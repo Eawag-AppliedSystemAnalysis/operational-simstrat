@@ -1,0 +1,9 @@
+[
+  { "key": "lowerconstance",
+    "dependencies": ["upperconstance"]
+  },
+  {
+    "key": "upperconstance",
+    "dependencies": []
+  }
+]
