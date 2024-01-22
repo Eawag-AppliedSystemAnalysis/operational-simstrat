@@ -5,5 +5,9 @@
   {
     "key": "upperconstance",
     "dependencies": []
+  },
+  {
+    "key": "zurich",
+    "dependencies": []
   }
 ]

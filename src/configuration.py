@@ -16,6 +16,8 @@ class Config(object):
             "snapshot": {"default": True, "verify": verify_bool, "desc": "Restart run from snapshot if available"},
             "snapshot_date": {"default": False, "verify": verify_date, "desc": "Snapshot date YYYYMMDD defaults to most recent"},
             "log": {"default": True, "verify": verify_bool, "desc": "Output log to file"},
+            "debug": {"default": False, "verify": verify_bool, "desc": "Raise any errors in code for easier debugging"},
+            "overwrite": {"default": False, "verify": verify_bool, "desc": "Remove existing simulation files and run full simulation"},
         }
         self.args = {k: v["default"] for k, v in self.default_args.items()}
 
