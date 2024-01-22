@@ -10,5 +10,7 @@ def process_args(input_args):
             value = True
         elif value.lower() == "false":
             value = False
+        elif key == "lakes":
+            value = value.split(",")
         output_args[key] = value
     return output_args

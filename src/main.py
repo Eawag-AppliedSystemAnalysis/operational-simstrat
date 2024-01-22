@@ -10,9 +10,8 @@ from model import Simstrat
 
 
 def task(parameters, args):
-    model = Simstrat(parameters, args)
+    model = Simstrat(parameters["key"], parameters, args)
     model.process()
-    time.sleep(2)
 
 
 def main(arg_file=False, overwrite_args=False):
@@ -23,7 +22,7 @@ def main(arg_file=False, overwrite_args=False):
     else:
         log = Logger()
     log.initialise("Simstrat Operational")
-    log.args(args)
+    log.inputs("Arguments", args)
     run_parallel_tasks(lake_parameters, args, task, log)
 
 

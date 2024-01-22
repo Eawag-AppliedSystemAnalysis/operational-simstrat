@@ -23,6 +23,11 @@ def verify_bool(value):
         raise ValueError("{} is not a valid bool.".format(value))
 
 
+def verify_dict(value):
+    if not isinstance(value, dict):
+        raise ValueError("{} is not a valid dictionary.".format(value))
+
+
 def verify_integer(value):
     if not isinstance(value, int):
         raise ValueError("{} is not a valid bool.".format(value))
@@ -33,9 +38,15 @@ def verify_list(value):
         raise ValueError("{} is not a valid list.".format(value))
 
 
+def verify_float(value):
+    float_value = float(value)
+    if not isinstance(float_value, float):
+        raise ValueError
+
+
 def verify_date(value):
     try:
         return datetime.strptime(value, '%Y%m%d')
     except:
-        raise Exception("A valid key: {} format YYYYMMDD must be provided.".format(value))
+        raise ValueError("A valid key: {} format YYYYMMDD must be provided.".format(value))
 

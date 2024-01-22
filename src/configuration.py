@@ -1,7 +1,7 @@
 import os
 import sys
 import json
-from functions.verify import verify_path, verify_bool, verify_date, verify_list, verify_integer
+from functions import verify
 
 
 class Config(object):
@@ -10,14 +10,14 @@ class Config(object):
         self.lake_parameters_dir = os.path.join(self.repo_dir, "static", "lake_parameters.json")
         self.lake_parameters = self.parse_lake_parameters()
         self.default_args = {
-            "lakes": {"default": [k['key'] for k in self.lake_parameters], "verify": verify_list, "desc": "List of lake keys to be processed"},
-            "simulation_dir": {"default": os.path.join(self.repo_dir, "runs"), "verify": verify_path, "desc": "Path to the simulation directory"},
-            "max_workers": {"default": 5, "verify": verify_integer, "desc": "Number of parallel workers"},
-            "snapshot": {"default": True, "verify": verify_bool, "desc": "Restart run from snapshot if available"},
-            "snapshot_date": {"default": False, "verify": verify_date, "desc": "Snapshot date YYYYMMDD defaults to most recent"},
-            "log": {"default": True, "verify": verify_bool, "desc": "Output log to file"},
-            "debug": {"default": False, "verify": verify_bool, "desc": "Raise any errors in code for easier debugging"},
-            "overwrite": {"default": False, "verify": verify_bool, "desc": "Remove existing simulation files and run full simulation"},
+            "lakes": {"default": [k['key'] for k in self.lake_parameters], "verify": verify.verify_list, "desc": "List of lake keys to be processed"},
+            "simulation_dir": {"default": os.path.join(self.repo_dir, "runs"), "verify": verify.verify_path, "desc": "Path to the simulation directory"},
+            "max_workers": {"default": 5, "verify": verify.verify_integer, "desc": "Number of parallel workers"},
+            "snapshot": {"default": True, "verify": verify.verify_bool, "desc": "Restart run from snapshot if available"},
+            "snapshot_date": {"default": False, "verify": verify.verify_date, "desc": "Snapshot date YYYYMMDD defaults to most recent"},
+            "log": {"default": True, "verify": verify.verify_bool, "desc": "Output log to file"},
+            "debug": {"default": False, "verify": verify.verify_bool, "desc": "Raise any errors in code for easier debugging"},
+            "overwrite": {"default": False, "verify": verify.verify_bool, "desc": "Remove existing simulation files and run full simulation"},
         }
         self.args = {k: v["default"] for k, v in self.default_args.items()}
 

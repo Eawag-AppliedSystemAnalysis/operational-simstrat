@@ -4,7 +4,8 @@
   },
   {
     "key": "upperconstance",
-    "dependencies": []
+    "dependencies": [],
+    "bathymetry_datalakes_id": 10
   },
   {
     "key": "zurich",
