@@ -46,7 +46,7 @@ class Logger(object):
         self.newline()
         out = datetime.now().strftime("%H:%M:%S") + "   Stage {}: ".format(self.stage) + string
         self.stage = self.stage + 1
-        print('\033[95m' + out + '\033[0m')
+        print(out)
         if self.path:
             with open(self.path, "a") as file:
                 file.write(out + "\n")
@@ -54,7 +54,7 @@ class Logger(object):
 
     def end_stage(self):
         out = datetime.now().strftime("%H:%M:%S") + "   Stage {}: Completed.".format(self.stage - 1)
-        print('\033[92m' + out + '\033[0m')
+        print(out)
         if self.path:
             with open(self.path, "a") as file:
                 file.write(out + "\n")

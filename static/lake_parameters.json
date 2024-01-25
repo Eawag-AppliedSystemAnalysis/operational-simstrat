@@ -1,14 +1,75 @@
 [
   { "key": "lowerconstance",
-    "dependencies": ["upperconstance"]
+    "bathymetry_datalakes_id": 53,
+    "meteo_stations": [
+      {"station_id": "STK", "source": "MeteoSwiss"},
+      {"station_id": "HAI", "source": "MeteoSwiss"},
+      {"station_id": "GUT", "source": "MeteoSwiss"}
+    ],
+    "meteo_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "lake_model_inflow": ["upperconstance"],
+    "hydro_stations": {
+      "inflow": [],
+      "outflow": [
+        {"station_id": 2288, "parameter": "AbflussRadarBruecke", "source": "Bafu"}
+      ],
+      "level": []
+    }
   },
   {
     "key": "upperconstance",
-    "dependencies": [],
-    "bathymetry_datalakes_id": 10
+    "bathymetry_datalakes_id": 10,
+    "meteo_stations": [
+      {"station_id": "ARH", "source": "MeteoSwiss"},
+      {"station_id": "GUT", "source": "MeteoSwiss"}
+    ],
+    "meteo_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "hydro_stations": {
+      "inflow": [
+        {
+          "discharge": {"station_id": 2473, "parameter": "AbflussPneumatikFluss", "source": "Bafu"},
+          "temperature": {"station_id": 2473, "parameter": "WassertemperaturFluss", "source": "Bafu"}
+        },
+        {
+          "discharge": {"station_id": 2308, "parameter": "AbflussPneumatik", "source": "Bafu"},
+          "temperature": {"station_id": 2308, "parameter": "Wassertemperatur", "source": "Bafu"}
+        },
+        {
+          "discharge": {"station_id": 2312, "parameter": "AbflussRadarSchacht", "source": "Bafu"},
+          "temperature": {"station_id": 2308, "parameter": "Wassertemperatur", "source": "Bafu"}
+        }
+      ],
+      "outflow": [],
+      "level": [
+        {"station_id": 2032, "parameter": "PegelPneumatik", "source": "Bafu"}
+      ]
+    }
   },
   {
-    "key": "zurich",
-    "dependencies": []
+    "key": "ageri",
+    "bathymetry_datalakes_id": 6,
+    "meteo_stations": [
+      {"station_id": "AEG", "source": "MeteoSwiss"},
+      {"station_id": "SAG", "source": "MeteoSwiss"},
+      {"station_id": "EIN", "source": "MeteoSwiss"}
+    ],
+    "meteo_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "hydro_stations": {
+      "inflow": [],
+      "outflow": [],
+      "level": []
+    }
   }
 ]

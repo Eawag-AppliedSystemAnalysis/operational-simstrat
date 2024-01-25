@@ -1,11 +1,18 @@
 import concurrent.futures
 import time
 import queue
+from .general import process_input
 
 
 def run_parallel_tasks(tasks, args, code_function, log):
     q = queue.Queue()
     start = time.time()
+
+    for task in tasks:
+        if "lake_model_inflow" in task:
+            task["dependencies"] = process_input(task["lake_model_inflow"])
+        else:
+            task["dependencies"] = []
 
     def feed_the_workers():
         new_tasks = False

@@ -15,9 +15,13 @@ class Config(object):
             "max_workers": {"default": 5, "verify": verify.verify_integer, "desc": "Number of parallel workers"},
             "snapshot": {"default": True, "verify": verify.verify_bool, "desc": "Restart run from snapshot if available"},
             "snapshot_date": {"default": False, "verify": verify.verify_date, "desc": "Snapshot date YYYYMMDD defaults to most recent"},
+            "data_api": {"default": "http://eaw-alplakes2:8000", "verify": verify.verify_string, "desc": "Base URL for the Alplakes API"},
             "log": {"default": True, "verify": verify.verify_bool, "desc": "Output log to file"},
             "debug": {"default": False, "verify": verify.verify_bool, "desc": "Raise any errors in code for easier debugging"},
-            "overwrite": {"default": False, "verify": verify.verify_bool, "desc": "Remove existing simulation files and run full simulation"},
+            "overwrite_simulation": {"default": False, "verify": verify.verify_bool, "desc": "Remove existing simulation files and run full simulation"},
+            "overwrite_start_date": {"default": False, "verify": verify.verify_date, "desc": "Overwrites the default start date and initialises from initial conditions and NOT a snapshot"},
+            "overwrite_end_date": {"default": False, "verify": verify.verify_date, "desc": "Overwrite the default end date"},
+            "forecast": {"default": True, "verify": verify.verify_bool, "desc": "Forecast values using meteo forecast"},
         }
         self.args = {k: v["default"] for k, v in self.default_args.items()}
 
