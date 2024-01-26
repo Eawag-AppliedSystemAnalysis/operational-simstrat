@@ -6,9 +6,12 @@ from datetime import datetime, timezone, timedelta
 
 from functions import verify
 from functions.log import Logger
-from functions.write import write_grid, write_bathymetry, write_output_depths, write_output_time_resolution
+from functions.write import (write_grid, write_bathymetry, write_output_depths, write_output_time_resolution,
+                             write_initial_conditions, write_absorption)
 from functions.bathymetry import bathymetry_from_file, bathymetry_from_datalakes
 from functions.meteo import period_from_meteo
+from functions.observations import (initial_conditions_from_observations, default_initial_conditions,
+                                    absorption_from_observations, default_absorption)
 
 
 class Simstrat(object):
@@ -18,10 +21,13 @@ class Simstrat(object):
         self.simulation_dir = os.path.join(args["simulation_dir"], key)
         self.required_parameters = {
             "meteo_stations": {"verify": verify.verify_meteo_stations, "desc": "List of dicts describing the input meteostations"},
+            "elevation": {"verify": verify.verify_float, "desc": "Elevation of lake above sea level (m a.s.l)"},
+            "trophic_state": {"verify": verify.verify_string, "desc": "Trophic state of the lake e.g. Oligotrophic, Eutrophic"},
         }
         self.default_parameters = {
             "reference_date": {"default": "19810101", "verify": verify.verify_date, "desc": "Reference date YYYYMMDD of the model"},
             "model_time_resolution": {"default": 300, "verify": verify.verify_integer, "desc": "Timestep of the model (s)"},
+            "salinity": {"default": 0.15, "verify": verify.verify_float, "desc": "Default salinity for intial conditions if not available in observations (ppt)"},
             "output_time_resolution": {"default": 10800, "verify": verify.verify_integer,"desc": "Output imestep of the model, should be evenly devisable by the model timestep (s)"},
         }
         self.optional_parameters = {
@@ -34,6 +40,7 @@ class Simstrat(object):
             "bathymetry_datalakes_id": {"verify": verify.verify_integer, "desc": "Datalakes ID for bathymetry profile"},
             "hydro_stations": {"verify": verify.verify_dict, "desc": "Dictionary of inputs, outputs and levels"},
             "meteo_forecast": {"verify": verify.verify_meteo_forecast, "desc": "Dictionary proving source and model"},
+            "absorption": {"verify": verify.verify_float, "desc": "Absorption coefficient when observation data not available"},
         }
         self.parameters = {k: v["default"] for k, v in self.default_parameters.items()}
 
@@ -52,6 +59,7 @@ class Simstrat(object):
                 self.parameters[key] = parameters[key]
 
         self.snapshot = args["snapshot"]
+        self.parameters["reference_date"] = datetime.strptime(self.parameters["reference_date"], "%Y%m%d").replace(tzinfo=timezone.utc)
         self.start_date = self.parameters["reference_date"]
         self.end_date = datetime.now().replace(tzinfo=timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
 
@@ -77,7 +85,13 @@ class Simstrat(object):
         if self.snapshot:
             self.prepare_snapshot()
         else:
-            self.create_initial_conditions_files()
+            self.create_initial_conditions_file()
+        if self.args["couple_aed2"]:
+            self.create_aed2_files()
+        self.create_absorption_file()
+        self.create_forcing_file()
+        self.create_inflow_files()
+        self.create_par_file()
 
     def create_bathymetry_file(self):
         self.log.begin_stage("create_bathymetry_file")
@@ -143,7 +157,6 @@ class Simstrat(object):
             self.log.info("Output depth resolution set to {} m".format(self.parameters["output_depth_resolution"]), indent=1)
             depths = np.arange(0, self.parameters["max_depth"], self.parameters["output_depth_resolution"])
             write_output_depths(depths, output_depths_file)
-
         self.log.end_stage()
 
     def create_output_time_resolution_file(self):
@@ -193,11 +206,12 @@ class Simstrat(object):
                 else:
                     snapshots.sort()
                     self.log.info("Snapshot {} located".format(snapshots[-1]), indent=2)
+                    self.args["snapshot_date"] = snapshots[-1]
                     start_date = datetime.strptime(snapshots[-1], "%Y%m%d").replace(tzinfo=timezone.utc)
         else:
             start_date = meteo_start
 
-        if start_date < datetime.strptime(self.parameters["reference_date"], "%Y%m%d").replace(tzinfo=timezone.utc):
+        if start_date < self.parameters["reference_date"]:
             raise ValueError("Start date cannot be before reference date")
 
         end_date = meteo_end
@@ -228,9 +242,49 @@ class Simstrat(object):
 
     def prepare_snapshot(self):
         self.log.begin_stage("prepare_snapshot")
+        snapshot = os.path.join(self.simulation_dir, "simulation-snapshot_{}.dat".format(self.args["snapshot_date"]))
+        self.log.info("Using snapshot: {}".format(snapshot), indent=1)
+        shutil.copy(snapshot, os.path.join(self.simulation_dir, 'simulation-snapshot.dat'))
         self.log.end_stage()
 
-    def create_initial_conditions_files(self):
-        self.log.begin_stage("create_initial_conditions_files")
+    def create_initial_conditions_file(self):
+        self.log.begin_stage("create_initial_conditions_file")
+        self.log.info("Attempting to generate initial conditions from observation data", indent=1)
+        profile = initial_conditions_from_observations(self.key, self.start_date, salinity=self.parameters["salinity"])
+        if not profile:
+            self.log.info("Failed to generate initial conditions from observation data, generating default profile", indent=1)
+            doy = self.start_date.timetuple().tm_yday
+            profile = default_initial_conditions(doy, self.parameters["elevation"], self.parameters["max_depth"], salinity=self.parameters["salinity"])
+        write_initial_conditions(profile["depth"], profile["temperature"], profile["salinity"],
+                                 os.path.join(self.simulation_dir, "InitialConditions.dat"))
         self.log.end_stage()
+
+    def create_aed2_files(self):
+        self.log.begin_stage("create_aed2_files")
+        self.log.end_stage()
+
+    def create_forcing_file(self):
+        self.log.begin_stage("create_forcing_file")
+        self.log.end_stage()
+
+    def create_absorption_file(self):
+        self.log.begin_stage("create_absorption_file")
+        self.log.info("Attempting to generate absorption from observation data", indent=1)
+        absorption = absorption_from_observations(self.key, self.start_date, self.end_date)
+        if not absorption:
+            self.log.info("Failed to generate absorption from observation data, generating default absorption",indent=1)
+            absorption = default_absorption(self.parameters["trophic_state"], self.parameters["elevation"],
+                                            self.start_date, self.end_date, self.parameters.get("absorption", False))
+        write_absorption(absorption["time"], absorption["depth"], absorption["absorption"],
+                         self.parameters["reference_date"], os.path.join(self.simulation_dir, "Absorption.dat"))
+        self.log.end_stage()
+
+    def create_inflow_files(self):
+        self.log.begin_stage("create_inflow_files")
+        self.log.end_stage()
+
+    def create_par_file(self):
+        self.log.begin_stage("create_par_file")
+        self.log.end_stage()
+
 

@@ -1,5 +1,7 @@
 [
   { "key": "lowerconstance",
+    "elevation": 395.0,
+    "trophic_state": "Mesotrophic",
     "bathymetry_datalakes_id": 53,
     "meteo_stations": [
       {"station_id": "STK", "source": "MeteoSwiss"},
@@ -22,6 +24,8 @@
   },
   {
     "key": "upperconstance",
+    "elevation": 395.0,
+    "trophic_state": "Mesotrophic",
     "bathymetry_datalakes_id": 10,
     "meteo_stations": [
       {"station_id": "ARH", "source": "MeteoSwiss"},
@@ -55,6 +59,8 @@
   },
   {
     "key": "ageri",
+    "elevation": 724.0,
+    "trophic_state": "Oligotrophic",
     "bathymetry_datalakes_id": 6,
     "meteo_stations": [
       {"station_id": "AEG", "source": "MeteoSwiss"},

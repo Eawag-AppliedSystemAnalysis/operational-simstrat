@@ -1,5 +1,5 @@
 import numpy as np
-
+from datetime import datetime
 
 def write_grid(grid_cells, file_path):
     with open(file_path, 'w', encoding='utf-8') as f:
@@ -25,3 +25,39 @@ def write_output_time_resolution(output_time_steps, file_path):
     with open(file_path, 'w', encoding='utf-8') as f:
         f.write('Number of time steps\n')
         f.write('%d\n' % np.floor(output_time_steps))
+
+
+def write_initial_conditions(depth_arr, temperature_arr, salinity_arr, file_path):
+    if len(depth_arr) != len(temperature_arr) or len(temperature_arr) != len(salinity_arr):
+        raise ValueError("All input arrays must be the same length")
+    if depth_arr[0] != 0:
+        raise ValueError("First depth must be zero")
+    with open(file_path, 'w', encoding='utf-8') as f:
+        f.write('%s    %s    %s    %s    %s    %s    %s\n' % ('Depth [m]', 'U [m/s]', 'V [m/s]', 'T [°C]', 'S [‰]', 'k [J/kg]', 'eps [W/kg]'))
+        for i in range(len(depth_arr)):
+            if not np.isnan(temperature_arr[i]):
+                if np.isnan(salinity_arr[i]):
+                    salinity_arr[i] = np.nanmean(salinity_arr)
+                f.write('%7.2f    %7.3f    %7.3f    %7.3f    %7.3f    %6.1e    %6.1e\n' % (-abs(depth_arr[i]), 0, 0, temperature_arr[i], salinity_arr[i], 3E-6, 5E-10))
+
+
+def write_absorption(time_arr, depth_arr, absorption_arr, reference_time, file_path):
+    if len(depth_arr) != len(time_arr) or len(time_arr) != len(absorption_arr):
+        raise ValueError("All input arrays must be the same length")
+    with open(file_path,'w',encoding='utf-8') as f:
+        f.write('Time [d] (1.col)    z [m] (1.row)    Absorption [m-1] (rest)\n')
+        depths = set([abs(z) for z in depth_arr])
+        f.write('%d\n' % len(depths))
+        f.write('-1         ' + ' '.join(['%5.2f' % -z for z in depths]) + '\n')
+        for t in time_arr:
+            f.write('%10.4f' % datetime_to_simstrat_time(t, reference_time))
+            for z in depths:
+                ind = np.logical_and(np.array(time_arr)==t,np.abs(depth_arr)==z)
+                if sum(ind)>1:
+                    raise Exception('Error: time %s seems to be repeated in the Secchi data; check the source file.' % datetime.strftime(t,"%d.%m.%Y %H:%M"))
+                f.write(' %5.3f' % np.array(absorption_arr)[ind])
+            f.write('\n')
+
+
+def datetime_to_simstrat_time(time, reference_time):
+    return (time - reference_time).days + (time - reference_time).seconds/24/3600
