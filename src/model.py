@@ -7,9 +7,11 @@ from datetime import datetime, timezone, timedelta
 from functions import verify
 from functions.log import Logger
 from functions.write import (write_grid, write_bathymetry, write_output_depths, write_output_time_resolution,
-                             write_initial_conditions, write_absorption)
+                             write_initial_conditions, write_absorption, write_par_file_303)
 from functions.bathymetry import bathymetry_from_file, bathymetry_from_datalakes
+from functions.grid import grid_from_file
 from functions.meteo import period_from_meteo
+from functions.par import update_par_file_303
 from functions.observations import (initial_conditions_from_observations, default_initial_conditions,
                                     absorption_from_observations, default_absorption)
 
@@ -22,7 +24,10 @@ class Simstrat(object):
         self.required_parameters = {
             "meteo_stations": {"verify": verify.verify_meteo_stations, "desc": "List of dicts describing the input meteostations"},
             "elevation": {"verify": verify.verify_float, "desc": "Elevation of lake above sea level (m a.s.l)"},
+            "surface_area": {"verify": verify.verify_float, "desc": "Surface area of the lake (km2)"},
             "trophic_state": {"verify": verify.verify_string, "desc": "Trophic state of the lake e.g. Oligotrophic, Eutrophic"},
+            "latitude": {"verify": verify.verify_float, "desc": "Latitude of the centroid of the lake (WGS 84)"},
+            "longitude": {"verify": verify.verify_float, "desc": "Longitude of the centroid of the lake (WGS 84)"},
         }
         self.default_parameters = {
             "reference_date": {"default": "19810101", "verify": verify.verify_date, "desc": "Reference date YYYYMMDD of the model"},
@@ -33,7 +38,6 @@ class Simstrat(object):
         self.optional_parameters = {
             "lake_model_inflow": {"verify": verify.verify_list, "desc": "List of keys for lake models that input into the lake"},
             "max_depth": {"verify": verify.verify_float, "desc": "Maximum depth of the lake (m)"},
-            "surface_area": {"verify": verify.verify_float, "desc": "Surface area of the lake (m2)"},
             "grid_resolution": {"verify": verify.verify_float, "desc": "Vertical resolution of the simulation grid (m)"},
             "output_depth_resolution": {"verify": verify.verify_float, "desc": "Vertical resolution of the output file (m)"},
             "bathymetry": {"verify": verify.verify_dict, "desc": "Bathymetry data in the format { area: [12,13,...], depth: [0, 1,...] } where area is in m2 and depth in m"},
@@ -46,7 +50,7 @@ class Simstrat(object):
 
         for key in self.required_parameters.keys():
             if key not in parameters:
-                raise ValueError("Required parameter: {} not in parameters".format(key))
+                raise ValueError("Required parameter: {} not in parameters. {}".format(key, self.required_parameters[key]["desc"]))
             self.required_parameters[key]["verify"](parameters[key])
             self.parameters[key] = parameters[key]
 
@@ -108,7 +112,7 @@ class Simstrat(object):
                 bathymetry = bathymetry_from_datalakes(self.parameters["bathymetry_datalakes_id"])
             elif "max_depth" in self.parameters and "surface_area" in self.parameters:
                 self.log.info("Using surface_area and max_depth for a simple two-point bathymetry", indent=1)
-                bathymetry = {"area": [self.parameters["surface_area"], 0], "depth": [0, self.parameters["max_depth"]]}
+                bathymetry = {"area": [self.parameters["surface_area"] * 10**6, 0], "depth": [0, self.parameters["max_depth"]]}
             else:
                 raise Exception("At least one of the following parameters must be provided: bathymetry, "
                                 "bathymetry_datalakes_id, max_depth and surface_area")
@@ -121,7 +125,8 @@ class Simstrat(object):
         self.log.begin_stage("create_grid_file")
         grid_file = os.path.join(self.simulation_dir, "Grid.dat")
         if os.path.exists(grid_file):
-            self.log.info("Grid file exists, skipping creation", indent=1)
+            self.log.info("Grid file exists, reading from file", indent=1)
+            self.parameters["grid_cells"] = grid_from_file(grid_file)
         else:
             if "grid_resolution" not in self.parameters:
                 if self.parameters["max_depth"] > 20:
@@ -133,11 +138,11 @@ class Simstrat(object):
                 else:
                     self.parameters["grid_resolution"] = 0.05
             self.log.info("Grid resolution set to {} m".format(self.parameters["grid_resolution"]), indent=1)
-            grid_cells = np.ceil(abs(self.parameters["max_depth"] / self.parameters["grid_resolution"]))
-            if grid_cells > 1000:
+            self.parameters["grid_cells"] = np.ceil(abs(self.parameters["max_depth"] / self.parameters["grid_resolution"]))
+            if self.parameters["grid_cells"] > 1000:
                 self.log.info('Grid cells limited to 1000', indent=1)
-                grid_cells = 1000
-            write_grid(grid_cells, grid_file)
+                self.parameters["grid_cells"] = 1000
+            write_grid(self.parameters["grid_cells"], grid_file)
         self.log.end_stage()
 
     def create_output_depths_file(self):
@@ -267,6 +272,10 @@ class Simstrat(object):
         self.log.begin_stage("create_forcing_file")
         self.log.end_stage()
 
+    def create_inflow_files(self):
+        self.log.begin_stage("create_inflow_files")
+        self.log.end_stage()
+
     def create_absorption_file(self):
         self.log.begin_stage("create_absorption_file")
         self.log.info("Attempting to generate absorption from observation data", indent=1)
@@ -279,12 +288,18 @@ class Simstrat(object):
                          self.parameters["reference_date"], os.path.join(self.simulation_dir, "Absorption.dat"))
         self.log.end_stage()
 
-    def create_inflow_files(self):
-        self.log.begin_stage("create_inflow_files")
-        self.log.end_stage()
-
     def create_par_file(self):
         self.log.begin_stage("create_par_file")
+        file_path = os.path.join(self.args["repo_dir"], "par", "simstrat_{}.par".format(self.args["simstrat_version"]))
+        if not os.path.exists(file_path):
+            raise ValueError("Unable to locate default PAR file for Simstrat version {}".format(self.args["simstrat_version"]))
+        if self.args["simstrat_version"] == "3.03":
+            self.log.info("Updating default PAR file for {}".format(self.args["simstrat_version"]), indent=1)
+            par = update_par_file_303(file_path, self.start_date, self.end_date, self.snapshot, self.parameters, self.args)
+            self.log.info("Writing default PAR file for {}".format(self.args["simstrat_version"]), indent=1)
+            write_par_file_303(par, self.simulation_dir)
+        else:
+            raise ValueError("PAR not implemented for Simstrat version {}".format(self.args["simstrat_version"]))
         self.log.end_stage()
 
 

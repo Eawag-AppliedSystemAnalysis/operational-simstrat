@@ -50,6 +50,7 @@ class Config(object):
                 raise ValueError('Lake key "{}" does not exist in lake_parameters.json, please select a different lake '
                                  'or add its properties to lake_parameters.json'.format(lake))
         lake_parameters = [lake for lake in self.lake_parameters if lake['key'] in self.args["lakes"]]
+        self.args["repo_dir"] = self.repo_dir
         return self.args, lake_parameters
 
     def parse_lake_parameters(self):

@@ -1,5 +1,9 @@
+import os
+import json
 import numpy as np
 from datetime import datetime
+from .general import datetime_to_simstrat_time
+
 
 def write_grid(grid_cells, file_path):
     with open(file_path, 'w', encoding='utf-8') as f:
@@ -59,5 +63,6 @@ def write_absorption(time_arr, depth_arr, absorption_arr, reference_time, file_p
             f.write('\n')
 
 
-def datetime_to_simstrat_time(time, reference_time):
-    return (time - reference_time).days + (time - reference_time).seconds/24/3600
+def write_par_file_303(par, simulation_dir):
+    with open(os.path.join(simulation_dir, "settings.par"), 'w') as f:
+        json.dump(par, f, indent=4)
