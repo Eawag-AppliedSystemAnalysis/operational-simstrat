@@ -56,17 +56,27 @@ def verify_date(value):
         raise ValueError("A valid key: {} format YYYYMMDD must be provided.".format(value))
 
 
-def verify_meteo_stations(stations):
-    if not isinstance(stations, list):
-        raise ValueError("Required input meteo_stations must be a list of dicts")
-    for station in stations:
-        if not isinstance(station, dict):
-            raise ValueError("Required input meteo_stations must be a list of dicts")
-        if "station_id" not in station or "source" not in station:
-            raise ValueError("Required input meteo_stations dicts must contain station_id and source")
+def verify_forcing(forcing):
+    if not isinstance(forcing, list):
+        raise ValueError("Required input forcing must be a list of dicts")
+    for f in forcing:
+        if not isinstance(f, dict):
+            raise ValueError("Required input forcing must be a list of dicts")
+        if "id" not in f or "type" not in f:
+            raise ValueError("Required input forcing dicts must contain id and type")
 
 
-def verify_meteo_forecast(value):
+def verify_inputs(inputs):
+    if not isinstance(inputs, list):
+        raise ValueError("Required input forcing must be a list of dicts")
+    for i in inputs:
+        if not isinstance(i, dict):
+            raise ValueError("Required input forcing must be a list of dicts")
+        if "discharge" not in i or "temperature" not in i:
+            raise ValueError("Required input dicts must contain discharge, and temperature")
+
+
+def verify_forcing_forecast(value):
     if not isinstance(value, dict):
         raise ValueError("meteo_forecast must be a dict")
     if "source" not in value or "model" not in value or "days" not in value:

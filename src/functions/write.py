@@ -66,3 +66,43 @@ def write_absorption(time_arr, depth_arr, absorption_arr, reference_time, file_p
 def write_par_file_303(par, simulation_dir):
     with open(os.path.join(simulation_dir, "settings.par"), 'w') as f:
         json.dump(par, f, indent=4)
+
+
+def write_inflow(parameter, inflow_mode, simulation_dir, time=None, deep_inflows=None, surface_inflows=None):
+    if surface_inflows is None:
+        surface_inflows = []
+    if deep_inflows is None:
+        deep_inflows = []
+    if time is None:
+        time = []
+    if parameter == "Q":
+        deep_unit = "m3/s"
+        surface_unit = "m2/s"
+    elif parameter == "T":
+        deep_unit = "°C"
+        surface_unit = "°C m2/s"
+    elif parameter == "S":
+        deep_unit = "ppt"
+        surface_unit = "ppt m2/s"
+    else:
+        raise ValueError("Parameter {} not recognised".format(parameter))
+    file_path = os.path.join(simulation_dir, "{}in.dat".format(parameter))
+    if inflow_mode == 0:
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write("No inflows")
+    elif inflow_mode == 2:
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write('%10s %10s %10s %10s\n' % ('Time [d]', 'Depth [m]', 'Deep Inflows [{}]'.format(deep_unit),
+                                               'Surface Inflows [{}]'.format(surface_unit)))
+            f.write('%10d %10d\n' % (len(deep_inflows), len(surface_inflows)))
+            f.write('-1         ' + ' '.join(['%10.2f' % z["depth"] for z in deep_inflows]) + ' '.join(['%10.2f' % z["depth"] for z in surface_inflows]) + '\n')
+            for i in range(len(time)):
+                f.write('%10.4f ' % time[i])
+                f.write(' '.join(['%10.2f' % z["data"][i] for z in deep_inflows]))
+                f.write(' '.join(['%10.2f' % z["data"][i] for z in surface_inflows]))
+                f.write('\n')
+
+
+def write_outflow(simulation_dir):
+    with open(os.path.join(simulation_dir, "Qout.dat"), 'w', encoding='utf-8') as f:
+        f.write("Outflow not used, lake overflows to maintain water level")

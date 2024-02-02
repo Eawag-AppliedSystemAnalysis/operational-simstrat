@@ -1,15 +1,6 @@
 import json
 import numpy as np
-from .general import datetime_to_simstrat_time
-
-
-def air_pressure_from_elevation(elevation):
-    return round(1013.25 * np.exp((-9.81 * 0.029 * elevation) / (8.314 * 283.15)), 0)
-
-
-def seiche_from_surface_area(surface_area):
-    # Surface area in km2
-    return min(max(round(0.0017 * np.sqrt(surface_area), 3), 0.0005), 0.05)
+from .general import datetime_to_simstrat_time, air_pressure_from_elevation, seiche_from_surface_area
 
 
 def update_par_file_303(file_path, start_date, end_date, snapshot, parameters, args):
@@ -17,6 +8,7 @@ def update_par_file_303(file_path, start_date, end_date, snapshot, parameters, a
         par = json.load(f)
 
     par["Input"]['Grid'] = parameters["grid_cells"]
+    par["ModelConfig"]["InflowMode"] = parameters["inflow_mode"]
     par["ModelConfig"]["CoupleAED2"] = args["couple_aed2"]
 
     par["Simulation"]["Start d"] = datetime_to_simstrat_time(start_date, parameters["reference_date"])
@@ -31,7 +23,5 @@ def update_par_file_303(file_path, start_date, end_date, snapshot, parameters, a
     for key in par["ModelParameters"].keys():
         if key in parameters:
             par["ModelParameters"][key] = parameters[key]
-
-    print(par)
 
     return par

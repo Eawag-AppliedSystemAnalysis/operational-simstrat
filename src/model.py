@@ -7,10 +7,10 @@ from datetime import datetime, timezone, timedelta
 from functions import verify
 from functions.log import Logger
 from functions.write import (write_grid, write_bathymetry, write_output_depths, write_output_time_resolution,
-                             write_initial_conditions, write_absorption, write_par_file_303)
+                             write_initial_conditions, write_absorption, write_par_file_303, write_inflow, write_outflow)
 from functions.bathymetry import bathymetry_from_file, bathymetry_from_datalakes
 from functions.grid import grid_from_file
-from functions.meteo import period_from_meteo
+from functions.forcing import period_from_forcing
 from functions.par import update_par_file_303
 from functions.observations import (initial_conditions_from_observations, default_initial_conditions,
                                     absorption_from_observations, default_absorption)
@@ -22,7 +22,7 @@ class Simstrat(object):
         self.args = args
         self.simulation_dir = os.path.join(args["simulation_dir"], key)
         self.required_parameters = {
-            "meteo_stations": {"verify": verify.verify_meteo_stations, "desc": "List of dicts describing the input meteostations"},
+            "forcing": {"verify": verify.verify_forcing, "desc": "List of dicts describing the input forcing data"},
             "elevation": {"verify": verify.verify_float, "desc": "Elevation of lake above sea level (m a.s.l)"},
             "surface_area": {"verify": verify.verify_float, "desc": "Surface area of the lake (km2)"},
             "trophic_state": {"verify": verify.verify_string, "desc": "Trophic state of the lake e.g. Oligotrophic, Eutrophic"},
@@ -36,14 +36,13 @@ class Simstrat(object):
             "output_time_resolution": {"default": 10800, "verify": verify.verify_integer,"desc": "Output imestep of the model, should be evenly devisable by the model timestep (s)"},
         }
         self.optional_parameters = {
-            "lake_model_inflow": {"verify": verify.verify_list, "desc": "List of keys for lake models that input into the lake"},
             "max_depth": {"verify": verify.verify_float, "desc": "Maximum depth of the lake (m)"},
             "grid_resolution": {"verify": verify.verify_float, "desc": "Vertical resolution of the simulation grid (m)"},
             "output_depth_resolution": {"verify": verify.verify_float, "desc": "Vertical resolution of the output file (m)"},
             "bathymetry": {"verify": verify.verify_dict, "desc": "Bathymetry data in the format { area: [12,13,...], depth: [0, 1,...] } where area is in m2 and depth in m"},
             "bathymetry_datalakes_id": {"verify": verify.verify_integer, "desc": "Datalakes ID for bathymetry profile"},
-            "hydro_stations": {"verify": verify.verify_dict, "desc": "Dictionary of inputs, outputs and levels"},
-            "meteo_forecast": {"verify": verify.verify_meteo_forecast, "desc": "Dictionary proving source and model"},
+            "inputs": {"verify": verify.verify_inputs, "desc": "List of inputs described by dicts with discharge and temeperature"},
+            "forcing_forecast": {"verify": verify.verify_forcing_forecast, "desc": "Dictionary proving source and model"},
             "absorption": {"verify": verify.verify_float, "desc": "Absorption coefficient when observation data not available"},
         }
         self.parameters = {k: v["default"] for k, v in self.default_parameters.items()}
@@ -179,14 +178,14 @@ class Simstrat(object):
     def set_simulation_run_period(self):
         self.log.begin_stage("set_simulation_run_period")
 
-        self.log.info("Retrieving meteo data extents", indent=1)
-        meteo_start, meteo_end = period_from_meteo(self.parameters["meteo_stations"], self.args["data_api"])
-        self.log.info("Meteodata timeframe: {} - {}".format(meteo_start, meteo_end), indent=2)
+        self.log.info("Retrieving forcing data extents", indent=1)
+        forcing_start, forcing_end = period_from_forcing(self.parameters["forcing"], self.args["data_api"])
+        self.log.info("Forcing timeframe: {} - {}".format(forcing_start, forcing_end), indent=2)
 
         if self.args["overwrite_start_date"]:
             overwrite_start_date = datetime.strptime(self.args["overwrite_start_date"], "%Y%m%d").replace(tzinfo=timezone.utc)
-            if overwrite_start_date < meteo_start:
-                raise ValueError("Overwrite start date is outside of available meteostation data")
+            if overwrite_start_date < forcing_start:
+                raise ValueError("Overwrite start date is outside of available forcing data")
             else:
                 self.log.info("Setting start date based on overwrite start date {}".format(self.args["overwrite_start_date"]), indent=1)
                 self.snapshot = False
@@ -195,9 +194,9 @@ class Simstrat(object):
             if self.args["snapshot_date"]:
                 self.log.info("Attempting to define start date by specific snapshot date {}".format(self.args["snapshot_date"]), indent=1)
                 if not os.path.exists(os.path.join(self.simulation_dir, "simulation-snapshot_{}.dat".format(self.args["snapshot_date"]))):
-                    self.log.info("Snapshot {} cannot be found, reverting to meteo period".format(self.args["snapshot_date"]), indent=2)
+                    self.log.info("Snapshot {} cannot be found, reverting to forcing period".format(self.args["snapshot_date"]), indent=2)
                     self.snapshot = False
-                    start_date = meteo_start
+                    start_date = forcing_start
                 else:
                     self.log.info("Snapshot {} located".format(self.args["snapshot_date"]), indent=2)
                     start_date = datetime.strptime(self.args["snapshot_date"], "%Y%m%d").replace(tzinfo=timezone.utc)
@@ -205,30 +204,30 @@ class Simstrat(object):
                 self.log.info("Attempting to define start date by most recent snapshot", indent=1)
                 snapshots = [f.split(".")[0].split("_")[-1] for f in os.listdir(self.simulation_dir) if "simulation-snapshot" in f]
                 if len(snapshots) == 0:
-                    self.log.info("No snapshots available, reverting to meteo period", indent=2)
+                    self.log.info("No snapshots available, reverting to forcing period", indent=2)
                     self.snapshot = False
-                    start_date = meteo_start
+                    start_date = forcing_start
                 else:
                     snapshots.sort()
                     self.log.info("Snapshot {} located".format(snapshots[-1]), indent=2)
                     self.args["snapshot_date"] = snapshots[-1]
                     start_date = datetime.strptime(snapshots[-1], "%Y%m%d").replace(tzinfo=timezone.utc)
         else:
-            start_date = meteo_start
+            start_date = forcing_start
 
         if start_date < self.parameters["reference_date"]:
             raise ValueError("Start date cannot be before reference date")
 
-        end_date = meteo_end
-        if self.args["forecast"] and "meteo_forecast" in self.parameters:
+        end_date = forcing_end
+        if self.args["forecast"] and "forcing_forecast" in self.parameters:
             today = datetime.now().replace(tzinfo=timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
-            end_date = today + timedelta(days=self.parameters["meteo_forecast"]["days"])
-            self.log.info("Using forecast to extend end date by {} days".format(self.parameters["meteo_forecast"]["days"]), indent=1)
+            end_date = today + timedelta(days=self.parameters["forcing_forecast"]["days"])
+            self.log.info("Using forecast to extend end date by {} days".format(self.parameters["forcing_forecast"]["days"]), indent=1)
 
         if self.args["overwrite_end_date"]:
             overwrite_end_date = datetime.strptime(self.args["overwrite_end_date"], "%Y%m%d").replace(tzinfo=timezone.utc)
             if overwrite_end_date > end_date:
-                raise ValueError("Overwrite end date is outside of available meteostation data")
+                raise ValueError("Overwrite end date is outside of available forcing data")
             else:
                 self.log.info("Setting end date based on overwrite end date {}".format(self.args["overwrite_start_date"]), indent=1)
                 end_date = overwrite_end_date
@@ -274,6 +273,27 @@ class Simstrat(object):
 
     def create_inflow_files(self):
         self.log.begin_stage("create_inflow_files")
+        if "inflows" in self.parameters and len(self.parameters["inflows"]) > 0:
+            self.log.info("Processing {} inputs".format(len(self.parameters["inflows"])), indent=1)
+            self.parameters["inflow_mode"] = 2
+            # Test data for seeing format required.
+            time = [0, 500, 15635]
+            deep_inflows = [
+                {"depth": 0.0, "data": [10.5, 11.2, 16.1]}
+            ]
+            surface_inflows = [
+                {"depth": -5.0, "data": [0, 0, 0]},
+                {"depth": -5.0, "data": [10.5, 11.2, 16.1]},
+                {"depth": 0.0, "data": [10.5, 11.2, 16.1]}
+            ]
+            write_inflow("Q", 2, self.simulation_dir, time=time, deep_inflows=deep_inflows, surface_inflows=surface_inflows)
+        else:
+            self.log.info("No inputs, producing default files", indent=1)
+            self.parameters["inflow_mode"] = 0  # No inputs
+            write_inflow("Q", 0, self.simulation_dir)
+            write_inflow("T", 0, self.simulation_dir)
+            write_inflow("S", 0, self.simulation_dir)
+        write_outflow(self.simulation_dir)
         self.log.end_stage()
 
     def create_absorption_file(self):
