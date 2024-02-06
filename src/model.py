@@ -7,10 +7,11 @@ from datetime import datetime, timezone, timedelta
 from functions import verify
 from functions.log import Logger
 from functions.write import (write_grid, write_bathymetry, write_output_depths, write_output_time_resolution,
-                             write_initial_conditions, write_absorption, write_par_file_303, write_inflow, write_outflow)
+                             write_initial_conditions, write_absorption, write_par_file_303, write_inflow,
+                             write_outflow, write_forcing_data)
 from functions.bathymetry import bathymetry_from_file, bathymetry_from_datalakes
 from functions.grid import grid_from_file
-from functions.forcing import period_from_forcing
+from functions.forcing import metadata_from_forcing, download_forcing_data
 from functions.par import update_par_file_303
 from functions.observations import (initial_conditions_from_observations, default_initial_conditions,
                                     absorption_from_observations, default_absorption)
@@ -179,7 +180,7 @@ class Simstrat(object):
         self.log.begin_stage("set_simulation_run_period")
 
         self.log.info("Retrieving forcing data extents", indent=1)
-        forcing_start, forcing_end = period_from_forcing(self.parameters["forcing"], self.args["data_api"])
+        forcing_start, forcing_end = metadata_from_forcing(self.parameters["forcing"], self.args["data_api"])
         self.log.info("Forcing timeframe: {} - {}".format(forcing_start, forcing_end), indent=2)
 
         if self.args["overwrite_start_date"]:
@@ -269,6 +270,17 @@ class Simstrat(object):
 
     def create_forcing_file(self):
         self.log.begin_stage("create_forcing_file")
+        forcing_data = download_forcing_data(self.start_date,
+                                             self.end_date,
+                                             self.parameters["forcing"],
+                                             self.parameters["elevation"],
+                                             self.parameters["latitude"],
+                                             self.parameters["longitude"],
+                                             self.parameters["reference_date"],
+                                             self.args["data_api"],
+                                             self.log)
+        print("WARNING NOT YET IMPLEMENTED - gap filling")
+        write_forcing_data(forcing_data, self.simulation_dir)
         self.log.end_stage()
 
     def create_inflow_files(self):

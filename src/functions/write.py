@@ -106,3 +106,13 @@ def write_inflow(parameter, inflow_mode, simulation_dir, time=None, deep_inflows
 def write_outflow(simulation_dir):
     with open(os.path.join(simulation_dir, "Qout.dat"), 'w', encoding='utf-8') as f:
         f.write("Outflow not used, lake overflows to maintain water level")
+
+
+def write_forcing_data(forcing_data, simulation_dir):
+    columns = ["Time", "u", "v", "Tair", "sol", "vap", "cloud", "rain"]
+    with open(os.path.join(simulation_dir, "Forcing.dat"), 'w', encoding='utf-8') as f:
+        f.write(' '.join(['%10s' % "{} [{}]".format(c, forcing_data[c]["unit"]) for c in columns]) + '\n')
+        for i in range(len(forcing_data["Time"]["data"])):
+            if any(np.isnan([forcing_data[c]["data"][i] for c in columns])):
+                continue
+            f.write(' '.join(['%10.4f' % forcing_data[c]["data"][i] for c in columns]) + '\n')
