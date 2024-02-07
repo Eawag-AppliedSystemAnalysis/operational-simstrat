@@ -2,7 +2,8 @@ import numpy as np
 import pandas as pd
 from datetime import datetime, timezone, timedelta
 from .general import (call_url, adjust_temperature_for_altitude_difference, air_pressure_from_elevation, detect_gaps,
-                      adjust_data_to_mean_and_std, clear_sky_solar_radiation, datetime_to_simstrat_time)
+                      adjust_data_to_mean_and_std, clear_sky_solar_radiation, datetime_to_simstrat_time,
+                      calculate_mean_wind_direction)
 
 
 def metadata_from_forcing(forcing, api):
@@ -63,6 +64,7 @@ def meteodata_from_meteoswiss_meteostations(start, end, forcing, elevation, lati
     endpoint = api + "/meteoswiss/meteodata/measured/{}/{}/{}/{}"
 
     time = start + np.arange(0, (end - start).total_seconds() / 3600 + 1, 1).astype(int) * timedelta(hours=1)
+
     df_t = pd.DataFrame({'time': time})
     df_t['time'] = pd.to_datetime(df_t['time'])
     output["Time"]["data"] = np.array([datetime_to_simstrat_time(t, reference_date) for t in time])
@@ -124,8 +126,8 @@ def meteodata_from_meteoswiss_meteostations(start, end, forcing, elevation, lati
     log.info("Processing wind from magnitude and direction to components", indent=1)
     wind_direction = raw_data["dkl010h0"]
     wind_magnitude = raw_data["fkl010h0"]
-    log.info("Set missing direction values to average wind direction", indent=2)
-    wind_direction_mean = np.arctan2(np.mean(np.sin(wind_direction)), np.mean(np.cos(wind_direction)))
+    wind_direction_mean = calculate_mean_wind_direction(wind_direction)
+    log.info("Set missing direction values to average wind direction {}°".format(wind_direction_mean), indent=2)
     wind_direction[np.isnan(wind_direction)] = wind_direction_mean
     log.info("Enforce wind magnitude to between 0 and 20 m/s", indent=1)
     wind_magnitude[(wind_magnitude < 0.0) | (wind_magnitude > 20.0)] = np.nan
@@ -158,8 +160,8 @@ def meteodata_from_meteoswiss_meteostations(start, end, forcing, elevation, lati
     air_pressure = air_pressure_from_elevation(elevation)
     cssr = clear_sky_solar_radiation(time, air_pressure, output["vap"]["data"], latitude, longitude)
     df = pd.DataFrame({"cssr": cssr, "swr": output["sol"]["data"]})
-    cssr_rolling = df['cssr'].rolling(window=24, center=True).mean()
-    swr_rolling = df['swr'].rolling(window=24, center=True).mean()
+    cssr_rolling = df['cssr'].rolling(window=24, center=True, min_periods=1).mean()
+    swr_rolling = df['swr'].rolling(window=24, center=True, min_periods=1).mean()
     solar_index = np.interp(swr_rolling / cssr_rolling, [0, 1], [0, 1])  # Flerchinger et al. (2009), Crawford and Duchon (1999)
     output["cloud"]["data"] = 1 - solar_index
 

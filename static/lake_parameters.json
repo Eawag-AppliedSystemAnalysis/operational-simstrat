@@ -1,5 +1,6 @@
 [
   { "key": "lowerconstance",
+    "name": "Lower Lake Constance",
     "elevation": 395.0,
     "surface_area": 63.0,
     "latitude": 47.676,
@@ -25,6 +26,7 @@
   },
   {
     "key": "upperconstance",
+    "name": "Upper Lake Constance",
     "elevation": 395.0,
     "surface_area": 473.0,
     "latitude": 47.629,
@@ -55,6 +57,7 @@
   },
   {
     "key": "ageri",
+    "name": "Lake Aegeri",
     "elevation": 724.0,
     "surface_area": 7.3,
     "latitude": 47.125,

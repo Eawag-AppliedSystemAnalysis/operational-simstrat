@@ -11,7 +11,7 @@
         "Inflow salinity": "Sin.dat"
     },
     "Output": {
-        "Path": "",
+        "Path": "Results",
         "Depths": "z_out.dat",
         "Times": "t_out.dat",
         "OutputDepthReference": "surface",

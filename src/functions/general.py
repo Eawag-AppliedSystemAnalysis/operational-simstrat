@@ -1,4 +1,5 @@
 import requests
+import subprocess
 import numpy as np
 from scipy import interpolate
 from datetime import datetime, timezone, timedelta
@@ -29,6 +30,10 @@ def process_input(input_text):
 
 def datetime_to_simstrat_time(time, reference_date):
     return (time - reference_date).days + (time - reference_date).seconds/24/3600
+
+
+def simstrat_time_to_datetime(time, reference_date):
+    return reference_date + timedelta(days=time)
 
 
 def air_pressure_from_elevation(elevation):
@@ -109,3 +114,20 @@ def detect_gaps(arr, start, end, max_allowable_gap=86400):
         end_date = datetime.utcfromtimestamp(sorted_timestamps[index + 1]).replace(tzinfo=timezone.utc)
         result.append((start_date, end_date))
     return result
+
+
+def calculate_mean_wind_direction(wind_direction):
+    mean_wind_direction = np.arctan2(np.nanmean(np.sin(np.radians(wind_direction))), np.nanmean(np.cos(np.radians(wind_direction))))
+    if mean_wind_direction < 0:
+        mean_wind_direction += 360
+    return mean_wind_direction
+
+
+def run_subprocess(command):
+    result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    if result.returncode != 0:
+        error_message = f"Command failed with return code {result.returncode}\n"
+        error_message += f"Command: {command}\n"
+        error_message += f"Standard Output: {result.stdout}\n"
+        error_message += f"Standard Error: {result.stderr}\n"
+        raise RuntimeError(error_message)

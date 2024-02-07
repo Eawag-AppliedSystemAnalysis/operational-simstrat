@@ -1,6 +1,7 @@
 import logging
 import os
 import shutil
+import subprocess
 import numpy as np
 from datetime import datetime, timezone, timedelta
 
@@ -12,9 +13,11 @@ from functions.write import (write_grid, write_bathymetry, write_output_depths, 
 from functions.bathymetry import bathymetry_from_file, bathymetry_from_datalakes
 from functions.grid import grid_from_file
 from functions.forcing import metadata_from_forcing, download_forcing_data
-from functions.par import update_par_file_303
+from functions.par import update_par_file_303, overwrite_par_file_dates
 from functions.observations import (initial_conditions_from_observations, default_initial_conditions,
                                     absorption_from_observations, default_absorption)
+from functions.postprocess import convert_to_netcdf, calculate_variables
+from functions.general import run_subprocess
 
 
 class Simstrat(object):
@@ -24,6 +27,7 @@ class Simstrat(object):
         self.simulation_dir = os.path.join(args["simulation_dir"], key)
         self.required_parameters = {
             "forcing": {"verify": verify.verify_forcing, "desc": "List of dicts describing the input forcing data"},
+            "name": {"verify": verify.verify_string, "desc": "Name of the lake"},
             "elevation": {"verify": verify.verify_float, "desc": "Elevation of lake above sea level (m a.s.l)"},
             "surface_area": {"verify": verify.verify_float, "desc": "Surface area of the lake (km2)"},
             "trophic_state": {"verify": verify.verify_string, "desc": "Trophic state of the lake e.g. Oligotrophic, Eutrophic"},
@@ -71,6 +75,7 @@ class Simstrat(object):
             shutil.rmtree(self.simulation_dir)
         if not os.path.exists(self.simulation_dir):
             os.makedirs(self.simulation_dir, exist_ok=True)
+        os.makedirs(os.path.join(self.simulation_dir, "Results"), exist_ok=True)
 
         if args["log"]:
             self.log = Logger(path=self.simulation_dir)
@@ -88,14 +93,16 @@ class Simstrat(object):
         self.set_simulation_run_period()
         if self.snapshot:
             self.prepare_snapshot()
-        else:
-            self.create_initial_conditions_file()
-        if self.args["couple_aed2"]:
-            self.create_aed2_files()
+        self.create_initial_conditions_file()
         self.create_absorption_file()
         self.create_forcing_file()
         self.create_inflow_files()
+        if self.args["couple_aed2"]:
+            self.create_aed2_files()
         self.create_par_file()
+        exit()
+        self.run_simulation()
+        # self.post_process()
 
     def create_bathymetry_file(self):
         self.log.begin_stage("create_bathymetry_file")
@@ -194,7 +201,7 @@ class Simstrat(object):
         elif self.args["snapshot"]:
             if self.args["snapshot_date"]:
                 self.log.info("Attempting to define start date by specific snapshot date {}".format(self.args["snapshot_date"]), indent=1)
-                if not os.path.exists(os.path.join(self.simulation_dir, "simulation-snapshot_{}.dat".format(self.args["snapshot_date"]))):
+                if not os.path.exists(os.path.join(self.simulation_dir, "Results", "simulation-snapshot_{}.dat".format(self.args["snapshot_date"]))):
                     self.log.info("Snapshot {} cannot be found, reverting to forcing period".format(self.args["snapshot_date"]), indent=2)
                     self.snapshot = False
                     start_date = forcing_start
@@ -203,7 +210,7 @@ class Simstrat(object):
                     start_date = datetime.strptime(self.args["snapshot_date"], "%Y%m%d").replace(tzinfo=timezone.utc)
             else:
                 self.log.info("Attempting to define start date by most recent snapshot", indent=1)
-                snapshots = [f.split(".")[0].split("_")[-1] for f in os.listdir(self.simulation_dir) if "simulation-snapshot" in f]
+                snapshots = [f.split(".")[0].split("_")[-1] for f in os.listdir(os.path.join(self.simulation_dir, "Results")) if "simulation-snapshot_" in f]
                 if len(snapshots) == 0:
                     self.log.info("No snapshots available, reverting to forcing period", indent=2)
                     self.snapshot = False
@@ -211,8 +218,8 @@ class Simstrat(object):
                 else:
                     snapshots.sort()
                     self.log.info("Snapshot {} located".format(snapshots[-1]), indent=2)
-                    self.args["snapshot_date"] = snapshots[-1]
-                    start_date = datetime.strptime(snapshots[-1], "%Y%m%d").replace(tzinfo=timezone.utc)
+                    self.args["snapshot_date"] = snapshots[-1].split(".")[0].split("_")[-1]
+                    start_date = datetime.strptime(self.args["snapshot_date"], "%Y%m%d").replace(tzinfo=timezone.utc)
         else:
             start_date = forcing_start
 
@@ -247,9 +254,11 @@ class Simstrat(object):
 
     def prepare_snapshot(self):
         self.log.begin_stage("prepare_snapshot")
-        snapshot = os.path.join(self.simulation_dir, "simulation-snapshot_{}.dat".format(self.args["snapshot_date"]))
+        snapshot = os.path.join(self.simulation_dir, "Results", "simulation-snapshot_{}.dat".format(self.args["snapshot_date"]))
         self.log.info("Using snapshot: {}".format(snapshot), indent=1)
-        shutil.copy(snapshot, os.path.join(self.simulation_dir, 'simulation-snapshot.dat'))
+        shutil.copy(snapshot, os.path.join(self.simulation_dir, "Results", 'simulation-snapshot.dat'))
+        with open(os.path.join(self.simulation_dir, "InitialConditions.dat"), 'w') as f:
+            f.write("Initialising model from snapshot")
         self.log.end_stage()
 
     def create_initial_conditions_file(self):
@@ -262,10 +271,6 @@ class Simstrat(object):
             profile = default_initial_conditions(doy, self.parameters["elevation"], self.parameters["max_depth"], salinity=self.parameters["salinity"])
         write_initial_conditions(profile["depth"], profile["temperature"], profile["salinity"],
                                  os.path.join(self.simulation_dir, "InitialConditions.dat"))
-        self.log.end_stage()
-
-    def create_aed2_files(self):
-        self.log.begin_stage("create_aed2_files")
         self.log.end_stage()
 
     def create_forcing_file(self):
@@ -320,6 +325,10 @@ class Simstrat(object):
                          self.parameters["reference_date"], os.path.join(self.simulation_dir, "Absorption.dat"))
         self.log.end_stage()
 
+    def create_aed2_files(self):
+        self.log.begin_stage("create_aed2_files")
+        self.log.end_stage()
+
     def create_par_file(self):
         self.log.begin_stage("create_par_file")
         file_path = os.path.join(self.args["repo_dir"], "par", "simstrat_{}.par".format(self.args["simstrat_version"]))
@@ -327,11 +336,38 @@ class Simstrat(object):
             raise ValueError("Unable to locate default PAR file for Simstrat version {}".format(self.args["simstrat_version"]))
         if self.args["simstrat_version"] == "3.03":
             self.log.info("Updating default PAR file for {}".format(self.args["simstrat_version"]), indent=1)
-            par = update_par_file_303(file_path, self.start_date, self.end_date, self.snapshot, self.parameters, self.args)
+            par = update_par_file_303(file_path, self.start_date, self.end_date, self.args["snapshot"], self.parameters, self.args)
             self.log.info("Writing default PAR file for {}".format(self.args["simstrat_version"]), indent=1)
             write_par_file_303(par, self.simulation_dir)
         else:
             raise ValueError("PAR not implemented for Simstrat version {}".format(self.args["simstrat_version"]))
         self.log.end_stage()
 
+    def run_simulation(self):
+        self.log.begin_stage("run_simulation")
+        command = "docker run --user $(id -u):$(id -g) -v {}:/simstrat/run eawag/simstrat:3.0.3 Settings.par".format(self.simulation_dir)
+        month_beginning = self.end_date.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        snapshot_path = os.path.join(self.simulation_dir, "Results", "simulation-snapshot.dat")
+        if self.args["snapshot"] and month_beginning != self.start_date:
+            self.log.info("Splitting into two runs to create correct snapshot", indent=1)
+            self.log.info("Running from {} - {}".format(self.start_date, month_beginning), indent=1)
+            overwrite_par_file_dates(os.path.join(self.simulation_dir, "Settings.par"), self.start_date, month_beginning, self.parameters["reference_date"])
+            run_subprocess(command)
+            snapshot_out_path = os.path.join(self.simulation_dir, "Results", "simulation-snapshot_{}.dat".format(month_beginning.strftime("%Y%m%d")))
+            shutil.copy(snapshot_path, snapshot_out_path)
+            overwrite_par_file_dates(os.path.join(self.simulation_dir, "Settings.par"), month_beginning, self.end_date, self.parameters["reference_date"])
+            self.log.info("Running from {} - {}".format(month_beginning, self.end_date), indent=1)
+            run_subprocess(command)
+        else:
+            self.log.info("Running from {} - {}".format(self.start_date, self.end_date), indent=1)
+            run_subprocess(command)
+            """if os.path.exists(snapshot_path):
+                os.remove(snapshot_path)"""
+        self.log.end_stage()
+
+    def post_process(self):
+        self.log.begin_stage("post_process")
+        convert_to_netcdf(os.path.join(self.simulation_dir, "Results"), self.args["simstrat_version"], self.parameters)
+        calculate_variables(os.path.join(self.simulation_dir, "Results", "netcdf"))
+        self.log.end_stage()
 

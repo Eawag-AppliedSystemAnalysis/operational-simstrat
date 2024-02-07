@@ -64,7 +64,7 @@ def write_absorption(time_arr, depth_arr, absorption_arr, reference_time, file_p
 
 
 def write_par_file_303(par, simulation_dir):
-    with open(os.path.join(simulation_dir, "settings.par"), 'w') as f:
+    with open(os.path.join(simulation_dir, "Settings.par"), 'w') as f:
         json.dump(par, f, indent=4)
 
 
