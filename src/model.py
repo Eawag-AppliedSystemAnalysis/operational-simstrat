@@ -8,12 +8,12 @@ from datetime import datetime, timezone, timedelta
 from functions import verify
 from functions.log import Logger
 from functions.write import (write_grid, write_bathymetry, write_output_depths, write_output_time_resolution,
-                             write_initial_conditions, write_absorption, write_par_file_303, write_inflow,
+                             write_initial_conditions, write_absorption, write_par_file, write_inflow,
                              write_outflow, write_forcing_data)
 from functions.bathymetry import bathymetry_from_file, bathymetry_from_datalakes
 from functions.grid import grid_from_file
 from functions.forcing import metadata_from_forcing, download_forcing_data
-from functions.par import update_par_file_303, overwrite_par_file_dates
+from functions.par import update_par_file, overwrite_par_file_dates
 from functions.observations import (initial_conditions_from_observations, default_initial_conditions,
                                     absorption_from_observations, default_absorption)
 from functions.postprocess import convert_to_netcdf, calculate_variables
@@ -100,7 +100,6 @@ class Simstrat(object):
         if self.args["couple_aed2"]:
             self.create_aed2_files()
         self.create_par_file()
-        exit()
         self.run_simulation()
         # self.post_process()
 
@@ -306,7 +305,7 @@ class Simstrat(object):
             write_inflow("Q", 2, self.simulation_dir, time=time, deep_inflows=deep_inflows, surface_inflows=surface_inflows)
         else:
             self.log.info("No inputs, producing default files", indent=1)
-            self.parameters["inflow_mode"] = 0  # No inputs
+            self.parameters["inflow_mode"] = 0
             write_inflow("Q", 0, self.simulation_dir)
             write_inflow("T", 0, self.simulation_dir)
             write_inflow("S", 0, self.simulation_dir)
@@ -334,18 +333,15 @@ class Simstrat(object):
         file_path = os.path.join(self.args["repo_dir"], "par", "simstrat_{}.par".format(self.args["simstrat_version"]))
         if not os.path.exists(file_path):
             raise ValueError("Unable to locate default PAR file for Simstrat version {}".format(self.args["simstrat_version"]))
-        if self.args["simstrat_version"] == "3.03":
-            self.log.info("Updating default PAR file for {}".format(self.args["simstrat_version"]), indent=1)
-            par = update_par_file_303(file_path, self.start_date, self.end_date, self.args["snapshot"], self.parameters, self.args)
-            self.log.info("Writing default PAR file for {}".format(self.args["simstrat_version"]), indent=1)
-            write_par_file_303(par, self.simulation_dir)
-        else:
-            raise ValueError("PAR not implemented for Simstrat version {}".format(self.args["simstrat_version"]))
+        self.log.info("Updating default PAR file for {}".format(self.args["simstrat_version"]), indent=1)
+        par = update_par_file(self.args["simstrat_version"], file_path, self.start_date, self.end_date, self.args["snapshot"], self.parameters, self.args)
+        self.log.info("Writing default PAR file for {}".format(self.args["simstrat_version"]), indent=1)
+        write_par_file(self.args["simstrat_version"], par, self.simulation_dir)
         self.log.end_stage()
 
     def run_simulation(self):
         self.log.begin_stage("run_simulation")
-        command = "docker run --user $(id -u):$(id -g) -v {}:/simstrat/run eawag/simstrat:3.0.3 Settings.par".format(self.simulation_dir)
+        command = "docker run --user $(id -u):$(id -g) -v {}:/simstrat/run eawag/simstrat:{} Settings.par".format(self.simulation_dir, self.args["simstrat_version"])
         month_beginning = self.end_date.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         snapshot_path = os.path.join(self.simulation_dir, "Results", "simulation-snapshot.dat")
         if self.args["snapshot"] and month_beginning != self.start_date:
@@ -358,11 +354,12 @@ class Simstrat(object):
             overwrite_par_file_dates(os.path.join(self.simulation_dir, "Settings.par"), month_beginning, self.end_date, self.parameters["reference_date"])
             self.log.info("Running from {} - {}".format(month_beginning, self.end_date), indent=1)
             run_subprocess(command)
+            os.remove(snapshot_path)
         else:
             self.log.info("Running from {} - {}".format(self.start_date, self.end_date), indent=1)
             run_subprocess(command)
-            """if os.path.exists(snapshot_path):
-                os.remove(snapshot_path)"""
+            if os.path.exists(snapshot_path):
+                os.remove(snapshot_path)
         self.log.end_stage()
 
     def post_process(self):

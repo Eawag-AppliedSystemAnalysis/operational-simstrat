@@ -12,7 +12,7 @@ class Config(object):
         self.default_args = {
             "lakes": {"default": [k['key'] for k in self.lake_parameters], "verify": verify.verify_list, "desc": "List of lake keys to be processed"},
             "simulation_dir": {"default": os.path.join(self.repo_dir, "runs"), "verify": verify.verify_path, "desc": "Path to the simulation directory"},
-            "simstrat_version": {"default": "3.03", "verify": verify.verify_string, "desc": "Version of Simstrat"},
+            "simstrat_version": {"default": "3.0.4", "verify": verify.verify_string, "desc": "Version of Simstrat"},
             "couple_aed2": {"default": True, "verify": verify.verify_bool, "desc": "Couple water quality model AED2"},
             "forecast": {"default": True, "verify": verify.verify_bool, "desc": "Forecast values using meteo forecast"},
             "max_workers": {"default": 5, "verify": verify.verify_integer, "desc": "Number of parallel workers"},

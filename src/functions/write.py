@@ -63,9 +63,12 @@ def write_absorption(time_arr, depth_arr, absorption_arr, reference_time, file_p
             f.write('\n')
 
 
-def write_par_file_303(par, simulation_dir):
-    with open(os.path.join(simulation_dir, "Settings.par"), 'w') as f:
-        json.dump(par, f, indent=4)
+def write_par_file(simstrat_version, par, simulation_dir):
+    if simstrat_version in ["3.0.3", "3.0.4"]:
+        with open(os.path.join(simulation_dir, "Settings.par"), 'w') as f:
+            json.dump(par, f, indent=4)
+    else:
+        raise ValueError("Writing par file not implemented for Simstrat version {}".format(simstrat_version))
 
 
 def write_inflow(parameter, inflow_mode, simulation_dir, time=None, deep_inflows=None, surface_inflows=None):
