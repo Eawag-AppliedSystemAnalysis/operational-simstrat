@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import datetime, timezone, timedelta
 from .general import (call_url, adjust_temperature_for_altitude_difference, air_pressure_from_elevation, detect_gaps,
                       adjust_data_to_mean_and_std, clear_sky_solar_radiation, datetime_to_simstrat_time,
-                      calculate_mean_wind_direction)
+                      calculate_mean_wind_direction, interpolate_timeseries)
 
 
 def metadata_from_forcing(forcing, api):
@@ -42,17 +42,7 @@ def metadata_from_meteoswiss_meteostation(forcing, api):
     return start, end
 
 
-def download_forcing_data(start, end, forcing, elevation, latitude, longitude, reference_date, api, log):
-    output = {
-        "Time": {"unit": "d", "description": "Time in days since reference date"},
-        "u": {"unit": "m/s", "description": "Wind component West to East"},
-        "v": {"unit": "m/s", "description": "Wind component South to North"},
-        "Tair": {"unit": "°C", "description": "Air temperature adjusted to lake altitude"},
-        "sol": {"unit": "W/m2", "description": "Solar irradiance"},
-        "vap": {"unit": "mbar", "description": "Vapor pressure"},
-        "cloud": {"unit": "-", "description": "Cloud cover from 0 to 1"},
-        "rain": {"unit": "m/hr", "description": "Precipitation"},
-    }
+def download_forcing_data(output, start, end, forcing, elevation, latitude, longitude, reference_date, api, log):
     if forcing[0]["type"].lower() == "meteoswiss_meteostation":
         output = meteodata_from_meteoswiss_meteostations(start, end, forcing, elevation, latitude, longitude,
                                                          reference_date, output, api, log)
@@ -129,32 +119,13 @@ def meteodata_from_meteoswiss_meteostations(start, end, forcing, elevation, lati
     wind_direction_mean = calculate_mean_wind_direction(wind_direction)
     log.info("Set missing direction values to average wind direction {}°".format(wind_direction_mean), indent=2)
     wind_direction[np.isnan(wind_direction)] = wind_direction_mean
-    log.info("Enforce wind magnitude to between 0 and 20 m/s", indent=1)
-    wind_magnitude[(wind_magnitude < 0.0) | (wind_magnitude > 20.0)] = np.nan
     output["u"]["data"] = -wind_magnitude * np.sin(wind_direction * np.pi / 180)
     output["v"]["data"] = -wind_magnitude * np.cos(wind_direction * np.pi / 180)
 
-    v = raw_data["tre200h0"]
-    log.info("Enforce air temperature to between -42 and 42 °C", indent=1)
-    v[(v < -42.0) | (v > 42.0)] = np.nan
-    output["Tair"]["data"] = v
-
-    v = raw_data["gre000h0"]
-    log.info("Enforce solar radiation to between 0 and 1000 W/m2", indent=1)
-    v[v < 0.0] = 0.0
-    v[v > 1000.0] = np.nan
-    output["sol"]["data"] = v
-
-    v = raw_data["pva200h0"]
-    log.info("Enforce vapour pressure to between 1 and 70 mbar (1hPa == 1mbar)", indent=1)
-    v[(v < 1.0) | (v > 70.0)] = np.nan
-    output["vap"]["data"] = v
-
-    v = raw_data["rre150h0"]
-    log.info("Enforce rainfall to greater than 0 and convert from mm to m", indent=1)
-    v[v < 0] = 0
-    v = v * 0.001
-    output["rain"]["data"] = v
+    output["Tair"]["data"] = raw_data["tre200h0"]
+    output["sol"]["data"] = raw_data["gre000h0"]
+    output["vap"]["data"] = raw_data["pva200h0"]
+    output["rain"]["data"] = raw_data["rre150h0"] * 0.001  # Convert mm to m
 
     log.info("Estimate cloudiness based on ratio between measured and theoretical solar radiation", indent=1)
     air_pressure = air_pressure_from_elevation(elevation)
@@ -162,7 +133,52 @@ def meteodata_from_meteoswiss_meteostations(start, end, forcing, elevation, lati
     df = pd.DataFrame({"cssr": cssr, "swr": output["sol"]["data"]})
     cssr_rolling = df['cssr'].rolling(window=24, center=True, min_periods=1).mean()
     swr_rolling = df['swr'].rolling(window=24, center=True, min_periods=1).mean()
-    solar_index = np.interp(swr_rolling / cssr_rolling, [0, 1], [0, 1])  # Flerchinger et al. (2009), Crawford and Duchon (1999)
+    solar_index = np.interp(swr_rolling / cssr_rolling, [0, 1],
+                            [0, 1])  # Flerchinger et al. (2009), Crawford and Duchon (1999)
     output["cloud"]["data"] = 1 - solar_index
 
     return output
+
+
+def quality_assurance_forcing_data(forcing_data, log):
+    log.info("Running quality assurance on forcing data", indent=1)
+    for key in forcing_data.keys():
+        if "negative_to_zero" in forcing_data[key] and forcing_data[key]["negative_to_zero"]:
+            log.info("Setting negative {} values to 0".format(key), indent=2)
+            forcing_data[key]["data"][forcing_data[key]["data"] < 0] = 0.0
+        if "min" in forcing_data[key]:
+            log.info("Setting {} values less than {} {} to nan".format(key, forcing_data[key]["min"],
+                                                                       forcing_data[key]["unit"]), indent=2)
+            forcing_data[key]["data"][forcing_data[key]["data"] < forcing_data[key]["min"]] = np.nan
+        if "max" in forcing_data[key]:
+            log.info("Setting {} values greater than {} {} to nan".format(key, forcing_data[key]["max"],
+                                                                          forcing_data[key]["unit"]), indent=2)
+            forcing_data[key]["data"][forcing_data[key]["data"] > forcing_data[key]["max"]] = np.nan
+    return forcing_data
+
+
+def interpolate_forcing_data(forcing_data):
+    for key in forcing_data.keys():
+        if "max_interpolate_gap" in forcing_data[key]:
+            forcing_data[key]["data"] = interpolate_timeseries(forcing_data["Time"]["data"],
+                                                               forcing_data[key]["data"],
+                                                               max_gap_size=forcing_data[key]["max_interpolate_gap"])
+    return forcing_data
+
+
+def fill_forcing_data(forcing_data, forcing, data_api, log):
+    for key in forcing_data.keys():
+        nan_values = np.isnan(forcing_data[key]["data"])
+        if np.sum(nan_values) > 0:
+            if "fill" in forcing_data[key]:
+                if forcing_data[key]["fill"] == "mean":
+                    mean = np.nanmean(forcing_data[key]["data"])
+                    forcing_data[key]["data"][nan_values] = mean
+                    log.info("Filling {} nan values in {} with mean value: {}".format(np.sum(nan_values), key, mean), indent=1)
+                elif forcing_data[key]["fill"] == "hoy":
+                    log.info("Collecting station statistics for hoy information: {}".format(key))
+                elif forcing_data[key]["fill"] is None:
+                    continue
+                else:
+                    raise ValueError("Fill not implemented for type: {}".format(forcing_data[key]["fill"]))
+    return forcing_data

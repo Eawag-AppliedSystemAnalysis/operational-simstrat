@@ -1,6 +1,7 @@
 import os
 import json
 import numpy as np
+import pandas as pd
 from datetime import datetime
 from .general import datetime_to_simstrat_time
 
@@ -46,6 +47,7 @@ def write_initial_conditions(depth_arr, temperature_arr, salinity_arr, file_path
 
 
 def write_absorption(time_arr, depth_arr, absorption_arr, reference_time, file_path):
+    # Merge with existing files if they exist
     if len(depth_arr) != len(time_arr) or len(time_arr) != len(absorption_arr):
         raise ValueError("All input arrays must be the same length")
     with open(file_path,'w',encoding='utf-8') as f:
@@ -72,6 +74,7 @@ def write_par_file(simstrat_version, par, simulation_dir):
 
 
 def write_inflow(parameter, inflow_mode, simulation_dir, time=None, deep_inflows=None, surface_inflows=None):
+    # Merge with existing files if they exist
     if surface_inflows is None:
         surface_inflows = []
     if deep_inflows is None:
@@ -111,9 +114,25 @@ def write_outflow(simulation_dir):
         f.write("Outflow not used, lake overflows to maintain water level")
 
 
-def write_forcing_data(forcing_data, simulation_dir):
+def write_forcing_data(forcing_data, simulation_dir, log):
     columns = ["Time", "u", "v", "Tair", "sol", "vap", "cloud", "rain"]
-    with open(os.path.join(simulation_dir, "Forcing.dat"), 'w', encoding='utf-8') as f:
+    file_path = os.path.join(simulation_dir, "Forcing.dat")
+
+    if os.path.exists(file_path):
+        try:
+            time_min = forcing_data["Time"]["data"][0]
+            df = pd.read_csv(file_path, skiprows=1, delim_whitespace=True, header=None)
+            df.columns = columns
+            df = df[df['Time'] < time_min]
+            if len(df) > 0:
+                for key in forcing_data.keys():
+                    forcing_data[key]["data"] = np.concatenate((df[key].values, forcing_data[key]["data"]))
+                log.info("Merged with existing forcing data", indent=1)
+        except:
+            log.info("Failed to merge with existing forcing data", indent=1)
+            raise
+
+    with open(file_path, 'w', encoding='utf-8') as f:
         f.write(' '.join(['%10s' % "{} [{}]".format(c, forcing_data[c]["unit"]) for c in columns]) + '\n')
         for i in range(len(forcing_data["Time"]["data"])):
             if any(np.isnan([forcing_data[c]["data"][i] for c in columns])):

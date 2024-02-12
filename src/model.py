@@ -12,7 +12,7 @@ from functions.write import (write_grid, write_bathymetry, write_output_depths, 
                              write_outflow, write_forcing_data)
 from functions.bathymetry import bathymetry_from_file, bathymetry_from_datalakes
 from functions.grid import grid_from_file
-from functions.forcing import metadata_from_forcing, download_forcing_data
+from functions.forcing import metadata_from_forcing, download_forcing_data, interpolate_forcing_data, fill_forcing_data, quality_assurance_forcing_data
 from functions.par import update_par_file, overwrite_par_file_dates
 from functions.observations import (initial_conditions_from_observations, default_initial_conditions,
                                     absorption_from_observations, default_absorption)
@@ -49,6 +49,16 @@ class Simstrat(object):
             "inputs": {"verify": verify.verify_inputs, "desc": "List of inputs described by dicts with discharge and temeperature"},
             "forcing_forecast": {"verify": verify.verify_forcing_forecast, "desc": "Dictionary proving source and model"},
             "absorption": {"verify": verify.verify_float, "desc": "Absorption coefficient when observation data not available"},
+        }
+        self.forcing_data = {
+            "Time": {"unit": "d", "description": "Time in days since reference date"},
+            "u": {"unit": "m/s", "description": "Wind component West to East", "max_interpolate_gap": 7, "fill": "mean", "min": -20, "max": 20},
+            "v": {"unit": "m/s", "description": "Wind component South to North", "max_interpolate_gap": 7, "fill": "mean", "min": -20, "max": 20},
+            "Tair": {"unit": "°C", "description": "Air temperature adjusted to lake altitude", "max_interpolate_gap": 2, "fill": "hoy", "min": -42, "max": 42},
+            "sol": {"unit": "W/m2", "description": "Solar irradiance", "max_interpolate_gap": 0.125, "fill": "hoy", "negative_to_zero": True, "max": 1000},
+            "vap": {"unit": "mbar", "description": "Vapor pressure", "max_interpolate_gap": 2, "fill": "hoy", "min": 1, "max": 70},
+            "cloud": {"unit": "-", "description": "Cloud cover from 0 to 1", "max_interpolate_gap": None, "fill": None, "min": 0, "max": 1},
+            "rain": {"unit": "m/hr", "description": "Precipitation", "max_interpolate_gap": 7, "fill": "mean", "negative_to_zero": True},
         }
         self.parameters = {k: v["default"] for k, v in self.default_parameters.items()}
 
@@ -274,7 +284,8 @@ class Simstrat(object):
 
     def create_forcing_file(self):
         self.log.begin_stage("create_forcing_file")
-        forcing_data = download_forcing_data(self.start_date,
+        forcing_data = download_forcing_data(self.forcing_data,
+                                             self.start_date,
                                              self.end_date,
                                              self.parameters["forcing"],
                                              self.parameters["elevation"],
@@ -283,8 +294,12 @@ class Simstrat(object):
                                              self.parameters["reference_date"],
                                              self.args["data_api"],
                                              self.log)
-        print("WARNING NOT YET IMPLEMENTED - gap filling")
-        write_forcing_data(forcing_data, self.simulation_dir)
+        forcing_data = quality_assurance_forcing_data(forcing_data, self.log)
+        self.log.info("Interpolating small data gaps")
+        forcing_data = interpolate_forcing_data(forcing_data)
+        self.log.info("Filling large data gaps")
+        forcing_data = fill_forcing_data(forcing_data, self.parameters["forcing"], self.args["data_api"], self.log)
+        write_forcing_data(forcing_data, self.simulation_dir, self.log)
         self.log.end_stage()
 
     def create_inflow_files(self):
@@ -351,7 +366,7 @@ class Simstrat(object):
             run_subprocess(command)
             snapshot_out_path = os.path.join(self.simulation_dir, "Results", "simulation-snapshot_{}.dat".format(month_beginning.strftime("%Y%m%d")))
             shutil.copy(snapshot_path, snapshot_out_path)
-            overwrite_par_file_dates(os.path.join(self.simulation_dir, "Settings.par"), month_beginning, self.end_date, self.parameters["reference_date"])
+            overwrite_par_file_dates(os.path.join(self.simulation_dir, "Settings.par"), self.start_date, self.end_date, self.parameters["reference_date"])
             self.log.info("Running from {} - {}".format(month_beginning, self.end_date), indent=1)
             run_subprocess(command)
             os.remove(snapshot_path)

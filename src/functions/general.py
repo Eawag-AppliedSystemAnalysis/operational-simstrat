@@ -66,6 +66,7 @@ def get_day_of_year(datetime_array):
 
 
 def clear_sky_solar_radiation(time, air_pressure, vapour_pressure, lat, lon):
+    vapour_pressure[vapour_pressure < 1] = np.nan
     hour_of_day = np.array([t.hour + t.minute / 60 + t.second / 3600 for t in time])
     doy = get_day_of_year(time) + hour_of_day / 24
     doy_winter = doy + 10
@@ -114,6 +115,23 @@ def detect_gaps(arr, start, end, max_allowable_gap=86400):
         end_date = datetime.utcfromtimestamp(sorted_timestamps[index + 1]).replace(tzinfo=timezone.utc)
         result.append((start_date, end_date))
     return result
+
+
+def interpolate_timeseries(time, data, max_gap_size=None):
+    if max_gap_size is None:
+        max_gap_size = time[-1] - time[0]
+    non_nan_indices = np.arange(len(data))[~np.isnan(data)]
+    for i in range(1, len(non_nan_indices)):
+        start_index = non_nan_indices[i - 1]
+        end_index = non_nan_indices[i]
+        gap_size = time[end_index] - time[start_index]
+        if gap_size <= max_gap_size:
+            t = time[start_index:end_index+1]
+            d = data[start_index:end_index+1]
+            nan_indices = np.isnan(d)
+            d[nan_indices] = np.interp(t[nan_indices], t[~nan_indices], d[~nan_indices])
+            data[start_index:end_index+1] = d
+    return data
 
 
 def calculate_mean_wind_direction(wind_direction):
