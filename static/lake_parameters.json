@@ -17,9 +17,9 @@
       "model": "COSMO",
       "days": 5
     },
-    "inputs": [
-      { "discharge": { "id": "upperconstance", "type": "simstrat_model_inflow"},
-        "temperature": { "id": "upperconstance", "type": "simstrat_model_inflow"},
+    "inflows": [
+      { "type": "simstrat_model_inflow",
+        "id": "upperconstance",
         "surface_flow": 5.0
       }
     ]
@@ -42,17 +42,19 @@
       "model": "COSMO",
       "days": 5
     },
-    "inputs": [
-      { "discharge": { "id": 2473, "type": "bafu_hydrostation", "parameter": "AbflussPneumatikFluss"},
-        "temperature": { "id": 2473, "type": "bafu_hydrostation", "parameter": "WassertemperaturFluss"}
+    "inflows": [
+      { "type": "bafu_hydrostation",
+        "Q": { "id": 2473, "parameter": "AbflussPneumatikFluss"},
+        "T": { "id": 2473, "parameter": "WassertemperaturFluss"}
       },
-      { "discharge": { "id": 2308, "type": "bafu_hydrostation", "parameter": "AbflussPneumatik"},
-        "temperature": { "id": 2308, "type": "bafu_hydrostation", "parameter": "Wassertemperatur"}
+      { "type": "bafu_hydrostation",
+        "Q": { "id": 2308, "parameter": "AbflussPneumatik"},
+        "T": { "id": 2308, "parameter": "Wassertemperatur"}
       },
-      { "discharge": { "id": 2312, "type": "bafu_hydrostation", "parameter": "AbflussRadarSchacht"},
-        "temperature": { "id": 2308, "type": "bafu_hydrostation", "parameter": "Wassertemperatur"}
+      { "type": "bafu_hydrostation",
+        "Q": { "id": 2312, "parameter": "AbflussRadarSchacht"},
+        "T": { "id": 2308, "parameter": "Wassertemperatur"}
       }
-
     ]
   },
   {
@@ -74,5 +76,35 @@
       "model": "COSMO",
       "days": 5
     }
+  },
+  {
+    "key": "walensee",
+    "name": "Lake Walensee",
+    "elevation": 419.0,
+    "surface_area": 24.2,
+    "latitude": 47.1234,
+    "longitude": 9.2228,
+    "trophic_state": "Oligotrophic",
+    "bathymetry_datalakes_id": 35,
+    "forcing": [
+      {"id": "QUI", "type": "meteoswiss_meteostation"},
+      {"id": "LAC", "type": "meteoswiss_meteostation"},
+      {"id": "GLA", "type": "meteoswiss_meteostation"}
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "inflows": [
+      { "type": "bafu_hydrostation",
+        "Q": { "id": 2372, "parameter": "AbflussPneumatik"},
+        "T": { "id": 2372, "parameter": "Wassertemperatur"}
+      },
+      { "type": "bafu_hydrostation",
+        "Q": { "id": 2426, "parameter": "AbflussRadarSchacht"},
+        "T": { "id": 2372, "parameter": "Wassertemperatur"}
+      }
+    ]
   }
 ]

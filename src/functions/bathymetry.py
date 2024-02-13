@@ -14,4 +14,4 @@ def bathymetry_from_file(file_path):
 def bathymetry_from_datalakes(lake_id):
     my_bytes = urlopen('https://api.datalakes-eawag.ch/externaldata/morphology/' + str(lake_id)).read()
     data = literal_eval(my_bytes.decode('utf-8'))
-    return {"area": data["Area"]["values"], "depth": data["Depth"]["values"]}
+    return {"area": list(map(float, data["Area"]["values"])), "depth": list(map(float, data["Depth"]["values"]))}

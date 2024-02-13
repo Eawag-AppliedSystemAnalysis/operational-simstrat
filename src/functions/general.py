@@ -1,6 +1,7 @@
 import requests
 import subprocess
 import numpy as np
+import pandas as pd
 from scipy import interpolate
 from datetime import datetime, timezone, timedelta
 
@@ -131,6 +132,16 @@ def interpolate_timeseries(time, data, max_gap_size=None):
             nan_indices = np.isnan(d)
             d[nan_indices] = np.interp(t[nan_indices], t[~nan_indices], d[~nan_indices])
             data[start_index:end_index+1] = d
+    return data
+
+
+def fill_day_of_year(time, data, time_full, data_full, reference_date):
+    df_full = pd.DataFrame({"simstrat_time": time_full, "data": data_full})
+    df_full['time'] = reference_date + pd.to_timedelta(df_full['simstrat_time'], unit='D')
+    doy_avg = df_full.groupby(df_full['time'].dt.dayofyear)['data'].mean()
+    df = pd.DataFrame({"simstrat_time": time, "data": data})
+    df['time'] = reference_date + pd.to_timedelta(df['simstrat_time'], unit='D')
+    data = df.apply(lambda row: doy_avg[row['time'].dayofyear] if pd.isna(row['data']) else row['data'], axis=1).values
     return data
 
 

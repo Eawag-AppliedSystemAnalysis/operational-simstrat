@@ -1,9 +1,10 @@
+import os.path
 import numpy as np
 import pandas as pd
 from datetime import datetime, timezone, timedelta
 from .general import (call_url, adjust_temperature_for_altitude_difference, air_pressure_from_elevation, detect_gaps,
                       adjust_data_to_mean_and_std, clear_sky_solar_radiation, datetime_to_simstrat_time,
-                      calculate_mean_wind_direction, interpolate_timeseries)
+                      calculate_mean_wind_direction, interpolate_timeseries, fill_day_of_year)
 
 
 def metadata_from_forcing(forcing, api):
@@ -166,17 +167,55 @@ def interpolate_forcing_data(forcing_data):
     return forcing_data
 
 
-def fill_forcing_data(forcing_data, forcing, data_api, log):
+def fill_forcing_data(forcing_data, simulation_dir, snapshot, reference_date, log):
+    fill_required = False
+    for key in forcing_data.keys():
+        nan_values = np.isnan(forcing_data[key]["data"])
+        if np.sum(nan_values) > 0:
+            fill_required = True
+
+    if fill_required:
+        if snapshot:
+            log.info("Reading previous forcing fill to generate fill statistics on full timeseries", indent=1)
+            file_path = os.path.join(simulation_dir, "Forcing.dat")
+            if not os.path.exists(file_path):
+                raise ValueError("Unable to locate Forcing.dat files from previous run, unable to fill nan values. "
+                                 "Please remove the snapshot and run the full simulation.")
+            columns = ["Time", "u", "v", "Tair", "sol", "vap", "cloud", "rain"]
+            time_min = forcing_data["Time"]["data"][0]
+            df = pd.read_csv(file_path, skiprows=1, delim_whitespace=True, header=None)
+            df.columns = columns
+            df = df[df['Time'] < time_min]
+            for key in forcing_data.keys():
+                forcing_data[key]["data_extended"] = np.concatenate((df[key].values, forcing_data[key]["data"]))
+    else:
+        return forcing_data
+
     for key in forcing_data.keys():
         nan_values = np.isnan(forcing_data[key]["data"])
         if np.sum(nan_values) > 0:
             if "fill" in forcing_data[key]:
                 if forcing_data[key]["fill"] == "mean":
-                    mean = np.nanmean(forcing_data[key]["data"])
+                    if snapshot:
+                        mean = np.nanmean(forcing_data[key]["data_extended"])
+                    else:
+                        mean = np.nanmean(forcing_data[key]["data"])
                     forcing_data[key]["data"][nan_values] = mean
-                    log.info("Filling {} nan values in {} with mean value: {}".format(np.sum(nan_values), key, mean), indent=1)
-                elif forcing_data[key]["fill"] == "hoy":
-                    log.info("Collecting station statistics for hoy information: {}".format(key))
+                    log.info("Filling {} nan values in {} with mean value: {}".format(np.sum(nan_values), key, mean), indent=2)
+                elif forcing_data[key]["fill"] == "doy":
+                    log.info("Computing day of year values for {}".format(key), indent=2)
+                    if snapshot:
+                        forcing_data[key]["data"] = fill_day_of_year(forcing_data["Time"]["data"],
+                                                                      forcing_data[key]["data"],
+                                                                      forcing_data["Time"]["data_extended"],
+                                                                      forcing_data[key]["data_extended"],
+                                                                      reference_date)
+                    else:
+                        forcing_data[key]["data"] = fill_day_of_year(forcing_data["Time"]["data"],
+                                                                      forcing_data[key]["data"],
+                                                                      forcing_data["Time"]["data"],
+                                                                      forcing_data[key]["data"],
+                                                                      reference_date)
                 elif forcing_data[key]["fill"] is None:
                     continue
                 else:

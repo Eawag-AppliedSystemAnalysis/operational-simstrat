@@ -66,14 +66,14 @@ def verify_forcing(forcing):
             raise ValueError("Required input forcing dicts must contain id and type")
 
 
-def verify_inputs(inputs):
-    if not isinstance(inputs, list):
-        raise ValueError("Required input forcing must be a list of dicts")
-    for i in inputs:
+def verify_inflows(inflows):
+    if not isinstance(inflows, list):
+        raise ValueError("Required inflow forcing must be a list of dicts")
+    for i in inflows:
         if not isinstance(i, dict):
-            raise ValueError("Required input forcing must be a list of dicts")
-        if "discharge" not in i or "temperature" not in i:
-            raise ValueError("Required input dicts must contain discharge, and temperature")
+            raise ValueError("Required inflow forcing must be a list of dicts")
+        if "type" not in i:
+            raise ValueError("Required inflow dicts must contain type")
 
 
 def verify_forcing_forecast(value):

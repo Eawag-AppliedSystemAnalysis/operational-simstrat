@@ -73,40 +73,48 @@ def write_par_file(simstrat_version, par, simulation_dir):
         raise ValueError("Writing par file not implemented for Simstrat version {}".format(simstrat_version))
 
 
-def write_inflow(parameter, inflow_mode, simulation_dir, time=None, deep_inflows=None, surface_inflows=None):
-    # Merge with existing files if they exist
-    if surface_inflows is None:
-        surface_inflows = []
-    if deep_inflows is None:
-        deep_inflows = []
-    if time is None:
-        time = []
-    if parameter == "Q":
-        deep_unit = "m3/s"
-        surface_unit = "m2/s"
-    elif parameter == "T":
-        deep_unit = "°C"
-        surface_unit = "°C m2/s"
-    elif parameter == "S":
-        deep_unit = "ppt"
-        surface_unit = "ppt m2/s"
-    else:
-        raise ValueError("Parameter {} not recognised".format(parameter))
-    file_path = os.path.join(simulation_dir, "{}in.dat".format(parameter))
-    if inflow_mode == 0:
-        with open(file_path, 'w', encoding='utf-8') as f:
-            f.write("No inflows")
-    elif inflow_mode == 2:
-        with open(file_path, 'w', encoding='utf-8') as f:
-            f.write('%10s %10s %10s %10s\n' % ('Time [d]', 'Depth [m]', 'Deep Inflows [{}]'.format(deep_unit),
-                                               'Surface Inflows [{}]'.format(surface_unit)))
-            f.write('%10d %10d\n' % (len(deep_inflows), len(surface_inflows)))
-            f.write('-1         ' + ' '.join(['%10.2f' % z["depth"] for z in deep_inflows]) + ' '.join(['%10.2f' % z["depth"] for z in surface_inflows]) + '\n')
-            for i in range(len(time)):
-                f.write('%10.4f ' % time[i])
-                f.write(' '.join(['%10.2f' % z["data"][i] for z in deep_inflows]))
-                f.write(' '.join(['%10.2f' % z["data"][i] for z in surface_inflows]))
-                f.write('\n')
+def write_inflows(inflow_mode, simulation_dir, log, inflow_data=None):
+    files = {
+        "Q": {"file": "Qin.dat", "deep_unit": "m3/s", "surface_unit": "m2/s"},
+        "T": {"file": "Tin.dat", "deep_unit": "°C", "surface_unit": "°C m2/s"},
+        "S": {"file": "Sin.dat", "deep_unit": "ppt", "surface_unit": "ppt m2/s"}
+    }
+    for key in files.keys():
+        file_path = os.path.join(simulation_dir, files[key]["file"])
+        log.info("Writing {} to file".format(key), indent=1)
+        if inflow_mode == 0:
+            with open(file_path, 'w', encoding='utf-8') as f:
+                f.write("No inflows")
+        elif inflow_mode == 2:
+            if os.path.exists(file_path):
+                time_min = inflow_data["Time"][0]
+                df = pd.read_csv(file_path, skiprows=3, delim_whitespace=True, header=None)
+                df.columns = ["Time"] + [str(c) for c in list(range(len(df.columns) - 1))]
+                df = df[df['Time'] < time_min]
+                if len(df) > 0:
+                    time = np.concatenate((df["Time"].values, inflow_data["Time"]))
+                    for i in range(len(inflow_data["deep_inflows"])):
+                        inflow_data["deep_inflows"][i][key] = np.concatenate((df[str(i)].values, inflow_data["deep_inflows"][i][key]))
+                    for i in range(len(inflow_data["deep_inflows"]), len(inflow_data["deep_inflows"]) + len(inflow_data["surface_inflows"])):
+                        inflow_data["surface_inflows"][i][key] = np.concatenate((df[str(i)].values, inflow_data["surface_inflows"][i][key]))
+                    log.info("Merged {} with existing forcing data".format(key), indent=2)
+                else:
+                    time = inflow_data["Time"]
+            else:
+                time = inflow_data["Time"]
+
+            with open(file_path, 'w', encoding='utf-8') as f:
+                f.write('%10s %10s %10s %10s\n' % ('Time [d]', 'Depth [m]', 'Deep Inflows [{}]'.format(files[key]["deep_unit"]),
+                                                   'Surface Inflows [{}]'.format(files[key]["surface_unit"])))
+                f.write('%10d %10d\n' % (len(inflow_data["deep_inflows"]), len(inflow_data["surface_inflows"])))
+                f.write('-1         ' + ' '.join(['%10.2f' % z["depth"] for z in inflow_data["deep_inflows"]]) + ' '.join(['%10.2f' % z["depth"] for z in inflow_data["surface_inflows"]]) + '\n')
+                for i in range(len(time)):
+                    if any(np.isnan([d[key][i] for d in inflow_data["deep_inflows"]])) or any(np.isnan([d[key][i] for d in inflow_data["surface_inflows"]])):
+                        continue
+                    f.write('%10.4f ' % time[i])
+                    f.write(' '.join(['%10.2f' % z[key][i] for z in inflow_data["deep_inflows"]]))
+                    f.write(' '.join(['%10.2f' % z[key][i] for z in inflow_data["surface_inflows"]]))
+                    f.write('\n')
 
 
 def write_outflow(simulation_dir):
@@ -119,18 +127,14 @@ def write_forcing_data(forcing_data, simulation_dir, log):
     file_path = os.path.join(simulation_dir, "Forcing.dat")
 
     if os.path.exists(file_path):
-        try:
-            time_min = forcing_data["Time"]["data"][0]
-            df = pd.read_csv(file_path, skiprows=1, delim_whitespace=True, header=None)
-            df.columns = columns
-            df = df[df['Time'] < time_min]
-            if len(df) > 0:
-                for key in forcing_data.keys():
-                    forcing_data[key]["data"] = np.concatenate((df[key].values, forcing_data[key]["data"]))
-                log.info("Merged with existing forcing data", indent=1)
-        except:
-            log.info("Failed to merge with existing forcing data", indent=1)
-            raise
+        time_min = forcing_data["Time"]["data"][0]
+        df = pd.read_csv(file_path, skiprows=1, delim_whitespace=True, header=None)
+        df.columns = columns
+        df = df[df['Time'] < time_min]
+        if len(df) > 0:
+            for key in forcing_data.keys():
+                forcing_data[key]["data"] = np.concatenate((df[key].values, forcing_data[key]["data"]))
+            log.info("Merged with existing forcing data", indent=2)
 
     with open(file_path, 'w', encoding='utf-8') as f:
         f.write(' '.join(['%10s' % "{} [{}]".format(c, forcing_data[c]["unit"]) for c in columns]) + '\n')

@@ -8,10 +8,11 @@ from datetime import datetime, timezone, timedelta
 from functions import verify
 from functions.log import Logger
 from functions.write import (write_grid, write_bathymetry, write_output_depths, write_output_time_resolution,
-                             write_initial_conditions, write_absorption, write_par_file, write_inflow,
+                             write_initial_conditions, write_absorption, write_par_file, write_inflows,
                              write_outflow, write_forcing_data)
 from functions.bathymetry import bathymetry_from_file, bathymetry_from_datalakes
 from functions.grid import grid_from_file
+from functions.inflow import collect_inflow_data, interpolate_inflow_data, quality_assurance_inflow_data, fill_inflow_data
 from functions.forcing import metadata_from_forcing, download_forcing_data, interpolate_forcing_data, fill_forcing_data, quality_assurance_forcing_data
 from functions.par import update_par_file, overwrite_par_file_dates
 from functions.observations import (initial_conditions_from_observations, default_initial_conditions,
@@ -38,6 +39,7 @@ class Simstrat(object):
             "reference_date": {"default": "19810101", "verify": verify.verify_date, "desc": "Reference date YYYYMMDD of the model"},
             "model_time_resolution": {"default": 300, "verify": verify.verify_integer, "desc": "Timestep of the model (s)"},
             "salinity": {"default": 0.15, "verify": verify.verify_float, "desc": "Default salinity for intial conditions if not available in observations (ppt)"},
+            "inflow_salinity": {"default": 0.15, "verify": verify.verify_float, "desc": "Default salinity for all river inputs if not available in observations (ppt)"},
             "output_time_resolution": {"default": 10800, "verify": verify.verify_integer,"desc": "Output imestep of the model, should be evenly devisable by the model timestep (s)"},
         }
         self.optional_parameters = {
@@ -46,19 +48,25 @@ class Simstrat(object):
             "output_depth_resolution": {"verify": verify.verify_float, "desc": "Vertical resolution of the output file (m)"},
             "bathymetry": {"verify": verify.verify_dict, "desc": "Bathymetry data in the format { area: [12,13,...], depth: [0, 1,...] } where area is in m2 and depth in m"},
             "bathymetry_datalakes_id": {"verify": verify.verify_integer, "desc": "Datalakes ID for bathymetry profile"},
-            "inputs": {"verify": verify.verify_inputs, "desc": "List of inputs described by dicts with discharge and temeperature"},
+            "inflows": {"verify": verify.verify_inflows, "desc": "List of inflows described by dicts with discharge and temeperature"},
             "forcing_forecast": {"verify": verify.verify_forcing_forecast, "desc": "Dictionary proving source and model"},
             "absorption": {"verify": verify.verify_float, "desc": "Absorption coefficient when observation data not available"},
         }
-        self.forcing_data = {
+        self.forcing_parameters = {
             "Time": {"unit": "d", "description": "Time in days since reference date"},
             "u": {"unit": "m/s", "description": "Wind component West to East", "max_interpolate_gap": 7, "fill": "mean", "min": -20, "max": 20},
             "v": {"unit": "m/s", "description": "Wind component South to North", "max_interpolate_gap": 7, "fill": "mean", "min": -20, "max": 20},
-            "Tair": {"unit": "°C", "description": "Air temperature adjusted to lake altitude", "max_interpolate_gap": 2, "fill": "hoy", "min": -42, "max": 42},
-            "sol": {"unit": "W/m2", "description": "Solar irradiance", "max_interpolate_gap": 0.125, "fill": "hoy", "negative_to_zero": True, "max": 1000},
-            "vap": {"unit": "mbar", "description": "Vapor pressure", "max_interpolate_gap": 2, "fill": "hoy", "min": 1, "max": 70},
+            "Tair": {"unit": "°C", "description": "Air temperature adjusted to lake altitude", "max_interpolate_gap": 2, "fill": "doy", "min": -42, "max": 42},
+            "sol": {"unit": "W/m2", "description": "Solar irradiance", "max_interpolate_gap": 0.125, "fill": "doy", "negative_to_zero": True, "max": 1000},
+            "vap": {"unit": "mbar", "description": "Vapor pressure", "max_interpolate_gap": 2, "fill": "doy", "min": 1, "max": 70},
             "cloud": {"unit": "-", "description": "Cloud cover from 0 to 1", "max_interpolate_gap": None, "fill": None, "min": 0, "max": 1},
             "rain": {"unit": "m/hr", "description": "Precipitation", "max_interpolate_gap": 7, "fill": "mean", "negative_to_zero": True},
+        }
+        self.inflow_parameters = {
+            "depth": {"unit": "m", "description": "Depth of inflow relative to top (river inflow) or surface (lake inflows)"},
+            "Q": {"unit": "m3/s", "description": "Flow rate", "max_interpolate_gap": 5, "fill": "doy", "negative_to_zero": True, "max": 1500},
+            "T": {"unit": "°C", "description": "Temperature", "max_interpolate_gap": 5, "fill": "doy", "negative_to_zero": True, "max": 30},
+            "S": {"unit": "ppt", "description": "Salinity", "max_interpolate_gap": 5, "fill": "doy", "negative_to_zero": True, "max": 0.5}
         }
         self.parameters = {k: v["default"] for k, v in self.default_parameters.items()}
 
@@ -110,8 +118,9 @@ class Simstrat(object):
         if self.args["couple_aed2"]:
             self.create_aed2_files()
         self.create_par_file()
-        self.run_simulation()
-        # self.post_process()
+        if self.args["run"]:
+            self.run_simulation()
+            # self.post_process()
 
     def create_bathymetry_file(self):
         self.log.begin_stage("create_bathymetry_file")
@@ -233,7 +242,8 @@ class Simstrat(object):
             start_date = forcing_start
 
         if start_date < self.parameters["reference_date"]:
-            raise ValueError("Start date cannot be before reference date")
+            self.log.info("Start date cannot be before reference date. Setting to reference date.", indent=1)
+            start_date = self.parameters["reference_date"]
 
         end_date = forcing_end
         if self.args["forecast"] and "forcing_forecast" in self.parameters:
@@ -284,7 +294,7 @@ class Simstrat(object):
 
     def create_forcing_file(self):
         self.log.begin_stage("create_forcing_file")
-        forcing_data = download_forcing_data(self.forcing_data,
+        forcing_data = download_forcing_data(self.forcing_parameters,
                                              self.start_date,
                                              self.end_date,
                                              self.parameters["forcing"],
@@ -295,35 +305,34 @@ class Simstrat(object):
                                              self.args["data_api"],
                                              self.log)
         forcing_data = quality_assurance_forcing_data(forcing_data, self.log)
-        self.log.info("Interpolating small data gaps")
+        self.log.info("Interpolating small data gaps", indent=1)
         forcing_data = interpolate_forcing_data(forcing_data)
-        self.log.info("Filling large data gaps")
-        forcing_data = fill_forcing_data(forcing_data, self.parameters["forcing"], self.args["data_api"], self.log)
+        self.log.info("Filling large data gaps", indent=1)
+        forcing_data = fill_forcing_data(forcing_data, self.simulation_dir, self.snapshot,
+                                         self.parameters["reference_date"], self.log)
+        self.log.info("Writing forcing data.", indent=1)
         write_forcing_data(forcing_data, self.simulation_dir, self.log)
         self.log.end_stage()
 
     def create_inflow_files(self):
         self.log.begin_stage("create_inflow_files")
         if "inflows" in self.parameters and len(self.parameters["inflows"]) > 0:
-            self.log.info("Processing {} inputs".format(len(self.parameters["inflows"])), indent=1)
+            self.log.info("Processing {} inflows".format(len(self.parameters["inflows"])), indent=1)
             self.parameters["inflow_mode"] = 2
-            # Test data for seeing format required.
-            time = [0, 500, 15635]
-            deep_inflows = [
-                {"depth": 0.0, "data": [10.5, 11.2, 16.1]}
-            ]
-            surface_inflows = [
-                {"depth": -5.0, "data": [0, 0, 0]},
-                {"depth": -5.0, "data": [10.5, 11.2, 16.1]},
-                {"depth": 0.0, "data": [10.5, 11.2, 16.1]}
-            ]
-            write_inflow("Q", 2, self.simulation_dir, time=time, deep_inflows=deep_inflows, surface_inflows=surface_inflows)
+            inflow_data = collect_inflow_data(self.parameters["inflows"], self.parameters["inflow_salinity"],
+                                              self.start_date, self.end_date, self.parameters["reference_date"],
+                                              self.simulation_dir, self.args["data_api"], self.log)
+            inflow_data = quality_assurance_inflow_data(inflow_data, self.inflow_parameters, self.log)
+            self.log.info("Interpolating small data gaps", indent=1)
+            inflow_data = interpolate_inflow_data(inflow_data, self.inflow_parameters)
+            """self.log.info("Filling large data gaps", indent=1)
+            inflow_data = fill_inflow_data(inflow_data, self.inflow_parameters, self.simulation_dir, self.snapshot,
+                                           self.parameters["reference_date"], self.log)"""
+            write_inflows(2, self.simulation_dir, self.log, inflow_data=inflow_data)
         else:
-            self.log.info("No inputs, producing default files", indent=1)
+            self.log.info("No inflows, producing default files", indent=1)
             self.parameters["inflow_mode"] = 0
-            write_inflow("Q", 0, self.simulation_dir)
-            write_inflow("T", 0, self.simulation_dir)
-            write_inflow("S", 0, self.simulation_dir)
+            write_inflows(0, self.simulation_dir, self.log)
         write_outflow(self.simulation_dir)
         self.log.end_stage()
 

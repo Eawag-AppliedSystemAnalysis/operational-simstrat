@@ -10,7 +10,6 @@ def default_initial_conditions(doy, elevation, max_depth, salinity=0.15):
     depths = np.array([0, 10, 20, 30, 40, 50, 100, 150, 200, 300])
     depth_arr = np.append(depths[depths < max_depth], max_depth)
     salinity_arr = [salinity] * len(depth_arr)
-
     temperature_profile_500m = np.array(
         [[5.5, 5.5, 5.0, 5.0, 5.0, 4.5, 4.5, 4.5, 4.5, 4.5],  # ~Jan 1st
          [8., 6.0, 5.0, 5.0, 5.0, 4.5, 4.5, 4.5, 4.5, 4.5],  # ~Apr 1st
