@@ -176,7 +176,7 @@ def fill_forcing_data(forcing_data, simulation_dir, snapshot, reference_date, lo
 
     if fill_required:
         if snapshot:
-            log.info("Reading previous forcing fill to generate fill statistics on full timeseries", indent=1)
+            log.info("Reading previous forcing to generate fill statistics on full timeseries", indent=1)
             file_path = os.path.join(simulation_dir, "Forcing.dat")
             if not os.path.exists(file_path):
                 raise ValueError("Unable to locate Forcing.dat files from previous run, unable to fill nan values. "

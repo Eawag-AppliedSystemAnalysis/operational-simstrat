@@ -20,7 +20,7 @@
     "inflows": [
       { "type": "simstrat_model_inflow",
         "id": "upperconstance",
-        "surface_flow": 5.0
+        "surface_inflow": 5.0
       }
     ]
   },

@@ -57,7 +57,7 @@ class Simstrat(object):
             "u": {"unit": "m/s", "description": "Wind component West to East", "max_interpolate_gap": 7, "fill": "mean", "min": -20, "max": 20},
             "v": {"unit": "m/s", "description": "Wind component South to North", "max_interpolate_gap": 7, "fill": "mean", "min": -20, "max": 20},
             "Tair": {"unit": "°C", "description": "Air temperature adjusted to lake altitude", "max_interpolate_gap": 2, "fill": "doy", "min": -42, "max": 42},
-            "sol": {"unit": "W/m2", "description": "Solar irradiance", "max_interpolate_gap": 0.125, "fill": "doy", "negative_to_zero": True, "max": 1000},
+            "sol": {"unit": "W/m2", "description": "Solar irradiance", "max_interpolate_gap": 0.125, "fill": "doy", "negative_to_zero": True, "max": 1200},
             "vap": {"unit": "mbar", "description": "Vapor pressure", "max_interpolate_gap": 2, "fill": "doy", "min": 1, "max": 70},
             "cloud": {"unit": "-", "description": "Cloud cover from 0 to 1", "max_interpolate_gap": None, "fill": None, "min": 0, "max": 1},
             "rain": {"unit": "m/hr", "description": "Precipitation", "max_interpolate_gap": 7, "fill": "mean", "negative_to_zero": True},
@@ -113,7 +113,7 @@ class Simstrat(object):
             self.prepare_snapshot()
         self.create_initial_conditions_file()
         self.create_absorption_file()
-        self.create_forcing_file()
+        #self.create_forcing_file()
         self.create_inflow_files()
         if self.args["couple_aed2"]:
             self.create_aed2_files()
@@ -325,10 +325,11 @@ class Simstrat(object):
             inflow_data = quality_assurance_inflow_data(inflow_data, self.inflow_parameters, self.log)
             self.log.info("Interpolating small data gaps", indent=1)
             inflow_data = interpolate_inflow_data(inflow_data, self.inflow_parameters)
-            """self.log.info("Filling large data gaps", indent=1)
+            self.log.info("Filling large data gaps", indent=1)
             inflow_data = fill_inflow_data(inflow_data, self.inflow_parameters, self.simulation_dir, self.snapshot,
-                                           self.parameters["reference_date"], self.log)"""
+                                           self.parameters["reference_date"], self.log)
             write_inflows(2, self.simulation_dir, self.log, inflow_data=inflow_data)
+            exit()
         else:
             self.log.info("No inflows, producing default files", indent=1)
             self.parameters["inflow_mode"] = 0

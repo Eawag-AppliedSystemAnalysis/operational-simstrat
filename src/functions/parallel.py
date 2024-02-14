@@ -1,7 +1,6 @@
 import concurrent.futures
 import time
 import queue
-from .general import process_input
 
 
 def run_parallel_tasks(tasks, args, code_function, log):
@@ -9,8 +8,15 @@ def run_parallel_tasks(tasks, args, code_function, log):
     start = time.time()
 
     for task in tasks:
-        if "lake_model_inflow" in task:
-            task["dependencies"] = process_input(task["lake_model_inflow"])
+        task["dependencies"] = []
+        if "inflows" in task:
+            for inflow in task["inflows"]:
+                if inflow["type"] == "simstrat_model_inflow":
+                    if inflow["id"] in args["lakes"]:
+                        task["dependencies"].append(inflow["id"])
+                    else:
+                        log.info("WARNING: Task {} has the dependency {} which is not in the task list. "
+                                 "This can lead to unexpected errors.".format(task["key"], inflow["id"]))
         else:
             task["dependencies"] = []
 
