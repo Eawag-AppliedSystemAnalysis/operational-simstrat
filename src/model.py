@@ -329,7 +329,6 @@ class Simstrat(object):
             inflow_data = fill_inflow_data(inflow_data, self.inflow_parameters, self.simulation_dir, self.snapshot,
                                            self.parameters["reference_date"], self.log)
             write_inflows(2, self.simulation_dir, self.log, inflow_data=inflow_data)
-            exit()
         else:
             self.log.info("No inflows, producing default files", indent=1)
             self.parameters["inflow_mode"] = 0
