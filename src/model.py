@@ -87,6 +87,7 @@ class Simstrat(object):
         self.snapshot = args["snapshot"]
         self.parameters["reference_date"] = datetime.strptime(self.parameters["reference_date"], "%Y%m%d").replace(tzinfo=timezone.utc)
         self.start_date = self.parameters["reference_date"]
+        self.origin_date = self.parameters["reference_date"]
         self.end_date = datetime.now().replace(tzinfo=timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
 
         if os.path.exists(self.simulation_dir) and args["overwrite_simulation"]:
@@ -113,7 +114,7 @@ class Simstrat(object):
             self.prepare_snapshot()
         self.create_initial_conditions_file()
         self.create_absorption_file()
-        #self.create_forcing_file()
+        self.create_forcing_file()
         self.create_inflow_files()
         if self.args["couple_aed2"]:
             self.create_aed2_files()
@@ -206,6 +207,7 @@ class Simstrat(object):
 
         self.log.info("Retrieving forcing data extents", indent=1)
         forcing_start, forcing_end = metadata_from_forcing(self.parameters["forcing"], self.args["data_api"])
+        self.origin_date = forcing_start
         self.log.info("Forcing timeframe: {} - {}".format(forcing_start, forcing_end), indent=2)
 
         if self.args["overwrite_start_date"]:
@@ -358,7 +360,11 @@ class Simstrat(object):
         if not os.path.exists(file_path):
             raise ValueError("Unable to locate default PAR file for Simstrat version {}".format(self.args["simstrat_version"]))
         self.log.info("Updating default PAR file for {}".format(self.args["simstrat_version"]), indent=1)
-        par = update_par_file(self.args["simstrat_version"], file_path, self.start_date, self.end_date, self.args["snapshot"], self.parameters, self.args)
+        if self.snapshot:
+            start = self.origin_date  # Snapshot start date == par start date
+        else:
+            start = self.start_date
+        par = update_par_file(self.args["simstrat_version"], file_path, start, self.end_date, self.args["snapshot"], self.parameters, self.args)
         self.log.info("Writing default PAR file for {}".format(self.args["simstrat_version"]), indent=1)
         write_par_file(self.args["simstrat_version"], par, self.simulation_dir)
         self.log.end_stage()
@@ -371,11 +377,11 @@ class Simstrat(object):
         if self.args["snapshot"] and month_beginning != self.start_date:
             self.log.info("Splitting into two runs to create correct snapshot", indent=1)
             self.log.info("Running from {} - {}".format(self.start_date, month_beginning), indent=1)
-            overwrite_par_file_dates(os.path.join(self.simulation_dir, "Settings.par"), self.start_date, month_beginning, self.parameters["reference_date"])
+            overwrite_par_file_dates(os.path.join(self.simulation_dir, "Settings.par"), self.origin_date, month_beginning, self.parameters["reference_date"])
             run_subprocess(command)
             snapshot_out_path = os.path.join(self.simulation_dir, "Results", "simulation-snapshot_{}.dat".format(month_beginning.strftime("%Y%m%d")))
             shutil.copy(snapshot_path, snapshot_out_path)
-            overwrite_par_file_dates(os.path.join(self.simulation_dir, "Settings.par"), self.start_date, self.end_date, self.parameters["reference_date"])
+            overwrite_par_file_dates(os.path.join(self.simulation_dir, "Settings.par"), self.origin_date, self.end_date, self.parameters["reference_date"])
             self.log.info("Running from {} - {}".format(month_beginning, self.end_date), indent=1)
             run_subprocess(command)
             os.remove(snapshot_path)

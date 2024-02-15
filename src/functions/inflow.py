@@ -198,9 +198,9 @@ def parse_lake_outflow(inflow, time, simulation_dir, reference_date):
         file_path = os.path.join(os.path.join(simulation_dir, "..", inflow["id"], "Results", "{}_out.dat".format(key)))
         df = pd.read_csv(file_path)
         df["time"] = pd.to_datetime(df['Datetime'], origin='19810101', unit='D', utc=True).dt.round('H')
+        df = df.drop_duplicates(subset=['time'])
         df = pd.merge(df_t, df, on='time', how='left')
         values = np.array(df.iloc[:, -1].values)
-
         depths = [abs(float(d)) for d in df.columns[2:]]
         surface_index = min(range(len(depths)), key=lambda i: abs(depths[i] - 0))
 
