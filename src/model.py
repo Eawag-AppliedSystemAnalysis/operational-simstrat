@@ -341,13 +341,13 @@ class Simstrat(object):
     def create_absorption_file(self):
         self.log.begin_stage("create_absorption_file")
         self.log.info("Attempting to generate absorption from observation data", indent=1)
-        absorption = absorption_from_observations(self.key, self.start_date, self.end_date)
+        absorption = absorption_from_observations(self.key, self.start_date, self.end_date, self.args["data_api"], self.parameters["reference_date"])
         if not absorption:
             self.log.info("Failed to generate absorption from observation data, generating default absorption",indent=1)
             absorption = default_absorption(self.parameters["trophic_state"], self.parameters["elevation"],
-                                            self.start_date, self.end_date, self.parameters.get("absorption", False))
-        write_absorption(absorption["time"], absorption["depth"], absorption["absorption"],
-                         self.parameters["reference_date"], os.path.join(self.simulation_dir, "Absorption.dat"))
+                                            self.start_date, self.end_date, self.parameters.get("absorption", False),
+                                            self.parameters["reference_date"])
+        write_absorption(absorption, os.path.join(self.simulation_dir, "Absorption.dat"), self.log)
         self.log.end_stage()
 
     def create_aed2_files(self):

@@ -2,8 +2,6 @@ import os
 import json
 import numpy as np
 import pandas as pd
-from datetime import datetime
-from .general import datetime_to_simstrat_time
 
 
 def write_grid(grid_cells, file_path):
@@ -46,22 +44,27 @@ def write_initial_conditions(depth_arr, temperature_arr, salinity_arr, file_path
                 f.write('%7.2f    %7.3f    %7.3f    %7.3f    %7.3f    %6.1e    %6.1e\n' % (-abs(depth_arr[i]), 0, 0, temperature_arr[i], salinity_arr[i], 3E-6, 5E-10))
 
 
-def write_absorption(time_arr, depth_arr, absorption_arr, reference_time, file_path):
-    # Merge with existing files if they exist
-    if len(depth_arr) != len(time_arr) or len(time_arr) != len(absorption_arr):
+def write_absorption(absorption, file_path, log):
+    if len(absorption["Time"]) != len(absorption["Value"]):
         raise ValueError("All input arrays must be the same length")
-    with open(file_path,'w',encoding='utf-8') as f:
+
+    if os.path.exists(file_path):
+        time_min = absorption["Time"][0]
+        df = pd.read_csv(file_path, skiprows=3, delim_whitespace=True, header=None)
+        df.columns = ["Time", "Value"]
+        df = df[df['Time'] < time_min]
+        if len(df) > 0:
+            absorption["Time"] = np.concatenate((df["Time"].values, absorption["Time"]))
+            absorption["Value"] = np.concatenate((df["Value"].values, absorption["Value"]))
+            log.info("Merged with existing forcing data", indent=2)
+
+    with open(file_path, 'w', encoding='utf-8') as f:
         f.write('Time [d] (1.col)    z [m] (1.row)    Absorption [m-1] (rest)\n')
-        depths = set([abs(z) for z in depth_arr])
-        f.write('%d\n' % len(depths))
-        f.write('-1         ' + ' '.join(['%5.2f' % -z for z in depths]) + '\n')
-        for t in time_arr:
-            f.write('%10.4f' % datetime_to_simstrat_time(t, reference_time))
-            for z in depths:
-                ind = np.logical_and(np.array(time_arr)==t,np.abs(depth_arr)==z)
-                if sum(ind)>1:
-                    raise Exception('Error: time %s seems to be repeated in the Secchi data; check the source file.' % datetime.strftime(t,"%d.%m.%Y %H:%M"))
-                f.write(' %5.3f' % np.array(absorption_arr)[ind])
+        f.write('%d\n' % 1)
+        f.write('-1         0.0\n')
+        for i in range(len(absorption["Time"])):
+            f.write('%10.4f' % absorption["Time"][i])
+            f.write(' %5.3f' % absorption["Value"][i])
             f.write('\n')
 
 
