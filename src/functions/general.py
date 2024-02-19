@@ -1,3 +1,5 @@
+import os
+
 import requests
 import subprocess
 import numpy as np
@@ -41,6 +43,25 @@ def air_pressure_from_elevation(elevation):
     return round(1013.25 * np.exp((-9.81 * 0.029 * elevation) / (8.314 * 283.15)), 0)
 
 
+def vapor_pressure_from_relative_humidity_and_temperature(temperature, relative_humidity):
+    """
+    Calculate vapor pressure using the Magnus formula.
+
+    Parameters:
+    - temperature (float or numpy array): Temperature in degrees Celsius
+    - relative_humidity (float or numpy array): Relative humidity as a percentage (e.g., 60 for 60%)
+
+    Returns:
+    - vapor_pressure (float or numpy array): Vapor pressure in hPa (hectopascals)
+    """
+    a = 17.27
+    b = 237.7
+    rh_fraction = relative_humidity / 100.0
+    saturation_vapor_pressure = 6.112 * np.exp((a * temperature) / (temperature + b))
+    vapor_pressure = rh_fraction * saturation_vapor_pressure
+    return vapor_pressure
+
+
 def seiche_from_surface_area(surface_area):
     # Surface area in km2
     return min(max(round(0.0017 * np.sqrt(surface_area), 3), 0.0005), 0.05)
@@ -58,6 +79,40 @@ def call_url(url):
         return data
     else:
         raise ValueError("Unable to access url {}".format(url))
+
+
+def upload_files(local_folder, remote_folder, host, username, password, log):
+    for file in os.listdir(local_folder):
+        if ".nc" in file:
+            remote_file = os.path.join(remote_folder, file)
+            log.info("Uploading {} to {}".format(file, remote_file), indent=1)
+
+
+def get_elevation_swisstopo(latitude, longitude):
+    endpoint = "https://api3.geo.admin.ch/rest/services/height?easting={}&northing={}"
+    easting, northing = latlng_to_ch1903(latitude, longitude)
+    data = call_url(endpoint.format(easting, northing))
+    return float(data["height"])
+
+
+def latlng_to_ch1903(lat, lng):
+    lat = lat * 3600
+    lng = lng * 3600
+    lat_aux = (lat - 169028.66) / 10000
+    lng_aux = (lng - 26782.5) / 10000
+    x = 2600072.37 + 211455.93 * lng_aux - 10938.51 * lng_aux * lat_aux - 0.36 * lng_aux * lat_aux ** 2 - 44.54 * lng_aux ** 3 - 2000000
+    y = 1200147.07 + 308807.95 * lat_aux + 3745.25 * lng_aux ** 2 + 76.63 * lat_aux ** 2 - 194.56 * lng_aux ** 2 * lat_aux + 119.79 * lat_aux ** 3 - 1000000
+    return x, y
+
+
+def ch1903_to_latlng(x, y):
+    x_aux = (x - 600000) / 1000000
+    y_aux = (y - 200000) / 1000000
+    lat = 16.9023892 + 3.238272 * y_aux - 0.270978 * x_aux ** 2 - 0.002528 * y_aux ** 2 - 0.0447 * x_aux ** 2 * y_aux - 0.014 * y_aux ** 3
+    lng = 2.6779094 + 4.728982 * x_aux + 0.791484 * x_aux * y_aux + 0.1306 * x_aux * y_aux ** 2 - 0.0436 * x_aux ** 3
+    lat = (lat * 100) / 36
+    lng = (lng * 100) / 36
+    return lat, lng
 
 
 def get_day_of_year(datetime_array):

@@ -4,7 +4,10 @@ import pandas as pd
 from datetime import datetime, timezone, timedelta
 from .general import (call_url, adjust_temperature_for_altitude_difference, air_pressure_from_elevation, detect_gaps,
                       adjust_data_to_mean_and_std, clear_sky_solar_radiation, datetime_to_simstrat_time,
-                      calculate_mean_wind_direction, interpolate_timeseries, fill_day_of_year)
+                      calculate_mean_wind_direction, interpolate_timeseries, fill_day_of_year, get_elevation_swisstopo,
+                      vapor_pressure_from_relative_humidity_and_temperature)
+
+import matplotlib.pyplot as plt
 
 
 def metadata_from_forcing(forcing, api):
@@ -43,10 +46,15 @@ def metadata_from_meteoswiss_meteostation(forcing, api):
     return start, end
 
 
-def download_forcing_data(output, start, end, forcing, elevation, latitude, longitude, reference_date, api, log):
+def download_forcing_data(output, start, end, forcing, forecast, forcing_forecast, elevation, latitude, longitude, reference_date, api, log):
     if forcing[0]["type"].lower() == "meteoswiss_meteostation":
         output = meteodata_from_meteoswiss_meteostations(start, end, forcing, elevation, latitude, longitude,
                                                          reference_date, output, api, log)
+    else:
+        raise ValueError("Unrecognised forcing type: {}".format(forcing[0]["type"].lower()))
+    if forecast:
+        if forcing_forecast["source"].lower() == "meteoswiss":
+            output = meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, longitude, reference_date, output, api, log)
     return output
 
 
@@ -138,6 +146,43 @@ def meteodata_from_meteoswiss_meteostations(start, end, forcing, elevation, lati
                             [0, 1])  # Flerchinger et al. (2009), Crawford and Duchon (1999)
     output["cloud"]["data"] = 1 - solar_index
 
+    return output
+
+
+def meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, longitude, reference_date, output, api, log):
+    parameters = ["Time", "u", "v", "Tair", "sol", "vap", "cloud", "rain"]
+    df_c = pd.DataFrame({key: output[key]["data"] for key in output.keys()})
+    df_c.set_index('Time', inplace=True)
+    if forcing_forecast["model"].lower() == "cosmo":
+        log.info("Extending forcing files using MeteoSwiss COSMO forecast.", indent=1)
+        endpoint = api + "/meteoswiss/cosmo/point/forecast/VNXZ32/{}/{}/{}?variables=T_2M_MEAN&variables=U_MEAN&variables=V_MEAN&variables=GLOB_MEAN&variables=RELHUM_2M_MEAN&variables=CLCT_MEAN&variables=TOT_PREC_MEAN"
+        today = datetime.now().strftime("%Y%m%d")
+        data = call_url(endpoint.format(today, latitude, longitude))
+        grid_elevation = get_elevation_swisstopo(data["lat"], data["lng"])
+        data_dict = {key: data[key]["data"] for key in data.keys() if isinstance(data[key], dict)}
+        data_dict["utc_time"] = data["time"]
+        df = pd.DataFrame(data_dict)
+        df['Time'] = pd.to_datetime(df['utc_time'], utc=True)
+        df['Time'] = df.apply(lambda row: datetime_to_simstrat_time(row['Time'], reference_date), axis=1)
+        df["T_2M_MEAN"] = df["T_2M_MEAN"] - 273.15  # Kelvin to celsius
+        df["T_2M_MEAN"] = adjust_temperature_for_altitude_difference(df["T_2M_MEAN"].values, elevation - grid_elevation)
+        df["TOT_PREC_MEAN"] = df["TOT_PREC_MEAN"] * 0.001  # kg m-2 to m/hr
+        df["CLCT_MEAN"] = df["CLCT_MEAN"] * 0.01  # Percentage to fraction
+        df["u"] = df["U_MEAN"]
+        df["v"] = df["V_MEAN"]
+        df["Tair"] = df["T_2M_MEAN"]
+        df["sol"] = df["GLOB_MEAN"]
+        df["vap"] = vapor_pressure_from_relative_humidity_and_temperature(df["T_2M_MEAN"].values, df["RELHUM_2M_MEAN"])
+        df["cloud"] = df["CLCT_MEAN"]
+        df["rain"] = df["TOT_PREC_MEAN"]
+        df = df[parameters]
+    else:
+        raise ValueError("MeteoSwiss forecast not implemented for model: {}".format(forcing_forecast["model"]))
+    df.set_index('Time', inplace=True)
+    df_o = df_c.fillna(df)
+    df_o.reset_index(inplace=True)
+    for key in df_o.columns:
+        output[key]["data"] = df_o[key].values
     return output
 
 

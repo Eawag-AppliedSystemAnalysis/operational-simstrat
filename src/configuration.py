@@ -21,10 +21,15 @@ class Config(object):
             "data_api": {"default": "http://eaw-alplakes2:8000", "verify": verify.verify_string, "desc": "Base URL for the Alplakes API"},
             "log": {"default": True, "verify": verify.verify_bool, "desc": "Output log to file"},
             "run": {"default": True, "verify": verify.verify_bool, "desc": "Run simulations"},
+            "upload": {"default": False, "verify": verify.verify_bool, "desc": "Upload results to server"},
+            "server_host": {"default": "eaw-alplakes2", "verify": verify.verify_string, "desc": "Upload server host name"},
+            "server_user": {"default": "alplakes", "verify": verify.verify_string, "desc": "Upload server user name"},
+            "server_password": {"default": False, "verify": verify.verify_string, "desc": "Upload server password"},
             "debug": {"default": False, "verify": verify.verify_bool, "desc": "Raise any errors in code for easier debugging"},
             "overwrite_simulation": {"default": False, "verify": verify.verify_bool, "desc": "Remove existing simulation files and run full simulation"},
             "overwrite_start_date": {"default": False, "verify": verify.verify_date, "desc": "Overwrites the default start date and initialises from initial conditions and NOT a snapshot"},
             "overwrite_end_date": {"default": False, "verify": verify.verify_date, "desc": "Overwrite the default end date"},
+            "results_folder_api": {"default": "/nfsmount/filesystem/media/simulations/simstrat", "verify": verify.verify_string, "desc": "Server path to upload results"},
         }
         self.args = {k: v["default"] for k, v in self.default_args.items()}
 

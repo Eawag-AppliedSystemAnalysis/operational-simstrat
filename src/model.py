@@ -18,7 +18,7 @@ from functions.par import update_par_file, overwrite_par_file_dates
 from functions.observations import (initial_conditions_from_observations, default_initial_conditions,
                                     absorption_from_observations, default_absorption)
 from functions.postprocess import convert_to_netcdf, calculate_variables
-from functions.general import run_subprocess
+from functions.general import run_subprocess, upload_files
 
 
 class Simstrat(object):
@@ -89,6 +89,7 @@ class Simstrat(object):
         self.start_date = self.parameters["reference_date"]
         self.origin_date = self.parameters["reference_date"]
         self.end_date = datetime.now().replace(tzinfo=timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+        self.forecast = False
 
         if os.path.exists(self.simulation_dir) and args["overwrite_simulation"]:
             shutil.rmtree(self.simulation_dir)
@@ -121,7 +122,9 @@ class Simstrat(object):
         self.create_par_file()
         if self.args["run"]:
             self.run_simulation()
-            # self.post_process()
+            self.post_process()
+            if self.args["upload"]:
+                self.upload()
 
     def create_bathymetry_file(self):
         self.log.begin_stage("create_bathymetry_file")
@@ -249,6 +252,7 @@ class Simstrat(object):
 
         end_date = forcing_end
         if self.args["forecast"] and "forcing_forecast" in self.parameters:
+            self.forecast = True
             today = datetime.now().replace(tzinfo=timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
             end_date = today + timedelta(days=self.parameters["forcing_forecast"]["days"])
             self.log.info("Using forecast to extend end date by {} days".format(self.parameters["forcing_forecast"]["days"]), indent=1)
@@ -300,6 +304,8 @@ class Simstrat(object):
                                              self.start_date,
                                              self.end_date,
                                              self.parameters["forcing"],
+                                             self.forecast,
+                                             self.parameters.get('forcing_forecast', False),
                                              self.parameters["elevation"],
                                              self.parameters["latitude"],
                                              self.parameters["longitude"],
@@ -394,7 +400,14 @@ class Simstrat(object):
 
     def post_process(self):
         self.log.begin_stage("post_process")
-        convert_to_netcdf(os.path.join(self.simulation_dir, "Results"), self.args["simstrat_version"], self.parameters)
+        convert_to_netcdf(self.start_date, os.path.join(self.simulation_dir, "Results"), self.args["simstrat_version"], self.parameters)
         calculate_variables(os.path.join(self.simulation_dir, "Results", "netcdf"))
+        self.log.end_stage()
+
+    def upload(self):
+        self.log.begin_stage("upload")
+        local_folder = os.path.join(self.simulation_dir, "Results", "netcdf")
+        remote_folder = os.path.join(self.args["results_folder_api"], self.key)
+        upload_files(local_folder, remote_folder, self.args["server_host"], self.args["server_user"], self.args["server_password"], self.log)
         self.log.end_stage()
 

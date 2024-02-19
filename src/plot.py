@@ -50,6 +50,7 @@ def plot_inflows(lake):
             lines = file.readlines()
             if lines[0].strip() == "No inflows":
                 print("Inflow files are empty")
+                plt.show()
                 return
             deep_inflows, surface_inflows = [int(d.strip()) for d in lines[1].strip().split(" ") if d != ""]
         df = pd.read_csv(file_path, skiprows=3, delim_whitespace=True, header=None)

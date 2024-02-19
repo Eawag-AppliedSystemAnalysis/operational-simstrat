@@ -10,7 +10,7 @@ from dateutil.relativedelta import relativedelta
 from .general import simstrat_time_to_datetime
 
 
-def convert_to_netcdf(results, version, parameters):
+def convert_to_netcdf(start_date, results, version, parameters):
     dimensions = {
         'time': {'dim_name': 'time', 'dim_size': None},
         'depth': {'dim_name': 'depth', 'dim_size': None}
@@ -73,28 +73,29 @@ def convert_to_netcdf(results, version, parameters):
 
     for i in range(delta.years * 12 + delta.months):
         file_start = start + relativedelta(months=i)
-        file_end = file_start + relativedelta(months=1)
-        time_mask = (time >= file_start) & (time < file_end)
-        dimensions_data = {"time": [datetime.timestamp(t) for t in time[time_mask]], "depth": depths}
-        file_name = os.path.join(results, "netcdf", "{}.nc".format(file_start.strftime('%Y%m')))
-        with netCDF4.Dataset(file_name, mode='w', format='NETCDF4') as nc:
-            for key in general_attributes:
-                setattr(nc, key, general_attributes[key])
-            for key, values in dimensions.items():
-                nc.createDimension(values['dim_name'], len(dimensions_data[key]))
-            for key, values in variables.items():
-                var = nc.createVariable(values["var_name"], np.float64, values["dim"], fill_value=np.nan)
-                var.units = values["unit"]
-                var.long_name = values["long_name"]
-                if key in dimensions:
-                    var[:] = dimensions_data[key]
-                else:
-                    df = pd.read_csv(os.path.join(results, "{}_out.dat".format(key)))
-                    df = df.drop('Datetime', axis=1)
-                    data = df.values[time_mask, :]
-                    if len(values["dim"]) > 1:
-                        data = data.T
-                    var[:] = data
+        if file_start >= start_date:
+            file_end = file_start + relativedelta(months=1)
+            time_mask = (time >= file_start) & (time < file_end)
+            dimensions_data = {"time": [datetime.timestamp(t) for t in time[time_mask]], "depth": depths}
+            file_name = os.path.join(results, "netcdf", "{}.nc".format(file_start.strftime('%Y%m')))
+            with netCDF4.Dataset(file_name, mode='w', format='NETCDF4') as nc:
+                for key in general_attributes:
+                    setattr(nc, key, general_attributes[key])
+                for key, values in dimensions.items():
+                    nc.createDimension(values['dim_name'], len(dimensions_data[key]))
+                for key, values in variables.items():
+                    var = nc.createVariable(values["var_name"], np.float64, values["dim"], fill_value=np.nan)
+                    var.units = values["unit"]
+                    var.long_name = values["long_name"]
+                    if key in dimensions:
+                        var[:] = dimensions_data[key]
+                    else:
+                        df = pd.read_csv(os.path.join(results, "{}_out.dat".format(key)))
+                        df = df.drop('Datetime', axis=1)
+                        data = df.values[time_mask, :]
+                        if len(values["dim"]) > 1:
+                            data = data.T
+                        var[:] = data
 
 
 def calculate_variables(folder):
