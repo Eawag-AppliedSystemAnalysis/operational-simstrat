@@ -1,5 +1,4 @@
 import os
-
 import requests
 import subprocess
 import numpy as np
@@ -81,11 +80,23 @@ def call_url(url):
         raise ValueError("Unable to access url {}".format(url))
 
 
-def upload_files(local_folder, remote_folder, host, username, password, log):
+def upload_files(local_folder, remote_folder, host, username, password, log, port=22):
+    mkdir = 'sshpass -p {} ssh -p {} {}@{} "mkdir -p {}"'.format(password, port, username, host, remote_folder)
+    subprocess.run(mkdir, check=True, shell=True)
+    failed = []
+    cmd = "sshpass -p {} scp -P {} {} {}@{}:{}"
     for file in os.listdir(local_folder):
         if ".nc" in file:
             remote_file = os.path.join(remote_folder, file)
             log.info("Uploading {} to {}".format(file, remote_file), indent=1)
+            try:
+                subprocess.run(cmd.format(password, port, os.path.join(local_folder, file), username, host, remote_file), check=True, shell=True)
+            except Exception as e:
+                print(e)
+                failed.append(file)
+
+    if len(failed) > 0:
+        raise ValueError("Failed to upload: {}".format(", ".join(failed)))
 
 
 def get_elevation_swisstopo(latitude, longitude):

@@ -157,7 +157,12 @@ def meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, lo
         log.info("Extending forcing files using MeteoSwiss COSMO forecast.", indent=1)
         endpoint = api + "/meteoswiss/cosmo/point/forecast/VNXZ32/{}/{}/{}?variables=T_2M_MEAN&variables=U_MEAN&variables=V_MEAN&variables=GLOB_MEAN&variables=RELHUM_2M_MEAN&variables=CLCT_MEAN&variables=TOT_PREC_MEAN"
         today = datetime.now().strftime("%Y%m%d")
-        data = call_url(endpoint.format(today, latitude, longitude))
+        try:
+            data = call_url(endpoint.format(today, latitude, longitude))
+        except Exception as e:
+            print(e)
+            yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y%m%d")
+            data = call_url(endpoint.format(yesterday, latitude, longitude))
         grid_elevation = get_elevation_swisstopo(data["lat"], data["lng"])
         data_dict = {key: data[key]["data"] for key in data.keys() if isinstance(data[key], dict)}
         data_dict["utc_time"] = data["time"]

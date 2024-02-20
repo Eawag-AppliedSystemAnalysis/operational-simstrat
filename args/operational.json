@@ -1,1 +1,1 @@
-{"lakes":  ["ageri"], "couple_aed2":  false, "forecast":  true, "overwrite_simulation":  false, "run":  true, "upload": true}
+{"lakes":  ["aegeri"], "couple_aed2":  false, "forecast":  true, "overwrite_simulation":  false, "run":  true, "upload": false, "debug": true, "log": false}
