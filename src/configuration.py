@@ -26,6 +26,7 @@ class Config(object):
             "server_user": {"default": "alplakes", "verify": verify.verify_string, "desc": "Upload server user name"},
             "server_password": {"default": False, "verify": verify.verify_string, "desc": "Upload server password"},
             "debug": {"default": False, "verify": verify.verify_bool, "desc": "Raise any errors in code for easier debugging"},
+            "docker_dir": {"default": False, "verify": verify.verify_string, "desc": "Repository path in base filesystem for when code is run in docker container"},
             "overwrite_simulation": {"default": False, "verify": verify.verify_bool, "desc": "Remove existing simulation files and run full simulation"},
             "overwrite_start_date": {"default": False, "verify": verify.verify_date, "desc": "Overwrites the default start date and initialises from initial conditions and NOT a snapshot"},
             "overwrite_end_date": {"default": False, "verify": verify.verify_date, "desc": "Overwrite the default end date"},
