@@ -71,6 +71,13 @@ def convert_to_netcdf(start_date, results, version, parameters):
 
     os.makedirs(os.path.join(results, "netcdf"), exist_ok=True)
 
+    data_dict = {}
+    for key, values in variables.items():
+        if key not in dimensions:
+            df = pd.read_csv(os.path.join(results, "{}_out.dat".format(key)))
+            df = df.drop('Datetime', axis=1)
+            data_dict[key] = df
+
     for i in range(delta.years * 12 + delta.months):
         file_start = start + relativedelta(months=i)
         if file_start >= start_date:
@@ -90,9 +97,7 @@ def convert_to_netcdf(start_date, results, version, parameters):
                     if key in dimensions:
                         var[:] = dimensions_data[key]
                     else:
-                        df = pd.read_csv(os.path.join(results, "{}_out.dat".format(key)))
-                        df = df.drop('Datetime', axis=1)
-                        data = df.values[time_mask, :]
+                        data = data_dict[key].values[time_mask, :]
                         if len(values["dim"]) > 1:
                             data = data.T
                         var[:] = data

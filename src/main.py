@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import time
 import argparse
 from functions.verify import verify_arg_file
 from functions.parallel import run_parallel_tasks
