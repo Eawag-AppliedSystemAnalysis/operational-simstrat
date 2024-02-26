@@ -1,6 +1,6 @@
 .idea
 args/testing.json
-runs
+runs/*
 !runs/.gitkeep
 src/__pycache__
 src/functions/__pycache__
