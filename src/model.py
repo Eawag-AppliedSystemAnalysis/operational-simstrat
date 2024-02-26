@@ -96,6 +96,7 @@ class Simstrat(object):
         if not os.path.exists(self.simulation_dir):
             os.makedirs(self.simulation_dir, exist_ok=True)
         os.makedirs(os.path.join(self.simulation_dir, "Results"), exist_ok=True)
+        os.chmod(os.path.join(self.simulation_dir, "Results"), 0o777)
 
         if args["log"]:
             self.log = Logger(path=self.simulation_dir)
