@@ -39,7 +39,10 @@ class Logger(object):
     def inputs(self, title, args):
         self.info("______ {} ______".format(title), time=False)
         for key in args.keys():
-            self.info("{}: {}".format(key, args[key]), time=False)
+            if "password" not in key:
+                self.info("{}: {}".format(key, args[key]), time=False)
+            else:
+                self.info("{}: {}".format(key, "*************"), time=False)
         self.info("_______{}_______".format("_" * len(title)), time=False)
 
     def begin_stage(self, string):

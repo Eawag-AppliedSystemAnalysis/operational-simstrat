@@ -87,7 +87,8 @@ class Simstrat(object):
         self.snapshot = args["snapshot"]
         self.parameters["reference_date"] = datetime.strptime(self.parameters["reference_date"], "%Y%m%d").replace(tzinfo=timezone.utc)
         self.start_date = self.parameters["reference_date"]
-        self.origin_date = self.parameters["reference_date"]
+        self.forcing_start = self.parameters["reference_date"]
+        self.forcing_end = self.parameters["reference_date"]
         self.end_date = datetime.now().replace(tzinfo=timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
         self.forecast = False
 
@@ -216,13 +217,12 @@ class Simstrat(object):
         self.log.begin_stage("set_simulation_run_period")
 
         self.log.info("Retrieving forcing data extents", indent=1)
-        forcing_start, forcing_end = metadata_from_forcing(self.parameters["forcing"], self.args["data_api"])
-        self.origin_date = forcing_start
-        self.log.info("Forcing timeframe: {} - {}".format(forcing_start, forcing_end), indent=2)
+        self.forcing_start, self.forcing_end = metadata_from_forcing(self.parameters["forcing"], self.args["data_api"])
+        self.log.info("Forcing timeframe: {} - {}".format(self.forcing_start, self.forcing_end), indent=2)
 
         if self.args["overwrite_start_date"]:
             overwrite_start_date = datetime.strptime(self.args["overwrite_start_date"], "%Y%m%d").replace(tzinfo=timezone.utc)
-            if overwrite_start_date < forcing_start:
+            if overwrite_start_date < self.forcing_start:
                 raise ValueError("Overwrite start date is outside of available forcing data")
             else:
                 self.log.info("Setting start date based on overwrite start date {}".format(self.args["overwrite_start_date"]), indent=1)
@@ -234,7 +234,7 @@ class Simstrat(object):
                 if not os.path.exists(os.path.join(self.simulation_dir, "Results", "simulation-snapshot_{}.dat".format(self.args["snapshot_date"]))):
                     self.log.info("Snapshot {} cannot be found, reverting to forcing period".format(self.args["snapshot_date"]), indent=2)
                     self.snapshot = False
-                    start_date = forcing_start
+                    start_date = self.forcing_start
                 else:
                     self.log.info("Snapshot {} located".format(self.args["snapshot_date"]), indent=2)
                     start_date = datetime.strptime(self.args["snapshot_date"], "%Y%m%d").replace(tzinfo=timezone.utc)
@@ -244,20 +244,20 @@ class Simstrat(object):
                 if len(snapshots) == 0:
                     self.log.info("No snapshots available, reverting to forcing period", indent=2)
                     self.snapshot = False
-                    start_date = forcing_start
+                    start_date = self.forcing_start
                 else:
                     snapshots.sort()
                     self.log.info("Snapshot {} located".format(snapshots[-1]), indent=2)
                     self.args["snapshot_date"] = snapshots[-1].split(".")[0].split("_")[-1]
                     start_date = datetime.strptime(self.args["snapshot_date"], "%Y%m%d").replace(tzinfo=timezone.utc)
         else:
-            start_date = forcing_start
+            start_date = self.forcing_start
 
         if start_date < self.parameters["reference_date"]:
             self.log.info("Start date cannot be before reference date. Setting to reference date.", indent=1)
             start_date = self.parameters["reference_date"]
 
-        end_date = forcing_end
+        end_date = self.forcing_end
         if self.args["forecast"] and "forcing_forecast" in self.parameters:
             self.forecast = True
             today = datetime.now().replace(tzinfo=timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
@@ -374,7 +374,7 @@ class Simstrat(object):
             raise ValueError("Unable to locate default PAR file for Simstrat version {}".format(self.args["simstrat_version"]))
         self.log.info("Updating default PAR file for {}".format(self.args["simstrat_version"]), indent=1)
         if self.snapshot:
-            start = self.origin_date  # Snapshot start date == par start date
+            start = self.forcing_start  # Snapshot start date == par start date
         else:
             start = self.start_date
         par = update_par_file(self.args["simstrat_version"], file_path, start, self.end_date, self.args["snapshot"], self.parameters, self.args)
@@ -389,16 +389,16 @@ class Simstrat(object):
         else:
             simulation_dir = self.simulation_dir
         command = "docker run --user $(id -u):$(id -g) -v {}:/simstrat/run eawag/simstrat:{} Settings.par".format(simulation_dir, self.args["simstrat_version"])
-        month_beginning = self.end_date.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        month_beginning = self.forcing_end.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         snapshot_path = os.path.join(self.simulation_dir, "Results", "simulation-snapshot.dat")
         if self.args["snapshot"] and month_beginning != self.start_date:
             self.log.info("Splitting into two runs to create correct snapshot", indent=1)
             self.log.info("Running from {} - {}".format(self.start_date, month_beginning), indent=1)
-            overwrite_par_file_dates(os.path.join(self.simulation_dir, "Settings.par"), self.origin_date, month_beginning, self.parameters["reference_date"])
+            overwrite_par_file_dates(os.path.join(self.simulation_dir, "Settings.par"), self.forcing_start, month_beginning, self.parameters["reference_date"])
             run_subprocess(command)
             snapshot_out_path = os.path.join(self.simulation_dir, "Results", "simulation-snapshot_{}.dat".format(month_beginning.strftime("%Y%m%d")))
             shutil.copy(snapshot_path, snapshot_out_path)
-            overwrite_par_file_dates(os.path.join(self.simulation_dir, "Settings.par"), self.origin_date, self.end_date, self.parameters["reference_date"])
+            overwrite_par_file_dates(os.path.join(self.simulation_dir, "Settings.par"), self.forcing_start, self.end_date, self.parameters["reference_date"])
             self.log.info("Running from {} - {}".format(month_beginning, self.end_date), indent=1)
             run_subprocess(command)
             os.remove(snapshot_path)
@@ -411,7 +411,9 @@ class Simstrat(object):
 
     def post_process(self):
         self.log.begin_stage("post_process")
+        self.log.info("Converting outputs to NetCDF", indent=1)
         convert_to_netcdf(self.start_date, os.path.join(self.simulation_dir, "Results"), self.args["simstrat_version"], self.parameters)
+        self.log.info("Calculating additional variables", indent=1)
         calculate_variables(os.path.join(self.simulation_dir, "Results", "netcdf"))
         self.log.end_stage()
 
