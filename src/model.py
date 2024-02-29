@@ -414,7 +414,7 @@ class Simstrat(object):
         self.log.info("Converting outputs to NetCDF", indent=1)
         convert_to_netcdf(self.start_date, os.path.join(self.simulation_dir, "Results"), self.args["simstrat_version"], self.parameters)
         self.log.info("Calculating additional variables", indent=1)
-        calculate_variables(os.path.join(self.simulation_dir, "Results", "netcdf"))
+        #calculate_variables(os.path.join(self.simulation_dir, "Results", "netcdf"))
         self.log.end_stage()
 
     def upload(self):
