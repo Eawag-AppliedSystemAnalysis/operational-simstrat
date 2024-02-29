@@ -107,25 +107,31 @@ class Simstrat(object):
         self.log.inputs("Input Parameters", self.parameters)
 
     def process(self):
-        self.create_bathymetry_file()
-        self.create_grid_file()
-        self.create_output_depths_file()
-        self.create_output_time_resolution_file()
-        self.set_simulation_run_period()
-        if self.snapshot:
-            self.prepare_snapshot()
-        self.create_initial_conditions_file()
-        self.create_absorption_file()
-        self.create_forcing_file()
-        self.create_inflow_files()
-        if self.args["couple_aed2"]:
-            self.create_aed2_files()
-        self.create_par_file()
-        if self.args["run"]:
-            self.run_simulation()
-            self.post_process()
-            if self.args["upload"]:
-                self.upload()
+        try:
+            self.create_bathymetry_file()
+            self.create_grid_file()
+            self.create_output_depths_file()
+            self.create_output_time_resolution_file()
+            self.set_simulation_run_period()
+            if self.snapshot:
+                self.prepare_snapshot()
+            self.create_initial_conditions_file()
+            self.create_absorption_file()
+            self.create_forcing_file()
+            self.create_inflow_files()
+            if self.args["couple_aed2"]:
+                self.create_aed2_files()
+            self.create_par_file()
+            if self.args["run"]:
+                self.run_simulation()
+                self.post_process()
+                if self.args["upload"]:
+                    self.upload()
+        except Exception as e:
+            print(e)
+            self.log.info(str(e))
+            raise ValueError("Processing failed. See log for details.")
+
 
     def create_bathymetry_file(self):
         self.log.begin_stage("create_bathymetry_file")
