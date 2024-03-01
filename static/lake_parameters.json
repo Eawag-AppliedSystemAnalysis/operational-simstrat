@@ -99,7 +99,7 @@
       {
         "type": "bafu_hydrostation",
         "Q": { "id": 2446, "parameter": "AbflussAFFRA" },
-        "T": { "id": 2447, "parameter": "Wassertemperatur1" }
+        "T": { "id": 2034, "parameter": "Wassertemperatur" }
       }
     ]
   },
@@ -521,7 +521,7 @@
       {
         "type": "bafu_hydrostation",
         "Q": { "id": 2447, "parameter": "AbflussAFFRA" },
-        "T": { "id": 2447, "parameter": "Wassertemperatur1" }
+        "T": { "id": 2034, "parameter": "Wassertemperatur" }
       },
       {
         "type": "bafu_hydrostation",
@@ -552,12 +552,12 @@
       {
         "type": "bafu_hydrostation",
         "Q": { "id": 2447, "parameter": "AbflussAFFRA" },
-        "T": { "id": 2447, "parameter": "Wassertemperatur1" }
+        "T": { "id": 2034, "parameter": "Wassertemperatur" }
       },
       {
         "type": "bafu_hydrostation",
         "Q": { "id": 2446, "parameter": "AbflussAFFRA" },
-        "T": { "id": 2447, "parameter": "Wassertemperatur1" }
+        "T": { "id": 2034, "parameter": "Wassertemperatur" }
       },
       {
         "type": "bafu_hydrostation",

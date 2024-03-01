@@ -96,6 +96,8 @@ class Simstrat(object):
             shutil.rmtree(self.simulation_dir)
         if not os.path.exists(self.simulation_dir):
             os.makedirs(self.simulation_dir, exist_ok=True)
+        if os.path.exists(os.path.join(self.simulation_dir, "Results")):
+            shutil.rmtree(os.path.join(self.simulation_dir, "Results"))
         os.makedirs(os.path.join(self.simulation_dir, "Results"), exist_ok=True)
         os.chmod(os.path.join(self.simulation_dir, "Results"), 0o777)
 
@@ -231,7 +233,7 @@ class Simstrat(object):
         elif self.args["snapshot"]:
             if self.args["snapshot_date"]:
                 self.log.info("Attempting to define start date by specific snapshot date {}".format(self.args["snapshot_date"]), indent=1)
-                if not os.path.exists(os.path.join(self.simulation_dir, "Results", "simulation-snapshot_{}.dat".format(self.args["snapshot_date"]))):
+                if not os.path.exists(os.path.join(self.simulation_dir, "simulation-snapshot_{}.dat".format(self.args["snapshot_date"]))):
                     self.log.info("Snapshot {} cannot be found, reverting to forcing period".format(self.args["snapshot_date"]), indent=2)
                     self.snapshot = False
                     start_date = self.forcing_start
@@ -240,7 +242,7 @@ class Simstrat(object):
                     start_date = datetime.strptime(self.args["snapshot_date"], "%Y%m%d").replace(tzinfo=timezone.utc)
             else:
                 self.log.info("Attempting to define start date by most recent snapshot", indent=1)
-                snapshots = [f.split(".")[0].split("_")[-1] for f in os.listdir(os.path.join(self.simulation_dir, "Results")) if "simulation-snapshot_" in f]
+                snapshots = [f.split(".")[0].split("_")[-1] for f in os.listdir(self.simulation_dir) if "simulation-snapshot_" in f]
                 if len(snapshots) == 0:
                     self.log.info("No snapshots available, reverting to forcing period", indent=2)
                     self.snapshot = False
@@ -286,11 +288,9 @@ class Simstrat(object):
 
     def prepare_snapshot(self):
         self.log.begin_stage("prepare_snapshot")
-        snapshot = os.path.join(self.simulation_dir, "Results", "simulation-snapshot_{}.dat".format(self.args["snapshot_date"]))
+        snapshot = os.path.join(self.simulation_dir, "simulation-snapshot_{}.dat".format(self.args["snapshot_date"]))
         self.log.info("Using snapshot: {}".format(snapshot), indent=1)
         shutil.copy(snapshot, os.path.join(self.simulation_dir, "Results", 'simulation-snapshot.dat'))
-        with open(os.path.join(self.simulation_dir, "InitialConditions.dat"), 'w') as f:
-            f.write("Initialising model from snapshot")
         self.log.end_stage()
 
     def create_initial_conditions_file(self):
@@ -373,11 +373,7 @@ class Simstrat(object):
         if not os.path.exists(file_path):
             raise ValueError("Unable to locate default PAR file for Simstrat version {}".format(self.args["simstrat_version"]))
         self.log.info("Updating default PAR file for {}".format(self.args["simstrat_version"]), indent=1)
-        if self.snapshot:
-            start = self.forcing_start  # Snapshot start date == par start date
-        else:
-            start = self.start_date
-        par = update_par_file(self.args["simstrat_version"], file_path, start, self.end_date, self.args["snapshot"], self.parameters, self.args)
+        par = update_par_file(self.args["simstrat_version"], file_path, self.start_date, self.end_date, self.args["snapshot"], self.parameters, self.args)
         self.log.info("Writing default PAR file for {}".format(self.args["simstrat_version"]), indent=1)
         write_par_file(self.args["simstrat_version"], par, self.simulation_dir)
         self.log.end_stage()
@@ -394,11 +390,11 @@ class Simstrat(object):
         if self.args["snapshot"] and month_beginning != self.start_date:
             self.log.info("Splitting into two runs to create correct snapshot", indent=1)
             self.log.info("Running from {} - {}".format(self.start_date, month_beginning), indent=1)
-            overwrite_par_file_dates(os.path.join(self.simulation_dir, "Settings.par"), self.forcing_start, month_beginning, self.parameters["reference_date"])
+            overwrite_par_file_dates(os.path.join(self.simulation_dir, "Settings.par"), self.start_date, month_beginning, self.parameters["reference_date"])
             run_subprocess(command)
-            snapshot_out_path = os.path.join(self.simulation_dir, "Results", "simulation-snapshot_{}.dat".format(month_beginning.strftime("%Y%m%d")))
+            snapshot_out_path = os.path.join(self.simulation_dir, "simulation-snapshot_{}.dat".format(month_beginning.strftime("%Y%m%d")))
             shutil.copy(snapshot_path, snapshot_out_path)
-            overwrite_par_file_dates(os.path.join(self.simulation_dir, "Settings.par"), self.forcing_start, self.end_date, self.parameters["reference_date"])
+            overwrite_par_file_dates(os.path.join(self.simulation_dir, "Settings.par"), month_beginning, self.end_date, self.parameters["reference_date"])
             self.log.info("Running from {} - {}".format(month_beginning, self.end_date), indent=1)
             run_subprocess(command)
             os.remove(snapshot_path)
@@ -414,7 +410,7 @@ class Simstrat(object):
         self.log.info("Converting outputs to NetCDF", indent=1)
         convert_to_netcdf(self.start_date, os.path.join(self.simulation_dir, "Results"), self.args["simstrat_version"], self.parameters)
         self.log.info("Calculating additional variables", indent=1)
-        #calculate_variables(os.path.join(self.simulation_dir, "Results", "netcdf"))
+        calculate_variables(os.path.join(self.simulation_dir, "Results", "netcdf"))
         self.log.end_stage()
 
     def upload(self):

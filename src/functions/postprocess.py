@@ -4,6 +4,7 @@ import pylake
 import netCDF4
 import numpy as np
 import pandas as pd
+import xarray as xr
 from datetime import datetime, timezone
 from dateutil.relativedelta import relativedelta
 
@@ -109,28 +110,23 @@ def calculate_variables(folder):
 
 
 def thermocline(file, overwrite=False):
-    with netCDF4.Dataset(file, 'r') as nc:
-        if "Thermocline" in nc.variables.keys() and not overwrite:
-            print("Thermocline already calculated.")
-            return
     temp_file = file.replace(".nc", "_temp.nc")
     try:
         shutil.copyfile(file, temp_file)
-        with netCDF4.Dataset(temp_file, 'a') as nc:
-            temperature = np.array(nc.variables["T"][:])
-            depth = np.array(nc.variables["depth"][:]) * -1
-            time = np.array(nc.variables["time"][:])
+        with xr.open_dataset(temp_file, mode='a') as ds:
+            temperature = ds["T"].values
+            depth = ds["depth"].values * -1
+            time = ds["time"].values
             thermocline_depth, thermocline_index = pylake.thermocline(temperature, depth=depth, time=time)
-
             if overwrite:
-                var = nc.variables["Thermocline"]
+                ds["Thermocline"][:] = thermocline_depth
             else:
-                var = nc.createVariable("Thermocline", np.float64, ['time'], fill_value=np.nan)
-                var.units = "m"
-                var.description = 'Thermocline depth calculated using PyLake'
-            var[:] = thermocline_depth
+                ds["Thermocline"] = xr.DataArray(thermocline_depth, dims=('time',), coords={'time': ds["time"]})
+                ds["Thermocline"].attrs['units'] = "m"
+                ds["Thermocline"].attrs['description'] = 'Thermocline depth calculated using PyLake'
         os.rename(temp_file, file)
-    except:
+    except Exception as e:
+        print("Failed to calculate thermocline", e)
         if os.path.exists(temp_file):
             os.remove(temp_file)
         raise
