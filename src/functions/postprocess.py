@@ -4,7 +4,6 @@ import pylake
 import netCDF4
 import numpy as np
 import pandas as pd
-import xarray as xr
 from datetime import datetime, timezone
 from dateutil.relativedelta import relativedelta
 
@@ -113,17 +112,19 @@ def thermocline(file, overwrite=False):
     temp_file = file.replace(".nc", "_temp.nc")
     try:
         shutil.copyfile(file, temp_file)
-        with xr.open_dataset(temp_file, mode='a') as ds:
-            temperature = ds["T"].values
-            depth = ds["depth"].values * -1
-            time = ds["time"].values
+        with netCDF4.Dataset(temp_file, 'a') as nc:
+            temperature = np.array(nc.variables["T"][:])
+            depth = np.array(nc.variables["depth"][:]) * -1
+            time = np.array(nc.variables["time"][:])
             thermocline_depth, thermocline_index = pylake.thermocline(temperature, depth=depth, time=time)
+
             if overwrite:
-                ds["Thermocline"][:] = thermocline_depth
+                var = nc.variables["Thermocline"]
             else:
-                ds["Thermocline"] = xr.DataArray(thermocline_depth, dims=('time',), coords={'time': ds["time"]})
-                ds["Thermocline"].attrs['units'] = "m"
-                ds["Thermocline"].attrs['description'] = 'Thermocline depth calculated using PyLake'
+                var = nc.createVariable("Thermocline", np.float64, ['time'], fill_value=np.nan)
+                var.units = "m"
+                var.description = 'Thermocline depth calculated using PyLake'
+            var[:] = thermocline_depth
         os.rename(temp_file, file)
     except Exception as e:
         print("Failed to calculate thermocline", e)

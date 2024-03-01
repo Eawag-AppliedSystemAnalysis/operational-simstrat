@@ -2,6 +2,7 @@ import logging
 import os
 import shutil
 import subprocess
+import time
 import numpy as np
 from datetime import datetime, timezone, timedelta
 
@@ -407,10 +408,21 @@ class Simstrat(object):
 
     def post_process(self):
         self.log.begin_stage("post_process")
-        self.log.info("Converting outputs to NetCDF", indent=1)
-        convert_to_netcdf(self.start_date, os.path.join(self.simulation_dir, "Results"), self.args["simstrat_version"], self.parameters)
-        self.log.info("Calculating additional variables", indent=1)
-        calculate_variables(os.path.join(self.simulation_dir, "Results", "netcdf"))
+        lock_file = os.path.join(self.args["simulation_dir"], "post_process.lock")
+        while os.path.exists(lock_file):
+            self.log.info("Another process is currently postprocessing. Waiting...", indent=2)
+            time.sleep(1)
+        with open(lock_file, "w") as f:
+            pass
+        try:
+            self.log.info("Converting outputs to NetCDF", indent=1)
+            convert_to_netcdf(self.start_date, os.path.join(self.simulation_dir, "Results"), self.args["simstrat_version"], self.parameters)
+            self.log.info("Calculating additional variables", indent=1)
+            calculate_variables(os.path.join(self.simulation_dir, "Results", "netcdf"))
+            os.remove(lock_file)
+        except:
+            os.remove(lock_file)
+            raise
         self.log.end_stage()
 
     def upload(self):
