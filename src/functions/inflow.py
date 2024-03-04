@@ -84,7 +84,7 @@ def fill_inflow_data(inflow_data, inflow_parameters, simulation_dir, snapshot, r
                 df = pd.read_csv(file_path, skiprows=3, delim_whitespace=True, header=None)
                 df.columns = ["Time"] + [str(c) for c in list(range(len(df.columns) - 1))]
                 df = df[df['Time'] < time_min]
-                inflow_data["Time_extended"] = np.concatenate((df["Time"].values, inflow_data["Time"]))
+                inflow_data[key + "_Time_extended"] = np.concatenate((df["Time"].values, inflow_data["Time"]))
                 for i in range(len(inflow_data["deep_inflows"])):
                     inflow_data["deep_inflows"][i][key + "_extended"] = np.concatenate(
                         (df[str(i)].values, inflow_data["deep_inflows"][i][key]))
@@ -111,7 +111,7 @@ def fill_inflow_data(inflow_data, inflow_parameters, simulation_dir, snapshot, r
                         if snapshot:
                             inflow_data["deep_inflows"][i][key] = fill_day_of_year(inflow_data["Time"],
                                                                                    inflow_data["deep_inflows"][i][key],
-                                                                                   inflow_data["Time_extended"],
+                                                                                   inflow_data[key + "_Time_extended"],
                                                                                    inflow_data["deep_inflows"][i][
                                                                                        key + "_extended"],
                                                                                    reference_date)

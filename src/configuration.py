@@ -30,7 +30,7 @@ class Config(object):
             "overwrite_simulation": {"default": False, "verify": verify.verify_bool, "desc": "Remove existing simulation files and run full simulation"},
             "overwrite_start_date": {"default": False, "verify": verify.verify_date, "desc": "Overwrites the default start date and initialises from initial conditions and NOT a snapshot"},
             "overwrite_end_date": {"default": False, "verify": verify.verify_date, "desc": "Overwrite the default end date"},
-            "results_folder_api": {"default": "/nfsmount/filesystem/media/simulations/simstrat/results", "verify": verify.verify_string, "desc": "Server path to upload results"},
+            "results_folder_api": {"default": "/nfsmount/filesystem/media/1dsimulations/simstrat/results", "verify": verify.verify_string, "desc": "Server path to upload results"},
         }
         self.args = {k: v["default"] for k, v in self.default_args.items()}
 

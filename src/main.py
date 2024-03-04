@@ -17,9 +17,6 @@ def task(parameters, args):
 def main(arg_file=False, overwrite_args=False):
     config = Config()
     args, lake_parameters = config.load(arg_file, overwrite_args)
-    lock_file = os.path.join(args["simulation_dir"], "post_process.lock")
-    if os.path.exists(lock_file):
-        os.remove(lock_file)
     if args["log"]:
         log = Logger(path=args["simulation_dir"])
     else:

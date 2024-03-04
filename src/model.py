@@ -18,7 +18,7 @@ from functions.forcing import metadata_from_forcing, download_forcing_data, inte
 from functions.par import update_par_file, overwrite_par_file_dates
 from functions.observations import (initial_conditions_from_observations, default_initial_conditions,
                                     absorption_from_observations, default_absorption)
-from functions.postprocess import convert_to_netcdf, calculate_variables
+from functions.postprocess import post_process
 from functions.general import run_subprocess, upload_files
 
 
@@ -132,10 +132,11 @@ class Simstrat(object):
                 if self.args["upload"]:
                     self.upload()
         except Exception as e:
-            print(e)
             self.log.info(str(e))
+            if not self.args["debug"]:
+                self.log.info("Removing input and output files of failed run (debug=False)")
+                shutil.rmtree(self.simulation_dir)
             raise ValueError("Processing failed. See log for details.")
-
 
     def create_bathymetry_file(self):
         self.log.begin_stage("create_bathymetry_file")
@@ -408,21 +409,7 @@ class Simstrat(object):
 
     def post_process(self):
         self.log.begin_stage("post_process")
-        lock_file = os.path.join(self.args["simulation_dir"], "post_process.lock")
-        while os.path.exists(lock_file):
-            self.log.info("Another process is currently postprocessing. Waiting...", indent=2)
-            time.sleep(1)
-        with open(lock_file, "w") as f:
-            pass
-        try:
-            self.log.info("Converting outputs to NetCDF", indent=1)
-            convert_to_netcdf(self.start_date, os.path.join(self.simulation_dir, "Results"), self.args["simstrat_version"], self.parameters)
-            self.log.info("Calculating additional variables", indent=1)
-            calculate_variables(os.path.join(self.simulation_dir, "Results", "netcdf"))
-            os.remove(lock_file)
-        except:
-            os.remove(lock_file)
-            raise
+        post_process(self.start_date, os.path.join(self.simulation_dir, "Results"), self.args["simstrat_version"], self.parameters, self.log)
         self.log.end_stage()
 
     def upload(self):

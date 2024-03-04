@@ -945,14 +945,7 @@
     "trophic_state": "",
     "bathymetry_datalakes_id": 51,
     "forcing": [{ "id": "ROB", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
-    "inflows": [
-      {
-        "type": "bafu_hydrostation",
-        "Q": { "id": 2078, "parameter": "AbflussDrucksondeSchacht" },
-        "T": { "id": 2078, "parameter": "NA" }
-      }
-    ]
+    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
   },
   {
     "key": "sils",
@@ -1009,14 +1002,7 @@
     "trophic_state": "",
     "bathymetry_datalakes_id": 41,
     "forcing": [{ "id": "SAM", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
-    "inflows": [
-      {
-        "type": "bafu_hydrostation",
-        "Q": { "id": 2105, "parameter": "PegelDrucksondeInnStMoritzbad" },
-        "T": { "id": 2105, "parameter": "NA" }
-      }
-    ]
+    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
   },
   {
     "key": "champfer",
@@ -1153,7 +1139,6 @@
     "latitude": 47.171,
     "longitude": 8.075,
     "trophic_state": "Eutrophic",
-    "bathymetry_datalakes_id": "NA",
     "forcing": [{ "id": "LUZ", "type": "meteoswiss_meteostation" }],
     "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
   },
@@ -1612,7 +1597,7 @@
     "latitude": 46.326,
     "longitude": 7.072,
     "trophic_state": "Mesotrophic",
-    "bathymetry_datalakes_id": "NA",
+
     "forcing": [
       { "id": "CDM", "type": "meteoswiss_meteostation" },
       { "id": "DIA", "type": "meteoswiss_meteostation" },
@@ -1772,7 +1757,6 @@
     "latitude": 46.6,
     "longitude": 8.325,
     "trophic_state": "NA",
-    "bathymetry_datalakes_id": "NA",
     "forcing": [
       { "id": "MMGTT", "type": "meteoswiss_meteostation" },
       { "id": "GRH", "type": "meteoswiss_meteostation" }
@@ -1794,7 +1778,6 @@
     "latitude": 46.693,
     "longitude": 8.286,
     "trophic_state": "Oligotrophic",
-    "bathymetry_datalakes_id": "NA",
     "forcing": [
       { "id": "SLFGU2", "type": "meteoswiss_meteostation" },
       { "id": "GRH", "type": "meteoswiss_meteostation" }
@@ -1838,7 +1821,6 @@
     "latitude": 47.615,
     "longitude": 8.753,
     "trophic_state": "NA",
-    "bathymetry_datalakes_id": "NA",
     "forcing": [{ "id": "TAE", "type": "meteoswiss_meteostation" }],
     "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
   },
@@ -1857,7 +1839,7 @@
     "latitude": 47.457,
     "longitude": 8.9,
     "trophic_state": "NA",
-    "bathymetry_datalakes_id": "NA",
+
     "forcing": [{ "id": "TAE", "type": "meteoswiss_meteostation" }],
     "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
   },
@@ -1914,7 +1896,6 @@
     "latitude": 47.48,
     "longitude": 9.256,
     "trophic_state": "NA",
-    "bathymetry_datalakes_id": "NA",
     "forcing": [{ "id": "TAE", "type": "meteoswiss_meteostation" }],
     "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
   },
@@ -1933,7 +1914,6 @@
     "latitude": 47.572,
     "longitude": 8.861,
     "trophic_state": "NA",
-    "bathymetry_datalakes_id": "NA",
     "forcing": [{ "id": "TAE", "type": "meteoswiss_meteostation" }],
     "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
   },
@@ -1952,7 +1932,6 @@
     "latitude": 47.618,
     "longitude": 9.156,
     "trophic_state": "NA",
-    "bathymetry_datalakes_id": "NA",
     "forcing": [{ "id": "GUT", "type": "meteoswiss_meteostation" }],
     "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
   },
@@ -1971,7 +1950,6 @@
     "latitude": 47.539,
     "longitude": 9.075,
     "trophic_state": "NA",
-    "bathymetry_datalakes_id": "NA",
     "forcing": [{ "id": "TAE", "type": "meteoswiss_meteostation" }],
     "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
   },
@@ -2009,7 +1987,6 @@
     "latitude": 47.586,
     "longitude": 9.029,
     "trophic_state": "NA",
-    "bathymetry_datalakes_id": "NA",
     "forcing": [{ "id": "TAE", "type": "meteoswiss_meteostation" }],
     "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
   },
@@ -2028,7 +2005,6 @@
     "latitude": 47.6,
     "longitude": 8.799,
     "trophic_state": "NA",
-    "bathymetry_datalakes_id": "NA",
     "forcing": [{ "id": "TAE", "type": "meteoswiss_meteostation" }],
     "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
   },
@@ -2047,7 +2023,6 @@
     "latitude": 47.582,
     "longitude": 9.055,
     "trophic_state": "NA",
-    "bathymetry_datalakes_id": "NA",
     "forcing": [{ "id": "TAE", "type": "meteoswiss_meteostation" }],
     "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
   }

@@ -10,7 +10,7 @@ from dateutil.relativedelta import relativedelta
 from .general import simstrat_time_to_datetime
 
 
-def convert_to_netcdf(start_date, results, version, parameters):
+def post_process(start_date, results, version, parameters, log):
     dimensions = {
         'time': {'dim_name': 'time', 'dim_size': None},
         'depth': {'dim_name': 'depth', 'dim_size': None}
@@ -53,13 +53,15 @@ def convert_to_netcdf(start_date, results, version, parameters):
         'WaterH': {'var_name': 'WaterH', 'dim': ('time',), 'unit': 'm', 'long_name': 'Water depth (positive height above sediment)'},
         'Qvert': {'var_name': 'Qvert', 'dim': ('depth', 'time',), 'unit': 'm3/s', 'long_name': 'Vertical advection'},
         'Eseiche': {'var_name': 'Eseiche', 'dim': ('time',), 'unit': 'J', 'long_name': 'Total seiche energy'},
+        'Thermocline': {'var_name': 'Thermocline', 'dim': ('time',), 'unit': 'm', 'long_name': 'Thermocline depth', 'calculated': True}
     }
     result_files = os.listdir(results)
     keys = list(variables.keys())
     for var in keys:
-        if not (var in dimensions or "{}_out.dat".format(var) in result_files):
+        if not (var in dimensions or "{}_out.dat".format(var) in result_files) and 'calculated' not in variables[var]:
             variables.pop(var)
 
+    log.info("Reading data from simulation files", indent=1)
     df = pd.read_csv(os.path.join(results, "T_out.dat"))
     time = np.array([simstrat_time_to_datetime(t, parameters["reference_date"]) for t in np.array(df["Datetime"])])
     depths = np.array(df.columns[1:]).astype(float)
@@ -73,11 +75,15 @@ def convert_to_netcdf(start_date, results, version, parameters):
 
     data_dict = {}
     for key, values in variables.items():
-        if key not in dimensions:
+        if key not in dimensions and 'calculated' not in values:
             df = pd.read_csv(os.path.join(results, "{}_out.dat".format(key)))
             df = df.drop('Datetime', axis=1)
-            data_dict[key] = df
+            data_dict[key] = df.values
 
+    log.info("Calculating products", indent=1)
+    data_dict["Thermocline"] = thermocline(data_dict["T"], time, depths)
+
+    log.info("Writing outputs to NetCDF", indent=1)
     for i in range(delta.years * 12 + delta.months):
         file_start = start + relativedelta(months=i)
         if file_start >= start_date:
@@ -97,37 +103,20 @@ def convert_to_netcdf(start_date, results, version, parameters):
                     if key in dimensions:
                         var[:] = dimensions_data[key]
                     else:
-                        data = data_dict[key].values[time_mask, :]
+                        if len(data_dict[key].shape) == 2:
+                            data = data_dict[key][time_mask, :]
+                        else:
+                            data = data_dict[key][time_mask]
                         if len(values["dim"]) > 1:
                             data = data.T
                         var[:] = data
 
 
-def calculate_variables(folder):
-    for file in os.listdir(folder):
-        thermocline(os.path.join(folder, file))
-
-
-def thermocline(file, overwrite=False):
-    temp_file = file.replace(".nc", "_temp.nc")
+def thermocline(temperature, time, depths):
+    td = np.full(len(time), np.nan)
     try:
-        shutil.copyfile(file, temp_file)
-        with netCDF4.Dataset(temp_file, 'a') as nc:
-            temperature = np.array(nc.variables["T"][:])
-            depth = np.array(nc.variables["depth"][:]) * -1
-            time = np.array(nc.variables["time"][:])
-            thermocline_depth, thermocline_index = pylake.thermocline(temperature, depth=depth, time=time)
-
-            if overwrite:
-                var = nc.variables["Thermocline"]
-            else:
-                var = nc.createVariable("Thermocline", np.float64, ['time'], fill_value=np.nan)
-                var.units = "m"
-                var.description = 'Thermocline depth calculated using PyLake'
-            var[:] = thermocline_depth
-        os.rename(temp_file, file)
+        thermocline_depth, thermocline_index = pylake.thermocline(temperature, depth=depths * -1, time=time)
+        td = thermocline_depth.values
     except Exception as e:
         print("Failed to calculate thermocline", e)
-        if os.path.exists(temp_file):
-            os.remove(temp_file)
-        raise
+    return td
