@@ -46,8 +46,9 @@ def simstrat_time_to_datetime(time, reference_date):
 
 def oxygen_saturation(temperature, altitude):
     # Benson & Krause, 1984; ignoring salinity effects
-    capac = -139.34411 + 1.575701e5 / temperature - 6.642308e7 / temperature ** 2 + 1.243800e10 / temperature ** 3 - 8.621949e11 / temperature ** 4
-    o2 = np.exp(capac) * pressure_correction(temperature, altitude)  # mgL
+    t_k = temperature + 273.15  # Convert to kelvin
+    capac = -139.34411 + 1.575701e5 / t_k - 6.642308e7 / t_k ** 2 + 1.243800e10 / t_k ** 3 - 8.621949e11 / t_k ** 4
+    o2 = np.exp(capac) * pressure_correction(t_k, altitude)  # mgL
     return o2 / 32 * 1000  # mmolm3
 
 
