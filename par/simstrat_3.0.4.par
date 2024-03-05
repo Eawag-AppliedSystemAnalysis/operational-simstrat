@@ -43,8 +43,8 @@
     },
     "AED2Config" : {
     "AED2ConfigFile"          : "aed2.nml",
-    "PathAED2initial"         : "OxygenInitialConditions.dat",
-    "PathAED2inflow"          : "Oin.dat",
+    "PathAED2initial"         : "AED2_initcond/",
+    "PathAED2inflow"          : "AED2_inflow/",
     "ParticleMobility"        : 0,
     "BioshadeFeedback"        : 0,
     "BackgroundExtinction"    : 0.2,

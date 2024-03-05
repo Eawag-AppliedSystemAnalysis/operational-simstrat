@@ -1,16 +1,15 @@
 import os
-import shutil
+import sys
+import json
 import pylake
 import netCDF4
 import numpy as np
 import pandas as pd
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from dateutil.relativedelta import relativedelta
 
-from .general import simstrat_time_to_datetime
 
-
-def post_process(start_date, results, version, parameters, log):
+def post_process(start_date, results, version, parameters):
     dimensions = {
         'time': {'dim_name': 'time', 'dim_size': None},
         'depth': {'dim_name': 'depth', 'dim_size': None}
@@ -53,6 +52,7 @@ def post_process(start_date, results, version, parameters, log):
         'WaterH': {'var_name': 'WaterH', 'dim': ('time',), 'unit': 'm', 'long_name': 'Water depth (positive height above sediment)'},
         'Qvert': {'var_name': 'Qvert', 'dim': ('depth', 'time',), 'unit': 'm3/s', 'long_name': 'Vertical advection'},
         'Eseiche': {'var_name': 'Eseiche', 'dim': ('time',), 'unit': 'J', 'long_name': 'Total seiche energy'},
+        'OXY_oxy': {'var_name': 'Oxygen', 'dim': ('depth', 'time',), 'unit': 'mmol', 'long_name': 'Dissolved oxygen'},
         'Thermocline': {'var_name': 'Thermocline', 'dim': ('time',), 'unit': 'm', 'long_name': 'Thermocline depth', 'calculated': True}
     }
     result_files = os.listdir(results)
@@ -61,9 +61,9 @@ def post_process(start_date, results, version, parameters, log):
         if not (var in dimensions or "{}_out.dat".format(var) in result_files) and 'calculated' not in variables[var]:
             variables.pop(var)
 
-    log.info("Reading data from simulation files", indent=1)
+    print("Reading data from simulation files")
     df = pd.read_csv(os.path.join(results, "T_out.dat"))
-    time = np.array([simstrat_time_to_datetime(t, parameters["reference_date"]) for t in np.array(df["Datetime"])])
+    time = np.array([parameters["reference_date"] + timedelta(days=t) for t in np.array(df["Datetime"])])
     depths = np.array(df.columns[1:]).astype(float)
     min_time = min(time)
     max_time = max(time)
@@ -80,10 +80,10 @@ def post_process(start_date, results, version, parameters, log):
             df = df.drop('Datetime', axis=1)
             data_dict[key] = df.values
 
-    log.info("Calculating products", indent=1)
+    print("Calculating products")
     data_dict["Thermocline"] = thermocline(data_dict["T"], time, depths)
 
-    log.info("Writing outputs to NetCDF", indent=1)
+    print("Writing outputs to NetCDF")
     for i in range(delta.years * 12 + delta.months):
         file_start = start + relativedelta(months=i)
         if file_start >= start_date:
@@ -120,3 +120,14 @@ def thermocline(temperature, time, depths):
     except Exception as e:
         print("Failed to calculate thermocline", e)
     return td
+
+
+if __name__ == "__main__":
+    input_file = os.path.join(sys.argv[1], "inputs.json")
+    if not os.path.exists(input_file):
+        raise ValueError("Input file not found.")
+    with open(input_file, 'r', encoding='utf-8') as file:
+        inputs = json.load(file)
+    inputs["start_date"] = datetime.fromisoformat(inputs["start_date"])
+    inputs["parameters"]["reference_date"] = datetime.fromisoformat(inputs["parameters"]["reference_date"])
+    post_process(inputs["start_date"], inputs["folder"], inputs["version"], inputs["parameters"])

@@ -24,18 +24,47 @@ def process_args(input_args):
     return output_args
 
 
+def serializer(obj):
+    if isinstance(obj, datetime):
+        return obj.isoformat()
+
+
 def process_input(input_text):
     # Convert input to a list if it's not already a list and check for empty string
-    output_list = [] if (not input_text) or (input_text == [""]) else [input_text] if isinstance(input_text, str) else input_text
+    output_list = [] if (not input_text) or (input_text == [""]) else [input_text] if isinstance(input_text,
+                                                                                                 str) else input_text
     return output_list
 
 
 def datetime_to_simstrat_time(time, reference_date):
-    return (time - reference_date).days + (time - reference_date).seconds/24/3600
+    return (time - reference_date).days + (time - reference_date).seconds / 24 / 3600
 
 
 def simstrat_time_to_datetime(time, reference_date):
     return reference_date + timedelta(days=time)
+
+
+def oxygen_saturation(temperature, altitude):
+    # Benson & Krause, 1984; ignoring salinity effects
+    capac = -139.34411 + 1.575701e5 / temperature - 6.642308e7 / temperature ** 2 + 1.243800e10 / temperature ** 3 - 8.621949e11 / temperature ** 4
+    o2 = np.exp(capac) * pressure_correction(temperature, altitude)  # mgL
+    return o2 / 32 * 1000  # mmolm3
+
+
+def pressure_correction(temperature, altitude):
+    mmHg_mb = 0.750061683
+    mmHg_inHg = 25.3970886
+    standard_pressure_sea_level = 29.92126
+    standard_temperature_sea_level = 15 + 273.15
+    gravitational_acceleration = 9.81
+    air_molar_mass = 0.0289644
+    universal_gas_constant = 8.31447
+    baro = (1. / mmHg_mb) * mmHg_inHg * standard_pressure_sea_level * np.exp(
+        (-gravitational_acceleration * air_molar_mass * altitude) / (
+                universal_gas_constant * standard_temperature_sea_level))
+    u = 10 ** (8.10765 - 1750.286 / (235 + temperature))
+    press_corr = (baro * mmHg_mb - u) / (760 - u)
+    return press_corr
 
 
 def air_pressure_from_elevation(elevation):
@@ -90,7 +119,9 @@ def upload_files(local_folder, remote_folder, host, username, password, log, por
             remote_file = os.path.join(remote_folder, file)
             log.info("Uploading {} to {}".format(file, remote_file), indent=1)
             try:
-                subprocess.run(cmd.format(password, port, os.path.join(local_folder, file), username, host, remote_file), check=True, shell=True)
+                subprocess.run(
+                    cmd.format(password, port, os.path.join(local_folder, file), username, host, remote_file),
+                    check=True, shell=True)
             except Exception as e:
                 print(e)
                 failed.append(file)
@@ -154,7 +185,8 @@ def clear_sky_solar_radiation(time, air_pressure, vapour_pressure, lat, lon):
                                [2.52, 3.07, 2.67, 2.93, 2.52], [1.76, 2.69, 2.61, 2.61, 1.76],
                                [1.6, 1.67, 2.24, 2.63, 1.6], [1.11, 1.44, 1.94, 2.02, 1.11]])
     G = np.array([fG(lat, d)[0] for d in doy])  # Empirical constant
-    Td = (243.5 * np.log(vapour_pressure / 6.112)) / (17.67 - np.log(vapour_pressure / 6.112))  # Dew point temperature [°C]
+    Td = (243.5 * np.log(vapour_pressure / 6.112)) / (
+                17.67 - np.log(vapour_pressure / 6.112))  # Dew point temperature [°C]
     pw = np.exp(0.1133 - np.log(G + 1) + 0.0393 * (1.8 * Td + 32))  # Precipitable water
     Tw = 1 - 0.077 * (pw * m) ** 0.3  # Attenuation coefficient for water vapour
     Ta = 0.935 ** m  # Attenuation coefficient for aerosols
@@ -193,11 +225,11 @@ def interpolate_timeseries(time, data, max_gap_size=None):
         end_index = non_nan_indices[i]
         gap_size = time[end_index] - time[start_index]
         if gap_size <= max_gap_size:
-            t = time[start_index:end_index+1]
-            d = data[start_index:end_index+1]
+            t = time[start_index:end_index + 1]
+            d = data[start_index:end_index + 1]
             nan_indices = np.isnan(d)
             d[nan_indices] = np.interp(t[nan_indices], t[~nan_indices], d[~nan_indices])
-            data[start_index:end_index+1] = d
+            data[start_index:end_index + 1] = d
     return data
 
 
@@ -212,7 +244,8 @@ def fill_day_of_year(time, data, time_full, data_full, reference_date):
 
 
 def calculate_mean_wind_direction(wind_direction):
-    mean_wind_direction = np.arctan2(np.nanmean(np.sin(np.radians(wind_direction))), np.nanmean(np.cos(np.radians(wind_direction))))
+    mean_wind_direction = np.arctan2(np.nanmean(np.sin(np.radians(wind_direction))),
+                                     np.nanmean(np.cos(np.radians(wind_direction))))
     if mean_wind_direction < 0:
         mean_wind_direction += 360
     return mean_wind_direction

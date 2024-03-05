@@ -1,1 +1,1 @@
-{"couple_aed2":  false, "forecast":  true, "overwrite_simulation":  false, "run":  true, "upload": true, "debug": false, "log": true}
+{"couple_aed2":  true, "forecast":  true, "overwrite_simulation":  false, "run":  true, "upload": true, "debug": false, "log": true}

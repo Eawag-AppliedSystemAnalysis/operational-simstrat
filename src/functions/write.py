@@ -30,7 +30,8 @@ def write_output_time_resolution(output_time_steps, file_path):
         f.write('%d\n' % np.floor(output_time_steps))
 
 
-def write_initial_conditions(depth_arr, temperature_arr, salinity_arr, file_path):
+def write_initial_conditions(depth_arr, temperature_arr, salinity_arr, simulation_dir):
+    file_path = os.path.join(simulation_dir, "InitialConditions.dat")
     if len(depth_arr) != len(temperature_arr) or len(temperature_arr) != len(salinity_arr):
         raise ValueError("All input arrays must be the same length")
     if depth_arr[0] != 0:
@@ -42,6 +43,17 @@ def write_initial_conditions(depth_arr, temperature_arr, salinity_arr, file_path
                 if np.isnan(salinity_arr[i]):
                     salinity_arr[i] = np.nanmean(salinity_arr)
                 f.write('%7.2f    %7.3f    %7.3f    %7.3f    %7.3f    %6.1e    %6.1e\n' % (-abs(depth_arr[i]), 0, 0, temperature_arr[i], salinity_arr[i], 3E-6, 5E-10))
+
+
+def write_initial_oxygen(depth_arr, oxygen_arr, simulation_dir):
+    file_path = os.path.join(simulation_dir, "AED2_initcond", "OXY_oxy_ini.dat")
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    if depth_arr[0] != 0:
+        raise ValueError("First depth must be zero")
+    with open(file_path, 'w', encoding='utf-8') as f:
+        f.write('%s    %s\n' % ('Depth [m]', 'O2 Conc. [mmol/m3]'))
+        for i in range(len(depth_arr)):
+            f.write('%7.2f    %7.3f\n' % (-abs(depth_arr[i]), oxygen_arr[i]))
 
 
 def write_absorption(absorption, file_path, log):
@@ -120,6 +132,48 @@ def write_inflows(inflow_mode, simulation_dir, log, inflow_data=None):
                     f.write('\n')
 
 
+def write_oxygen_inflows(simulation_dir, inflow_data=None):
+    file_path = os.path.join(simulation_dir, "AED2_inflow", "OXY_oxy_inflow.dat")
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    if inflow_data is None:
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write("No inflows")
+    else:
+        if os.path.exists(file_path):
+            time_min = inflow_data["Time"][0]
+            df = pd.read_csv(file_path, skiprows=3, delim_whitespace=True, header=None)
+            df.columns = ["Time"] + [str(c) for c in list(range(len(df.columns) - 1))]
+            df = df[df['Time'] < time_min]
+            if len(df) > 0:
+                time = np.concatenate((df["Time"].values, inflow_data["Time"]))
+                for i in range(len(inflow_data["deep_inflows"])):
+                    inflow_data["deep_inflows"][i]["oxygen"] = np.concatenate(
+                        (df[str(i)].values, inflow_data["deep_inflows"][i]["oxygen"]))
+                for i in range(len(inflow_data["deep_inflows"]),
+                               len(inflow_data["deep_inflows"]) + len(inflow_data["surface_inflows"])):
+                    inflow_data["surface_inflows"][i]["oxygen"] = np.concatenate(
+                        (df[str(i)].values, inflow_data["surface_inflows"][i]["oxygen"]))
+            else:
+                time = inflow_data["Time"]
+        else:
+            time = inflow_data["Time"]
+
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write(
+                '%10s %10s %10s %10s\n' % ('Time [d]', 'Depth [m]', 'Deep Inflows [mmol/m3]', 'Surface Inflows [mmol/m3]'))
+            f.write('%10d %10d\n' % (len(inflow_data["deep_inflows"]), len(inflow_data["surface_inflows"])))
+            f.write('-1         ' + ' '.join(['%10.2f' % z["depth"] for z in inflow_data["deep_inflows"]]) + ' '.join(
+                ['%10.2f' % z["depth"] for z in inflow_data["surface_inflows"]]) + '\n')
+            for i in range(len(time)):
+                if any(np.isnan([d["oxygen"][i] for d in inflow_data["deep_inflows"]])) or any(
+                        np.isnan([d["oxygen"][i] for d in inflow_data["surface_inflows"]])):
+                    continue
+                f.write('%10.4f ' % time[i])
+                f.write(' '.join(['%10.2f' % z["oxygen"][i] for z in inflow_data["deep_inflows"]]))
+                f.write(' '.join(['%10.2f' % z["oxygen"][i] for z in inflow_data["surface_inflows"]]))
+                f.write('\n')
+
+
 def write_outflow(simulation_dir):
     with open(os.path.join(simulation_dir, "Qout.dat"), 'w', encoding='utf-8') as f:
         f.write("Outflow not used, lake overflows to maintain water level")
@@ -145,3 +199,5 @@ def write_forcing_data(forcing_data, simulation_dir, log):
             if any(np.isnan([forcing_data[c]["data"][i] for c in columns])):
                 continue
             f.write(' '.join(['%10.4f' % forcing_data[c]["data"][i] for c in columns]) + '\n')
+
+

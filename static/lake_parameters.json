@@ -15,6 +15,7 @@
     "longitude": 8.618,
     "trophic_state": "Oligotrophic",
     "bathymetry_datalakes_id": 6,
+    "sediment_oxygen_uptake_rate": -19.7,
     "forcing": [
       { "id": "AEG", "type": "meteoswiss_meteostation" },
       { "id": "SAG", "type": "meteoswiss_meteostation" },
@@ -38,6 +39,7 @@
     "longitude": 8.261,
     "trophic_state": "Eutrophic",
     "bathymetry_datalakes_id": 7,
+    "sediment_oxygen_uptake_rate": -41.6,
     "forcing": [{ "id": "MOA", "type": "meteoswiss_meteostation" }],
     "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
   },
@@ -57,6 +59,7 @@
     "longitude": 8.214,
     "trophic_state": "Eutrophic",
     "bathymetry_datalakes_id": 8,
+    "sediment_oxygen_uptake_rate": -28.1,
     "forcing": [{ "id": "MOA", "type": "meteoswiss_meteostation" }],
     "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
     "inflows": [
@@ -158,6 +161,7 @@
     "longitude": 9.0,
     "trophic_state": "Mesotrophic",
     "bathymetry_datalakes_id": 53,
+    "sediment_oxygen_uptake_rate": -25.0,
     "forcing": [
       { "id": "STK", "type": "meteoswiss_meteostation" },
       { "id": "HAI", "type": "meteoswiss_meteostation" },
@@ -187,6 +191,7 @@
     "longitude": 7.952,
     "trophic_state": "Oligotrophic",
     "bathymetry_datalakes_id": 12,
+    "sediment_oxygen_uptake_rate": -10.6,
     "forcing": [{ "id": "INT", "type": "meteoswiss_meteostation" }],
     "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
     "inflows": [
@@ -218,6 +223,7 @@
     "longitude": 7.733,
     "trophic_state": "Oligotrophic",
     "bathymetry_datalakes_id": 16,
+    "sediment_oxygen_uptake_rate": -14.0,
     "forcing": [
       { "id": "THU", "type": "meteoswiss_meteostation" },
       { "id": "INT", "type": "meteoswiss_meteostation" }
@@ -257,6 +263,7 @@
     "longitude": 6.589,
     "trophic_state": "Mesotrophic",
     "bathymetry_datalakes_id": 1,
+    "sediment_oxygen_uptake_rate": -37.5,
     "forcing": [{ "id": "PUY", "type": "meteoswiss_meteostation" }],
     "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
     "inflows": [
@@ -303,6 +310,7 @@
     "longitude": 8.678,
     "trophic_state": "Eutrophic",
     "bathymetry_datalakes_id": 3,
+    "sediment_oxygen_uptake_rate": -32.5,
     "forcing": [{ "id": "SMA", "type": "meteoswiss_meteostation" }],
     "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
   },
@@ -398,6 +406,7 @@
     "longitude": 8.645,
     "trophic_state": "Oligotrophic",
     "bathymetry_datalakes_id": 14,
+    "sediment_oxygen_uptake_rate": -26.6,
     "forcing": [{ "id": "OTL", "type": "meteoswiss_meteostation" }],
     "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
     "inflows": [
@@ -460,6 +469,7 @@
     "longitude": 8.897,
     "trophic_state": "Mesotrophic",
     "bathymetry_datalakes_id": 24,
+    "sediment_oxygen_uptake_rate": -33.1,
     "forcing": [{ "id": "LUG", "type": "meteoswiss_meteostation" }],
     "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
     "inflows": [
@@ -515,6 +525,7 @@
     "longitude": 7.064,
     "trophic_state": "Mesotrophic",
     "bathymetry_datalakes_id": 26,
+    "sediment_oxygen_uptake_rate": -32.8,
     "forcing": [{ "id": "NEU", "type": "meteoswiss_meteostation" }],
     "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
     "inflows": [
@@ -546,6 +557,7 @@
     "longitude": 6.843,
     "trophic_state": "Mesotrophic",
     "bathymetry_datalakes_id": 27,
+    "sediment_oxygen_uptake_rate": -27.8,
     "forcing": [{ "id": "NEU", "type": "meteoswiss_meteostation" }],
     "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
     "inflows": [
@@ -597,6 +609,7 @@
     "longitude": 8.784,
     "trophic_state": "",
     "bathymetry_datalakes_id": 28,
+    "sediment_oxygen_uptake_rate": -23.8,
     "forcing": [{ "id": "SMA", "type": "meteoswiss_meteostation" }],
     "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
   },
@@ -616,6 +629,7 @@
     "longitude": 8.159,
     "trophic_state": "Mesotrophic",
     "bathymetry_datalakes_id": 23,
+    "sediment_oxygen_uptake_rate": -31.9,
     "forcing": [{ "id": "EGO", "type": "meteoswiss_meteostation" }],
     "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
     "inflows": [
@@ -642,6 +656,7 @@
     "longitude": 8.204,
     "trophic_state": "Oligotrophic",
     "bathymetry_datalakes_id": 29,
+    "sediment_oxygen_uptake_rate": -11.3,
     "forcing": [{ "id": "GIH", "type": "meteoswiss_meteostation" }],
     "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
   },
@@ -762,6 +777,7 @@
     "longitude": 8.429,
     "trophic_state": "Oligotrophic",
     "bathymetry_datalakes_id": 37,
+    "sediment_oxygen_uptake_rate": -10.0,
     "forcing": [{ "id": "LUZ", "type": "meteoswiss_meteostation" }],
     "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
     "inflows": [
@@ -793,6 +809,7 @@
     "longitude": 9.223,
     "trophic_state": "Oligotrophic",
     "bathymetry_datalakes_id": 35,
+    "sediment_oxygen_uptake_rate": -18.4,
     "forcing": [
       { "id": "QUI", "type": "meteoswiss_meteostation" },
       { "id": "LAC", "type": "meteoswiss_meteostation" },
@@ -914,6 +931,7 @@
     "longitude": 8.591,
     "trophic_state": "Mesotrophic",
     "bathymetry_datalakes_id": 5,
+    "sediment_oxygen_uptake_rate": -30.3,
     "forcing": [
       { "id": "LAC", "type": "meteoswiss_meteostation" },
       { "id": "SCM", "type": "meteoswiss_meteostation" },
