@@ -48,7 +48,7 @@ def oxygen_saturation(temperature, altitude):
     # Benson & Krause, 1984; ignoring salinity effects
     t_k = temperature + 273.15  # Convert to kelvin
     capac = -139.34411 + 1.575701e5 / t_k - 6.642308e7 / t_k ** 2 + 1.243800e10 / t_k ** 3 - 8.621949e11 / t_k ** 4
-    o2 = np.exp(capac) * pressure_correction(t_k, altitude)  # mgL
+    o2 = np.exp(capac) * pressure_correction(temperature, altitude)  # mgL
     return o2 / 32 * 1000  # mmolm3
 
 
@@ -107,10 +107,10 @@ def call_url(url):
         data = response.json()
         return data
     else:
-        raise ValueError("Unable to access url {}".format(url))
+        raise ValueError(f"Unable to access url {url}. Status code: {response.status_code}. Message: {response.text}")
 
 
-def upload_files(local_folder, remote_folder, host, username, password, log, port=22):
+def upload_files(local_folder, remote_folder, host, username, password, port=22):
     mkdir = 'sshpass -p {} ssh -p {} {}@{} "mkdir -p {}"'.format(password, port, username, host, remote_folder)
     subprocess.run(mkdir, check=True, shell=True)
     failed = []
@@ -118,7 +118,6 @@ def upload_files(local_folder, remote_folder, host, username, password, log, por
     for file in os.listdir(local_folder):
         if ".nc" in file:
             remote_file = os.path.join(remote_folder, file)
-            log.info("Uploading {} to {}".format(file, remote_file), indent=1)
             try:
                 subprocess.run(
                     cmd.format(password, port, os.path.join(local_folder, file), username, host, remote_file),
@@ -199,7 +198,13 @@ def clear_sky_solar_radiation(time, air_pressure, vapour_pressure, lat, lon):
 
 def adjust_data_to_mean_and_std(arr, std, mean):
     arr = np.array(arr)
-    return (arr - np.nanmean(arr)) / np.nanstd(arr) * std + mean
+    data_mean = np.nanmean(arr)
+    data_std = np.nanstd(arr)
+    if np.isnan(data_mean) or np.isnan(data_std) or data_std == 0:
+        print("Forcing data not adjusted")
+        return arr
+
+    return (arr - data_mean) / data_std * std + mean
 
 
 def detect_gaps(arr, start, end, max_allowable_gap=86400):

@@ -498,5 +498,5 @@ class Simstrat(object):
         local_folder = os.path.join(self.simulation_dir, "Results", "netcdf")
         remote_folder = os.path.join(self.args["results_folder_api"], self.key)
         upload_files(local_folder, remote_folder, self.args["server_host"], self.args["server_user"],
-                     self.args["server_password"], self.log)
+                     self.args["server_password"])
         self.log.end_stage()

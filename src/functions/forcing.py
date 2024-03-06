@@ -98,24 +98,23 @@ def meteodata_from_meteoswiss_meteostations(start, end, forcing, elevation, lati
                 elif len(gaps) > 0:
                     for gap in gaps:
                         if gap[0] >= parameter["start_date"] and gap[1] <= parameter["end_date"]:
-                            data = call_url(
-                                endpoint.format(f["id"], p_id, gap[0].strftime('%Y%m%d'), gap[1].strftime('%Y%m%d')))
-                            log.info("{}: Completing with data from station {} : {} - {}".format(p_id, f["id"],
-                                                                                                 gap[0].strftime(
-                                                                                                     '%Y%m%d'),
-                                                                                                 gap[1].strftime(
-                                                                                                     '%Y%m%d')),
-                                     indent=2)
-                            df_new = pd.DataFrame({'time': data["Time"],
-                                                   'values_new': adjust_data_to_mean_and_std(data[p_id], std, mean)})
-                            df_new['time'] = pd.to_datetime(df_new['time'])
-                            df_new['values_new'] = pd.to_numeric(df_new['values_new'], errors='coerce')
-                            df = pd.merge(df, df_new, on='time', how='outer')
-                            df['values'] = df['values'].combine_first(df['values_new'])
-                            df = df[["time", "values"]]
-                            df = df.dropna()
-                            df = df.sort_values(by='time')
-                            df.reset_index(inplace=True)
+                            log.info("{}: Trying to complete with data from station {} : {} - {}".format(
+                                p_id, f["id"], gap[0].strftime('%Y%m%d'), gap[1].strftime('%Y%m%d')), indent=2)
+                            try:
+                                data = call_url(
+                                    endpoint.format(f["id"], p_id, gap[0].strftime('%Y%m%d'), gap[1].strftime('%Y%m%d')))
+                                df_new = pd.DataFrame({'time': data["Time"],
+                                                       'values_new': adjust_data_to_mean_and_std(data[p_id], std, mean)})
+                                df_new['time'] = pd.to_datetime(df_new['time'])
+                                df_new['values_new'] = pd.to_numeric(df_new['values_new'], errors='coerce')
+                                df = pd.merge(df, df_new, on='time', how='outer')
+                                df['values'] = df['values'].combine_first(df['values_new'])
+                                df = df[["time", "values"]]
+                                df = df.dropna()
+                                df = df.sort_values(by='time')
+                                df.reset_index(inplace=True)
+                            except Exception as e:
+                                print(e)
                     gaps = detect_gaps(df["time"], start, end)
         if not isinstance(df, pd.core.frame.DataFrame):
             raise ValueError("Failed to collect values for {}".format(p_id))
