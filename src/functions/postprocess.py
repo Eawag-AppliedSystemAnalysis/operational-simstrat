@@ -52,7 +52,8 @@ def post_process(start_date, results, version, parameters):
         'WaterH': {'var_name': 'WaterH', 'dim': ('time',), 'unit': 'm', 'long_name': 'Water depth (positive height above sediment)'},
         'Qvert': {'var_name': 'Qvert', 'dim': ('depth', 'time',), 'unit': 'm3/s', 'long_name': 'Vertical advection'},
         'Eseiche': {'var_name': 'Eseiche', 'dim': ('time',), 'unit': 'J', 'long_name': 'Total seiche energy'},
-        'OXY_oxy': {'var_name': 'Oxygen', 'dim': ('depth', 'time',), 'unit': 'mmol', 'long_name': 'Dissolved oxygen'},
+        'OXY_oxy': {'var_name': 'Oxygen', 'dim': ('depth', 'time',), 'unit': 'mmol/m3', 'long_name': 'Dissolved oxygen'},
+        'OXY_sat': {'var_name': 'OxygenSat', 'dim': ('depth', 'time',), 'unit': '%', 'long_name': 'Oxygen saturation'},
         'Thermocline': {'var_name': 'Thermocline', 'dim': ('time',), 'unit': 'm', 'long_name': 'Thermocline depth', 'calculated': True}
     }
     result_files = os.listdir(results)

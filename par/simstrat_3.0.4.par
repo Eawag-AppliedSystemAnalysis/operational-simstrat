@@ -49,7 +49,7 @@
     "BioshadeFeedback"        : 0,
     "BackgroundExtinction"    : 0.2,
     "BenthicMode"             : 1,
-    "OutputDiagnosticVars"    : false
+    "OutputDiagnosticVars"    : true
     },
     "Simulation": {
         "Timestep s": 300,

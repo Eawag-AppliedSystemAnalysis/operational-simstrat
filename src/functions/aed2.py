@@ -1,5 +1,5 @@
 import os
-import matplotlib.pyplot as plt
+import numpy as np
 from .general import oxygen_saturation
 
 
@@ -19,8 +19,13 @@ def create_aed_configuration_file(simulation_dir, sediment_oxygen_uptake_rate):
 def compute_oxygen_inflows(inflow_data, elevation):
     for inflow in inflow_data["deep_inflows"]:
         inflow["oxygen"] = oxygen_saturation(inflow["T"], elevation)
-    for inflow in inflow_data["surface_inflows"]:
-        inflow["oxygen"] = oxygen_saturation(inflow["T"], elevation)
+    if len(inflow_data["surface_inflows"]) > 0:
+        depth = max(abs(item["depth"]) for item in inflow_data["surface_inflows"])
+        for inflow in inflow_data["surface_inflows"]:
+            if np.all(inflow["T"] == 0):
+                inflow["oxygen"] = inflow["T"]
+            else:
+                inflow["oxygen"] = oxygen_saturation(inflow["T"] * depth, elevation) / depth
     return inflow_data
 
 

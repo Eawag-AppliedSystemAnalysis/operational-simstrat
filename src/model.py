@@ -162,7 +162,10 @@ class Simstrat(object):
             self.log.info(str(e))
             if not self.args["debug"]:
                 self.log.info("Removing input and output files of failed run (debug=False)")
-                shutil.rmtree(self.simulation_dir)
+                for root, dirs, files in os.walk(self.simulation_dir):
+                    for file in files:
+                        if file.endswith(".dat"):
+                            os.remove(os.path.join(root, file))
             raise ValueError("Processing failed. See log for details.")
 
     def create_bathymetry_file(self):
