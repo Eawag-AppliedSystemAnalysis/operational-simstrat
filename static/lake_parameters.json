@@ -1819,7 +1819,6 @@
     "trophic_state": "Oligotrophic",
     "bathymetry_datalakes_id": 122,
     "forcing": [
-      { "id": "SLFGAD", "type": "meteoswiss_meteostation" },
       { "id": "GRH", "type": "meteoswiss_meteostation" }
     ],
     "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
