@@ -77,7 +77,7 @@ def meteodata_from_meteoswiss_meteostations(start, end, forcing, elevation, lati
             if p_id in [p["id"] for p in f["parameters"]]:
                 parameter = next((d for d in f["parameters"] if d.get("id") == p_id), None)
                 if not gaps:
-                    start_date = max(start, parameter["start_date"])
+                    start_date = min(max(start, parameter["start_date"]), parameter["end_date"])
                     end_date = min(end, parameter["end_date"])
                     log.info(
                         "{}: Using data from station {} : {} - {}".format(p_id, f["id"], start_date.strftime('%Y%m%d'),

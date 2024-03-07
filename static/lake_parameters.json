@@ -17,11 +17,28 @@
     "bathymetry_datalakes_id": 6,
     "sediment_oxygen_uptake_rate": -19.7,
     "forcing": [
-      { "id": "AEG", "type": "meteoswiss_meteostation" },
-      { "id": "SAG", "type": "meteoswiss_meteostation" },
-      { "id": "EIN", "type": "meteoswiss_meteostation" }
+      {
+        "id": "AEG",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "SAG",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "EIN",
+        "type": "meteoswiss_meteostation"
+      }
     ],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.012730098,
+    "f_wind": 0.550475116,
+    "p_lw": 0.941027656,
+    "snow_temp": 9.75303208
   },
   {
     "key": "baldegg",
@@ -40,8 +57,21 @@
     "trophic_state": "Eutrophic",
     "bathymetry_datalakes_id": 7,
     "sediment_oxygen_uptake_rate": -41.6,
-    "forcing": [{ "id": "MOA", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "MOA",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.024503328,
+    "f_wind": 0.613069291,
+    "p_lw": 0.967677917,
+    "snow_temp": 2.88596699
   },
   {
     "key": "hallwil",
@@ -60,15 +90,34 @@
     "trophic_state": "Eutrophic",
     "bathymetry_datalakes_id": 8,
     "sediment_oxygen_uptake_rate": -28.1,
-    "forcing": [{ "id": "MOA", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
+    "forcing": [
+      {
+        "id": "MOA",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
     "inflows": [
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2416, "parameter": "AbflussDrucksondeSchacht" },
-        "T": { "id": 2018, "parameter": "Wassertemperatur1" }
+        "Q": {
+          "id": 2416,
+          "parameter": "AbflussDrucksondeSchacht"
+        },
+        "T": {
+          "id": 2018,
+          "parameter": "Wassertemperatur1"
+        }
       }
-    ]
+    ],
+    "a_seiche": 0.0088249651,
+    "f_wind": 0.871255826,
+    "p_lw": 0.960484292,
+    "snow_temp": 2.77131348
   },
   {
     "key": "biel",
@@ -86,25 +135,56 @@
     "longitude": 7.198,
     "trophic_state": "Eutrophic",
     "bathymetry_datalakes_id": 2,
-    "forcing": [{ "id": "CRM", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
+    "forcing": [
+      {
+        "id": "CRM",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
     "inflows": [
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2085, "parameter": "AbflussAFFRA" },
-        "T": { "id": 2085, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2085,
+          "parameter": "AbflussAFFRA"
+        },
+        "T": {
+          "id": 2085,
+          "parameter": "Wassertemperatur"
+        }
       },
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2307, "parameter": "AbflussRadarSchacht" },
-        "T": { "id": 2307, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2307,
+          "parameter": "AbflussRadarSchacht"
+        },
+        "T": {
+          "id": 2307,
+          "parameter": "Wassertemperatur"
+        }
       },
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2446, "parameter": "AbflussAFFRA" },
-        "T": { "id": 2034, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2446,
+          "parameter": "AbflussAFFRA"
+        },
+        "T": {
+          "id": 2034,
+          "parameter": "Wassertemperatur"
+        }
       }
-    ]
+    ],
+    "a_seiche": 0.00058257296,
+    "f_wind": 1.37410473,
+    "p_lw": 1.00360502,
+    "snow_temp": 2.0
   },
   {
     "key": "upperconstance",
@@ -123,27 +203,59 @@
     "trophic_state": "Mesotrophic",
     "bathymetry_datalakes_id": 10,
     "forcing": [
-      { "id": "ARH", "type": "meteoswiss_meteostation" },
-      { "id": "GUT", "type": "meteoswiss_meteostation" }
+      {
+        "id": "ARH",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "GUT",
+        "type": "meteoswiss_meteostation"
+      }
     ],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
     "inflows": [
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2473, "parameter": "AbflussPneumatikFluss" },
-        "T": { "id": 2473, "parameter": "WassertemperaturFluss" }
+        "Q": {
+          "id": 2473,
+          "parameter": "AbflussPneumatikFluss"
+        },
+        "T": {
+          "id": 2473,
+          "parameter": "WassertemperaturFluss"
+        }
       },
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2308, "parameter": "AbflussPneumatik" },
-        "T": { "id": 2308, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2308,
+          "parameter": "AbflussPneumatik"
+        },
+        "T": {
+          "id": 2308,
+          "parameter": "Wassertemperatur"
+        }
       },
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2312, "parameter": "AbflussRadarSchacht" },
-        "T": { "id": 2308, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2312,
+          "parameter": "AbflussRadarSchacht"
+        },
+        "T": {
+          "id": 2308,
+          "parameter": "Wassertemperatur"
+        }
       }
-    ]
+    ],
+    "a_seiche": 0.010082634,
+    "f_wind": 1.25524434,
+    "p_lw": 0.921585827,
+    "snow_temp": 2.0
   },
   {
     "key": "lowerconstance",
@@ -163,17 +275,34 @@
     "bathymetry_datalakes_id": 53,
     "sediment_oxygen_uptake_rate": -25.0,
     "forcing": [
-      { "id": "STK", "type": "meteoswiss_meteostation" },
-      { "id": "HAI", "type": "meteoswiss_meteostation" },
-      { "id": "GUT", "type": "meteoswiss_meteostation" }
+      {
+        "id": "STK",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "HAI",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "GUT",
+        "type": "meteoswiss_meteostation"
+      }
     ],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
     "inflows": [
       {
         "type": "simstrat_model_inflow",
         "id": "upperconstance"
       }
-    ]
+    ],
+    "a_seiche": 5.3874369e-05,
+    "f_wind": 1.03342539,
+    "p_lw": 0.881435144,
+    "snow_temp": 1.56753149
   },
   {
     "key": "brienz",
@@ -192,20 +321,45 @@
     "trophic_state": "Oligotrophic",
     "bathymetry_datalakes_id": 12,
     "sediment_oxygen_uptake_rate": -10.6,
-    "forcing": [{ "id": "INT", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
+    "forcing": [
+      {
+        "id": "INT",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
     "inflows": [
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2019, "parameter": "AbflussPneumatik" },
-        "T": { "id": 2019, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2019,
+          "parameter": "AbflussPneumatik"
+        },
+        "T": {
+          "id": 2019,
+          "parameter": "Wassertemperatur"
+        }
       },
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2109, "parameter": "AbflussPneumatik" },
-        "T": { "id": 2109, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2109,
+          "parameter": "AbflussPneumatik"
+        },
+        "T": {
+          "id": 2109,
+          "parameter": "Wassertemperatur"
+        }
       }
-    ]
+    ],
+    "a_seiche": 0.0096394707,
+    "f_wind": 1.52206581,
+    "p_lw": 1.00328962,
+    "snow_temp": 2.0
   },
   {
     "key": "thun",
@@ -225,27 +379,59 @@
     "bathymetry_datalakes_id": 16,
     "sediment_oxygen_uptake_rate": -14.0,
     "forcing": [
-      { "id": "THU", "type": "meteoswiss_meteostation" },
-      { "id": "INT", "type": "meteoswiss_meteostation" }
+      {
+        "id": "THU",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "INT",
+        "type": "meteoswiss_meteostation"
+      }
     ],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
     "inflows": [
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2457, "parameter": "AbflussPneumatik" },
-        "T": { "id": 2457, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2457,
+          "parameter": "AbflussPneumatik"
+        },
+        "T": {
+          "id": 2457,
+          "parameter": "Wassertemperatur"
+        }
       },
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2469, "parameter": "AbflussPneumatik" },
-        "T": { "id": 2109, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2469,
+          "parameter": "AbflussPneumatik"
+        },
+        "T": {
+          "id": 2109,
+          "parameter": "Wassertemperatur"
+        }
       },
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2488, "parameter": "AbflussPneumatik" },
-        "T": { "id": 2109, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2488,
+          "parameter": "AbflussPneumatik"
+        },
+        "T": {
+          "id": 2109,
+          "parameter": "Wassertemperatur"
+        }
       }
-    ]
+    ],
+    "a_seiche": 0.016098637,
+    "f_wind": 1.22128344,
+    "p_lw": 0.972159681,
+    "snow_temp": 2.0
   },
   {
     "key": "geneva",
@@ -264,35 +450,78 @@
     "trophic_state": "Mesotrophic",
     "bathymetry_datalakes_id": 1,
     "sediment_oxygen_uptake_rate": -37.5,
-    "forcing": [{ "id": "PUY", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
+    "forcing": [
+      {
+        "id": "PUY",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
     "inflows": [
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2009, "parameter": "AbflussPneumatikunten" },
-        "T": { "id": 2009, "parameter": "Wassertemperatur1" }
+        "Q": {
+          "id": 2009,
+          "parameter": "AbflussPneumatikunten"
+        },
+        "T": {
+          "id": 2009,
+          "parameter": "Wassertemperatur1"
+        }
       },
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2432, "parameter": "AbflussRadar" },
-        "T": { "id": 2432, "parameter": "Wassertemperatur1" }
+        "Q": {
+          "id": 2432,
+          "parameter": "AbflussRadar"
+        },
+        "T": {
+          "id": 2432,
+          "parameter": "Wassertemperatur1"
+        }
       },
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2433, "parameter": "AbflussPneumatik" },
-        "T": { "id": 2433, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2433,
+          "parameter": "AbflussPneumatik"
+        },
+        "T": {
+          "id": 2433,
+          "parameter": "Wassertemperatur"
+        }
       },
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2486, "parameter": "AbflussRadar" },
-        "T": { "id": 2433, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2486,
+          "parameter": "AbflussRadar"
+        },
+        "T": {
+          "id": 2433,
+          "parameter": "Wassertemperatur"
+        }
       },
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2493, "parameter": "AbflussPneumatik" },
-        "T": { "id": 2493, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2493,
+          "parameter": "AbflussPneumatik"
+        },
+        "T": {
+          "id": 2493,
+          "parameter": "Wassertemperatur"
+        }
       }
-    ]
+    ],
+    "a_seiche": 0.059189,
+    "f_wind": 0.97018,
+    "p_lw": 0.89251,
+    "snow_temp": 2.0
   },
   {
     "key": "greifensee",
@@ -311,12 +540,25 @@
     "trophic_state": "Eutrophic",
     "bathymetry_datalakes_id": 3,
     "sediment_oxygen_uptake_rate": -32.5,
-    "forcing": [{ "id": "SMA", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "SMA",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.0056684225,
+    "f_wind": 0.672030072,
+    "p_lw": 0.952833972,
+    "snow_temp": 2.02759986
   },
   {
     "key": "gruyere",
-    "name": "Lac de la Gruyère",
+    "name": "Lac de la Gruy\u00e8re",
     "elevation": 677.0,
     "surface_area": 9.6,
     "type": "Artificial",
@@ -331,27 +573,57 @@
     "trophic_state": "",
     "bathymetry_datalakes_id": 19,
     "forcing": [
-      { "id": "MAS", "type": "meteoswiss_meteostation" },
-      { "id": "GRA", "type": "meteoswiss_meteostation" },
-      { "id": "PLF", "type": "meteoswiss_meteostation" }
+      {
+        "id": "MAS",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "GRA",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "PLF",
+        "type": "meteoswiss_meteostation"
+      }
     ],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
     "inflows": [
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2160, "parameter": "AbflussPneumatik" },
-        "T": { "id": 2109, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2160,
+          "parameter": "AbflussPneumatik"
+        },
+        "T": {
+          "id": 2109,
+          "parameter": "Wassertemperatur"
+        }
       },
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2412, "parameter": "AbflussRadarSchacht" },
-        "T": { "id": 2433, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2412,
+          "parameter": "AbflussRadarSchacht"
+        },
+        "T": {
+          "id": 2433,
+          "parameter": "Wassertemperatur"
+        }
       }
-    ]
+    ],
+    "a_seiche": 0.443285989,
+    "f_wind": 0.471895425,
+    "p_lw": 1.06129016,
+    "snow_temp": 1.9809877,
+    "p_absorb": 0.5
   },
   {
     "key": "klontalersee",
-    "name": "Klöntalersee",
+    "name": "Kl\u00f6ntalersee",
     "elevation": 848.0,
     "surface_area": 3.3,
     "type": "Natural, used as reservoir",
@@ -365,8 +637,22 @@
     "longitude": 8.994,
     "trophic_state": "",
     "bathymetry_datalakes_id": 20,
-    "forcing": [{ "id": "GLA", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "GLA",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.059946936,
+    "f_wind": 0.282218056,
+    "p_lw": 0.808813832,
+    "snow_temp": 0.5,
+    "p_absorb": 1.5
   },
   {
     "key": "joux",
@@ -385,10 +671,24 @@
     "trophic_state": "",
     "bathymetry_datalakes_id": 17,
     "forcing": [
-      { "id": "CHB", "type": "meteoswiss_meteostation" },
-      { "id": "BIE", "type": "meteoswiss_meteostation" }
+      {
+        "id": "CHB",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "BIE",
+        "type": "meteoswiss_meteostation"
+      }
     ],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.0066084,
+    "f_wind": 0.9169,
+    "p_lw": 0.82999,
+    "snow_temp": 1.9904
   },
   {
     "key": "maggiore",
@@ -407,25 +707,56 @@
     "trophic_state": "Oligotrophic",
     "bathymetry_datalakes_id": 14,
     "sediment_oxygen_uptake_rate": -26.6,
-    "forcing": [{ "id": "OTL", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
+    "forcing": [
+      {
+        "id": "OTL",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
     "inflows": [
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2068, "parameter": "AbflussPneumatik" },
-        "T": { "id": 2068, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2068,
+          "parameter": "AbflussPneumatik"
+        },
+        "T": {
+          "id": 2068,
+          "parameter": "Wassertemperatur"
+        }
       },
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2167, "parameter": "AbflussDrucksonde" },
-        "T": { "id": 2167, "parameter": "Wassertemperatur1" }
+        "Q": {
+          "id": 2167,
+          "parameter": "AbflussDrucksonde"
+        },
+        "T": {
+          "id": 2167,
+          "parameter": "Wassertemperatur1"
+        }
       },
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2368, "parameter": "AbflussPneumatikoben" },
-        "T": { "id": 2612, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2368,
+          "parameter": "AbflussPneumatikoben"
+        },
+        "T": {
+          "id": 2612,
+          "parameter": "Wassertemperatur"
+        }
       }
-    ]
+    ],
+    "a_seiche": 0.07855248099999998,
+    "f_wind": 0.940530067,
+    "p_lw": 0.87581625,
+    "snow_temp": 2.0
   },
   {
     "key": "upperlugano",
@@ -443,15 +774,34 @@
     "longitude": 9.033,
     "trophic_state": "Eutrophic",
     "bathymetry_datalakes_id": 22,
-    "forcing": [{ "id": "LUG", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
+    "forcing": [
+      {
+        "id": "LUG",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
     "inflows": [
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2321, "parameter": "AbflussPneumatik" },
-        "T": { "id": 2068, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2321,
+          "parameter": "AbflussPneumatik"
+        },
+        "T": {
+          "id": 2068,
+          "parameter": "Wassertemperatur"
+        }
       }
-    ]
+    ],
+    "a_seiche": 0.0050542836,
+    "f_wind": 1.00241374,
+    "p_lw": 0.925887461,
+    "snow_temp": 2.0
   },
   {
     "key": "lowerlugano",
@@ -470,25 +820,50 @@
     "trophic_state": "Mesotrophic",
     "bathymetry_datalakes_id": 24,
     "sediment_oxygen_uptake_rate": -33.1,
-    "forcing": [{ "id": "LUG", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
+    "forcing": [
+      {
+        "id": "LUG",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
     "inflows": [
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2629, "parameter": "AbflussPneumatik" },
-        "T": { "id": 2068, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2629,
+          "parameter": "AbflussPneumatik"
+        },
+        "T": {
+          "id": 2068,
+          "parameter": "Wassertemperatur"
+        }
       },
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2461, "parameter": "AbflussRadar" },
-        "T": { "id": 2068, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2461,
+          "parameter": "AbflussRadar"
+        },
+        "T": {
+          "id": 2068,
+          "parameter": "Wassertemperatur"
+        }
       },
       {
         "type": "simstrat_model_inflow",
         "id": "upperlugano",
         "surface_inflow": 5.0
       }
-    ]
+    ],
+    "a_seiche": 0.0079280932,
+    "f_wind": 0.895982542,
+    "p_lw": 0.930849464,
+    "snow_temp": 2.0
   },
   {
     "key": "lungern",
@@ -506,8 +881,22 @@
     "longitude": 8.161,
     "trophic_state": "",
     "bathymetry_datalakes_id": 25,
-    "forcing": [{ "id": "GIH", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "GIH",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.5,
+    "f_wind": 0.471074645,
+    "p_lw": 0.94652831,
+    "snow_temp": 2.5,
+    "p_absorb": 1.5
   },
   {
     "key": "murten",
@@ -526,24 +915,49 @@
     "trophic_state": "Mesotrophic",
     "bathymetry_datalakes_id": 26,
     "sediment_oxygen_uptake_rate": -32.8,
-    "forcing": [{ "id": "NEU", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
+    "forcing": [
+      {
+        "id": "NEU",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
     "inflows": [
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2447, "parameter": "AbflussAFFRA" },
-        "T": { "id": 2034, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2447,
+          "parameter": "AbflussAFFRA"
+        },
+        "T": {
+          "id": 2034,
+          "parameter": "Wassertemperatur"
+        }
       },
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2034, "parameter": "AbflussPneumatik" },
-        "T": { "id": 2034, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2034,
+          "parameter": "AbflussPneumatik"
+        },
+        "T": {
+          "id": 2034,
+          "parameter": "Wassertemperatur"
+        }
       }
-    ]
+    ],
+    "a_seiche": 0.0066405428,
+    "f_wind": 0.876621813,
+    "p_lw": 0.945298472,
+    "snow_temp": 2.0
   },
   {
     "key": "neuchatel",
-    "name": "Lake Neuchâtel",
+    "name": "Lake Neuch\u00e2tel",
     "elevation": 429.0,
     "surface_area": 218.3,
     "type": "Natural",
@@ -558,44 +972,93 @@
     "trophic_state": "Mesotrophic",
     "bathymetry_datalakes_id": 27,
     "sediment_oxygen_uptake_rate": -27.8,
-    "forcing": [{ "id": "NEU", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
+    "forcing": [
+      {
+        "id": "NEU",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
     "inflows": [
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2447, "parameter": "AbflussAFFRA" },
-        "T": { "id": 2034, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2447,
+          "parameter": "AbflussAFFRA"
+        },
+        "T": {
+          "id": 2034,
+          "parameter": "Wassertemperatur"
+        }
       },
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2446, "parameter": "AbflussAFFRA" },
-        "T": { "id": 2034, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2446,
+          "parameter": "AbflussAFFRA"
+        },
+        "T": {
+          "id": 2034,
+          "parameter": "Wassertemperatur"
+        }
       },
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2369, "parameter": "AbflussRadar" },
-        "T": { "id": 2369, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2369,
+          "parameter": "AbflussRadar"
+        },
+        "T": {
+          "id": 2369,
+          "parameter": "Wassertemperatur"
+        }
       },
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2378, "parameter": "AbflussPneumatik" },
-        "T": { "id": 2369, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2378,
+          "parameter": "AbflussPneumatik"
+        },
+        "T": {
+          "id": 2369,
+          "parameter": "Wassertemperatur"
+        }
       },
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2480, "parameter": "AbflussPneumatik" },
-        "T": { "id": 2369, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2480,
+          "parameter": "AbflussPneumatik"
+        },
+        "T": {
+          "id": 2369,
+          "parameter": "Wassertemperatur"
+        }
       },
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2458, "parameter": "AbflussRadar" },
-        "T": { "id": 2369, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2458,
+          "parameter": "AbflussRadar"
+        },
+        "T": {
+          "id": 2369,
+          "parameter": "Wassertemperatur"
+        }
       }
-    ]
+    ],
+    "a_seiche": 0.013802622,
+    "f_wind": 1.10544407,
+    "p_lw": 0.928679167,
+    "snow_temp": 2.0
   },
   {
     "key": "pfaffikon",
-    "name": "Lake Pfäffikon",
+    "name": "Lake Pf\u00e4ffikon",
     "elevation": 537.0,
     "surface_area": 3.3,
     "type": "Natural",
@@ -610,8 +1073,21 @@
     "trophic_state": "",
     "bathymetry_datalakes_id": 28,
     "sediment_oxygen_uptake_rate": -23.8,
-    "forcing": [{ "id": "SMA", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "SMA",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.0048860626,
+    "f_wind": 0.652597669,
+    "p_lw": 0.952926026,
+    "snow_temp": 2.19158942
   },
   {
     "key": "sempach",
@@ -630,15 +1106,34 @@
     "trophic_state": "Mesotrophic",
     "bathymetry_datalakes_id": 23,
     "sediment_oxygen_uptake_rate": -31.9,
-    "forcing": [{ "id": "EGO", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
+    "forcing": [
+      {
+        "id": "EGO",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
     "inflows": [
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2608, "parameter": "AbflussRadar" },
-        "T": { "id": 2608, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2608,
+          "parameter": "AbflussRadar"
+        },
+        "T": {
+          "id": 2608,
+          "parameter": "Wassertemperatur"
+        }
       }
-    ]
+    ],
+    "a_seiche": 0.018284876,
+    "f_wind": 0.867069287,
+    "p_lw": 0.959916993,
+    "snow_temp": 5.40179025
   },
   {
     "key": "sarnen",
@@ -657,8 +1152,22 @@
     "trophic_state": "Oligotrophic",
     "bathymetry_datalakes_id": 29,
     "sediment_oxygen_uptake_rate": -11.3,
-    "forcing": [{ "id": "GIH", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "GIH",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.025169492,
+    "f_wind": 0.931323767,
+    "p_lw": 0.97625911,
+    "snow_temp": 2.0,
+    "p_absorb": 1.5
   },
   {
     "key": "lucernealpnachersee",
@@ -676,20 +1185,46 @@
     "longitude": 8.321,
     "trophic_state": "Oligotrophic",
     "bathymetry_datalakes_id": 30,
-    "forcing": [{ "id": "LUZ", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
+    "forcing": [
+      {
+        "id": "LUZ",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
     "inflows": [
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2102, "parameter": "AbflussRadar" },
-        "T": { "id": 2457, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2102,
+          "parameter": "AbflussRadar"
+        },
+        "T": {
+          "id": 2457,
+          "parameter": "Wassertemperatur"
+        }
       },
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2436, "parameter": "AbflussRadarSchacht" },
-        "T": { "id": 2109, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2436,
+          "parameter": "AbflussRadarSchacht"
+        },
+        "T": {
+          "id": 2109,
+          "parameter": "Wassertemperatur"
+        }
       }
-    ]
+    ],
+    "a_seiche": 0.060025069,
+    "f_wind": 0.495986135,
+    "p_lw": 0.944463586,
+    "snow_temp": 2.0,
+    "p_absorb": 0.580208916
   },
   {
     "key": "lucerneurnersee",
@@ -707,20 +1242,46 @@
     "longitude": 8.604,
     "trophic_state": "Oligotrophic",
     "bathymetry_datalakes_id": 31,
-    "forcing": [{ "id": "ALT", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
+    "forcing": [
+      {
+        "id": "ALT",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
     "inflows": [
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2056, "parameter": "AbflussPneumatik" },
-        "T": { "id": 2056, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2056,
+          "parameter": "AbflussPneumatik"
+        },
+        "T": {
+          "id": 2056,
+          "parameter": "Wassertemperatur"
+        }
       },
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2276, "parameter": "PegelDrucksondeSchacht" },
-        "T": { "id": 2276, "parameter": "Wassertemperatur2" }
+        "Q": {
+          "id": 2276,
+          "parameter": "PegelDrucksondeSchacht"
+        },
+        "T": {
+          "id": 2276,
+          "parameter": "Wassertemperatur2"
+        }
       }
-    ]
+    ],
+    "a_seiche": 0.0069648246,
+    "f_wind": 0.79084835,
+    "p_lw": 0.831976597,
+    "snow_temp": 2.0,
+    "p_absorb": 1.5
   },
   {
     "key": "lucernegersauerandtreibbecken",
@@ -739,27 +1300,54 @@
     "trophic_state": "Oligotrophic",
     "bathymetry_datalakes_id": 34,
     "forcing": [
-      { "id": "GES", "type": "meteoswiss_meteostation" },
-      { "id": "ALT", "type": "meteoswiss_meteostation" }
+      {
+        "id": "GES",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "ALT",
+        "type": "meteoswiss_meteostation"
+      }
     ],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
     "inflows": [
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2084, "parameter": "AbflussPneumatik" },
-        "T": { "id": 2084, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2084,
+          "parameter": "AbflussPneumatik"
+        },
+        "T": {
+          "id": 2084,
+          "parameter": "Wassertemperatur"
+        }
       },
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2481, "parameter": "AbflussPneumatik" },
-        "T": { "id": 2481, "parameter": "Wassertemperaturhoch" }
+        "Q": {
+          "id": 2481,
+          "parameter": "AbflussPneumatik"
+        },
+        "T": {
+          "id": 2481,
+          "parameter": "Wassertemperaturhoch"
+        }
       },
       {
         "type": "simstrat_model_inflow",
         "id": "lucerneurnersee",
         "surface_inflow": 100.0
       }
-    ]
+    ],
+    "a_seiche": 0.0079872082,
+    "f_wind": 1.12189644,
+    "p_lw": 0.835617709,
+    "snow_temp": 2.0,
+    "p_absorb": 1.5
   },
   {
     "key": "lucernekreuztrichterandvitznauerbecken",
@@ -778,8 +1366,17 @@
     "trophic_state": "Oligotrophic",
     "bathymetry_datalakes_id": 37,
     "sediment_oxygen_uptake_rate": -10.0,
-    "forcing": [{ "id": "LUZ", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
+    "forcing": [
+      {
+        "id": "LUZ",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
     "inflows": [
       {
         "type": "simstrat_model_inflow",
@@ -791,7 +1388,11 @@
         "id": "lucernealpnachersee",
         "surface_inflow": 5.0
       }
-    ]
+    ],
+    "a_seiche": 0.141737632,
+    "f_wind": 0.641462747,
+    "p_lw": 0.939650582,
+    "snow_temp": 2.0
   },
   {
     "key": "walensee",
@@ -811,23 +1412,52 @@
     "bathymetry_datalakes_id": 35,
     "sediment_oxygen_uptake_rate": -18.4,
     "forcing": [
-      { "id": "QUI", "type": "meteoswiss_meteostation" },
-      { "id": "LAC", "type": "meteoswiss_meteostation" },
-      { "id": "GLA", "type": "meteoswiss_meteostation" }
+      {
+        "id": "QUI",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "LAC",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "GLA",
+        "type": "meteoswiss_meteostation"
+      }
     ],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
     "inflows": [
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2372, "parameter": "AbflussPneumatik" },
-        "T": { "id": 2372, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2372,
+          "parameter": "AbflussPneumatik"
+        },
+        "T": {
+          "id": 2372,
+          "parameter": "Wassertemperatur"
+        }
       },
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2426, "parameter": "AbflussRadarSchacht" },
-        "T": { "id": 2372, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2426,
+          "parameter": "AbflussRadarSchacht"
+        },
+        "T": {
+          "id": 2372,
+          "parameter": "Wassertemperatur"
+        }
       }
-    ]
+    ],
+    "a_seiche": 0.012152548,
+    "f_wind": 0.840673112,
+    "p_lw": 0.987217063,
+    "snow_temp": 2.0
   },
   {
     "key": "zug",
@@ -846,17 +1476,37 @@
     "trophic_state": "Eutrophic",
     "bathymetry_datalakes_id": 39,
     "forcing": [
-      { "id": "CHZ", "type": "meteoswiss_meteostation" },
-      { "id": "WAE", "type": "meteoswiss_meteostation" }
+      {
+        "id": "CHZ",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "WAE",
+        "type": "meteoswiss_meteostation"
+      }
     ],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
     "inflows": [
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2477, "parameter": "AbflussPneumatik" },
-        "T": { "id": 2457, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2477,
+          "parameter": "AbflussPneumatik"
+        },
+        "T": {
+          "id": 2457,
+          "parameter": "Wassertemperatur"
+        }
       }
-    ]
+    ],
+    "a_seiche": 0.0050071163,
+    "f_wind": 1.23881627,
+    "p_lw": 0.955591244,
+    "snow_temp": 0.823119584
   },
   {
     "key": "sihlsee",
@@ -874,20 +1524,45 @@
     "longitude": 8.782,
     "trophic_state": "",
     "bathymetry_datalakes_id": 42,
-    "forcing": [{ "id": "EIN", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
+    "forcing": [
+      {
+        "id": "EIN",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
     "inflows": [
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2635, "parameter": "AbflussPneumatik" },
-        "T": { "id": 2635, "parameter": "Wassertemperatur1" }
+        "Q": {
+          "id": 2635,
+          "parameter": "AbflussPneumatik"
+        },
+        "T": {
+          "id": 2635,
+          "parameter": "Wassertemperatur1"
+        }
       },
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2300, "parameter": "AbflussRadarSchacht" },
-        "T": { "id": 2635, "parameter": "Wassertemperatur1" }
+        "Q": {
+          "id": 2300,
+          "parameter": "AbflussRadarSchacht"
+        },
+        "T": {
+          "id": 2635,
+          "parameter": "Wassertemperatur1"
+        }
       }
-    ]
+    ],
+    "a_seiche": 0.01380797,
+    "f_wind": 0.907450602,
+    "p_lw": 0.925011947,
+    "snow_temp": 0.7203344
   },
   {
     "key": "upperzurich",
@@ -905,15 +1580,34 @@
     "longitude": 8.823,
     "trophic_state": "Mesotrophic",
     "bathymetry_datalakes_id": 4,
-    "forcing": [{ "id": "WAE", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
+    "forcing": [
+      {
+        "id": "WAE",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
     "inflows": [
       {
         "type": "bafu_hydrostation",
-        "Q": { "id": 2104, "parameter": "AbflussPneumatik" },
-        "T": { "id": 2104, "parameter": "Wassertemperatur" }
+        "Q": {
+          "id": 2104,
+          "parameter": "AbflussPneumatik"
+        },
+        "T": {
+          "id": 2104,
+          "parameter": "Wassertemperatur"
+        }
       }
-    ]
+    ],
+    "a_seiche": 0.023978884,
+    "f_wind": 0.787022564,
+    "p_lw": 0.944942876,
+    "snow_temp": 0.5
   },
   {
     "key": "lowerzurich",
@@ -933,18 +1627,35 @@
     "bathymetry_datalakes_id": 5,
     "sediment_oxygen_uptake_rate": -30.3,
     "forcing": [
-      { "id": "LAC", "type": "meteoswiss_meteostation" },
-      { "id": "SCM", "type": "meteoswiss_meteostation" },
-      { "id": "WAE", "type": "meteoswiss_meteostation" }
+      {
+        "id": "LAC",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "SCM",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "WAE",
+        "type": "meteoswiss_meteostation"
+      }
     ],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 },
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
     "inflows": [
       {
         "type": "simstrat_model_inflow",
         "id": "upperzurich",
         "surface_inflow": 5.0
       }
-    ]
+    ],
+    "a_seiche": 0.0033446664,
+    "f_wind": 1.21780976,
+    "p_lw": 0.941562201,
+    "snow_temp": 2.0
   },
   {
     "key": "poschiavo",
@@ -962,8 +1673,21 @@
     "longitude": 10.098,
     "trophic_state": "",
     "bathymetry_datalakes_id": 51,
-    "forcing": [{ "id": "ROB", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "ROB",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.024482,
+    "f_wind": 0.92215,
+    "p_lw": 0.87889,
+    "snow_temp": 2.0
   },
   {
     "key": "sils",
@@ -981,8 +1705,22 @@
     "longitude": 9.739,
     "trophic_state": "",
     "bathymetry_datalakes_id": 38,
-    "forcing": [{ "id": "SIA", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "SIA",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.0017828189,
+    "f_wind": 0.856892896,
+    "p_lw": 0.831807756,
+    "snow_temp": 1.98987448,
+    "p_absorb": 1.24681457
   },
   {
     "key": "silvaplana",
@@ -1000,8 +1738,22 @@
     "longitude": 9.792,
     "trophic_state": "",
     "bathymetry_datalakes_id": 40,
-    "forcing": [{ "id": "SIA", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "SIA",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.0029569,
+    "f_wind": 0.93552,
+    "p_lw": 0.86485,
+    "snow_temp": 1.0546,
+    "p_absorb": 1.5
   },
   {
     "key": "stmoritz",
@@ -1019,8 +1771,22 @@
     "longitude": 9.847,
     "trophic_state": "",
     "bathymetry_datalakes_id": 41,
-    "forcing": [{ "id": "SAM", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "SAM",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.0010668751,
+    "f_wind": 0.846589013,
+    "p_lw": 0.830137784,
+    "snow_temp": 4.02521955,
+    "p_absorb": 0.5
   },
   {
     "key": "champfer",
@@ -1038,8 +1804,22 @@
     "longitude": 9.806,
     "trophic_state": "",
     "bathymetry_datalakes_id": 136,
-    "forcing": [{ "id": "SAM", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "SAM",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 5.1076349e-05,
+    "f_wind": 0.899563869,
+    "p_lw": 0.8,
+    "snow_temp": 2.81477923,
+    "p_absorb": 0.588650011
   },
   {
     "key": "lauerz",
@@ -1058,10 +1838,24 @@
     "trophic_state": "",
     "bathymetry_datalakes_id": 8,
     "forcing": [
-      { "id": "GES", "type": "meteoswiss_meteostation" },
-      { "id": "LUZ", "type": "meteoswiss_meteostation" }
+      {
+        "id": "GES",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "LUZ",
+        "type": "meteoswiss_meteostation"
+      }
     ],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.0402098,
+    "f_wind": 0.581223863,
+    "p_lw": 0.930848735,
+    "snow_temp": 3.1645711
   },
   {
     "key": "rotsee",
@@ -1079,12 +1873,25 @@
     "longitude": 8.316,
     "trophic_state": "Eutrophic",
     "bathymetry_datalakes_id": 45,
-    "forcing": [{ "id": "LUZ", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "LUZ",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.0018630685,
+    "f_wind": 0.592261525,
+    "p_lw": 0.979862399,
+    "snow_temp": 1.64634012
   },
   {
     "key": "turlersee",
-    "name": "Türlersee",
+    "name": "T\u00fcrlersee",
     "elevation": 643.0,
     "surface_area": 0.499,
     "type": "Natural",
@@ -1098,8 +1905,21 @@
     "longitude": 8.5,
     "trophic_state": "Eutrophic",
     "bathymetry_datalakes_id": 33,
-    "forcing": [{ "id": "WAE", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "WAE",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.00060032053,
+    "f_wind": 0.441759822,
+    "p_lw": 0.905692065,
+    "snow_temp": 1.797973
   },
   {
     "key": "amsoldingersee",
@@ -1118,10 +1938,25 @@
     "trophic_state": "Eutrophic",
     "bathymetry_datalakes_id": 67,
     "forcing": [
-      { "id": "THU", "type": "meteoswiss_meteostation" },
-      { "id": "INT", "type": "meteoswiss_meteostation" }
+      {
+        "id": "THU",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "INT",
+        "type": "meteoswiss_meteostation"
+      }
     ],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 1e-05,
+    "f_wind": 0.160015781,
+    "p_lw": 0.911207681,
+    "snow_temp": 1.87685111,
+    "p_absorb": 1.41253218
   },
   {
     "key": "moossee",
@@ -1139,8 +1974,22 @@
     "longitude": 7.48,
     "trophic_state": "Eutrophic",
     "bathymetry_datalakes_id": 108,
-    "forcing": [{ "id": "BER", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "BER",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.0030076455,
+    "f_wind": 0.760568842,
+    "p_lw": 0.949045974,
+    "snow_temp": 0.5,
+    "p_absorb": 1.0175931
   },
   {
     "key": "mauensee",
@@ -1157,8 +2006,22 @@
     "latitude": 47.171,
     "longitude": 8.075,
     "trophic_state": "Eutrophic",
-    "forcing": [{ "id": "LUZ", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "LUZ",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 1e-05,
+    "f_wind": 0.587953754,
+    "p_lw": 0.97076586,
+    "snow_temp": 4.11348732,
+    "p_absorb": 0.698406792
   },
   {
     "key": "oeschinensee",
@@ -1176,8 +2039,22 @@
     "longitude": 7.727,
     "trophic_state": "Oligotrophic",
     "bathymetry_datalakes_id": 9,
-    "forcing": [{ "id": "ABO", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "ABO",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.011443833,
+    "f_wind": 1.18895968,
+    "p_lw": 0.8606683,
+    "snow_temp": 3.22574326,
+    "p_absorb": 1.5
   },
   {
     "key": "soppensee",
@@ -1196,10 +2073,24 @@
     "trophic_state": "Eutrophic",
     "bathymetry_datalakes_id": 18,
     "forcing": [
-      { "id": "EGO", "type": "meteoswiss_meteostation" },
-      { "id": "LUZ", "type": "meteoswiss_meteostation" }
+      {
+        "id": "EGO",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "LUZ",
+        "type": "meteoswiss_meteostation"
+      }
     ],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.026729057,
+    "f_wind": 0.236736976,
+    "p_lw": 0.971760895,
+    "snow_temp": 1.60903351
   },
   {
     "key": "inkwilersee",
@@ -1217,12 +2108,26 @@
     "longitude": 7.664,
     "trophic_state": "Eutrophic",
     "bathymetry_datalakes_id": 54,
-    "forcing": [{ "id": "WYN", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "WYN",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 1e-05,
+    "f_wind": 1.75,
+    "p_lw": 0.940633698,
+    "snow_temp": 0.808717138,
+    "p_absorb": 1.5
   },
   {
     "key": "huttwilersee",
-    "name": "Hüttwilersee",
+    "name": "H\u00fcttwilersee",
     "elevation": 434.0,
     "surface_area": 0.34,
     "type": "Natural",
@@ -1236,8 +2141,21 @@
     "longitude": 8.844,
     "trophic_state": "Eutrophic",
     "bathymetry_datalakes_id": 11,
-    "forcing": [{ "id": "SHA", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "SHA",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.0027102207,
+    "f_wind": 0.274118112,
+    "p_lw": 0.975922416,
+    "snow_temp": 0.71260424
   },
   {
     "key": "cadagno",
@@ -1255,8 +2173,22 @@
     "longitude": 8.712,
     "trophic_state": "Oligotrophic",
     "bathymetry_datalakes_id": 15,
-    "forcing": [{ "id": "PIO", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "PIO",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 6e-05,
+    "f_wind": 0.117720387,
+    "p_lw": 0.8,
+    "snow_temp": 10.0,
+    "p_absorb": 1.5
   },
   {
     "key": "husemersee",
@@ -1274,12 +2206,25 @@
     "longitude": 8.705,
     "trophic_state": "Eutrophic",
     "bathymetry_datalakes_id": 152,
-    "forcing": [{ "id": "SHA", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "SHA",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.00022704534,
+    "f_wind": 0.352934964,
+    "p_lw": 0.930652192,
+    "snow_temp": 1.67646197
   },
   {
     "key": "huttnersee",
-    "name": "Hüttnersee",
+    "name": "H\u00fcttnersee",
     "elevation": 658.3,
     "surface_area": 0.165,
     "type": "Natural",
@@ -1293,12 +2238,25 @@
     "longitude": 8.675,
     "trophic_state": "Eutrophic",
     "bathymetry_datalakes_id": 145,
-    "forcing": [{ "id": "WAE", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "WAE",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.0056114111,
+    "f_wind": 0.422451294,
+    "p_lw": 0.901318282,
+    "snow_temp": 1.16816031
   },
   {
     "key": "lutzelsee",
-    "name": "Lützelsee",
+    "name": "L\u00fctzelsee",
     "elevation": 500.0,
     "surface_area": 0.128,
     "type": "Natural",
@@ -1313,10 +2271,25 @@
     "trophic_state": "Eutrophic",
     "bathymetry_datalakes_id": 57,
     "forcing": [
-      { "id": "WAE", "type": "meteoswiss_meteostation" },
-      { "id": "LAC", "type": "meteoswiss_meteostation" }
+      {
+        "id": "WAE",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "LAC",
+        "type": "meteoswiss_meteostation"
+      }
     ],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.0016845317,
+    "f_wind": 0.627174863,
+    "p_lw": 0.90881844,
+    "snow_temp": 0.595780306,
+    "p_absorb": 1.5
   },
   {
     "key": "mettmenhaslisee",
@@ -1334,8 +2307,21 @@
     "longitude": 8.492,
     "trophic_state": "Mesotrophic",
     "bathymetry_datalakes_id": 148,
-    "forcing": [{ "id": "KLO", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "KLO",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.00066433441,
+    "f_wind": 0.297805236,
+    "p_lw": 0.900916609,
+    "snow_temp": 1.61431489
   },
   {
     "key": "egelsee",
@@ -1354,10 +2340,25 @@
     "trophic_state": "Eutrophic",
     "bathymetry_datalakes_id": 147,
     "forcing": [
-      { "id": "WAE", "type": "meteoswiss_meteostation" },
-      { "id": "LAC", "type": "meteoswiss_meteostation" }
+      {
+        "id": "WAE",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "LAC",
+        "type": "meteoswiss_meteostation"
+      }
     ],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.00016314154,
+    "f_wind": 0.507742075,
+    "p_lw": 0.928509244,
+    "snow_temp": 1.09089922,
+    "p_absorb": 1.49626025
   },
   {
     "key": "untererchatzensee",
@@ -1375,8 +2376,22 @@
     "longitude": 8.489,
     "trophic_state": "Eutrophic",
     "bathymetry_datalakes_id": 150,
-    "forcing": [{ "id": "KLO", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "KLO",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.0005966991,
+    "f_wind": 0.415846477,
+    "p_lw": 0.933299951,
+    "snow_temp": 0.5,
+    "p_absorb": 1.47456365
   },
   {
     "key": "seeweidsee",
@@ -1384,7 +2399,7 @@
     "elevation": 550.1,
     "surface_area": 0.0116,
     "type": "Natural",
-    "volume": 3.96e-5,
+    "volume": 3.96e-05,
     "max_depth": 5.3,
     "average_depth": "NA",
     "residence_time": "NA",
@@ -1394,12 +2409,26 @@
     "longitude": 8.746,
     "trophic_state": "Mesotrophic",
     "bathymetry_datalakes_id": 154,
-    "forcing": [{ "id": "WAE", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "WAE",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 9.5740876e-05,
+    "f_wind": 0.460566303,
+    "p_lw": 0.891812402,
+    "snow_temp": 1.08389841,
+    "p_absorb": 1.5
   },
   {
     "key": "burgaschisee",
-    "name": "Burgäschisee",
+    "name": "Burg\u00e4schisee",
     "elevation": 464.7,
     "surface_area": 0.206,
     "type": "Natural",
@@ -1414,10 +2443,24 @@
     "trophic_state": "Eutrophic",
     "bathymetry_datalakes_id": 72,
     "forcing": [
-      { "id": "KOP", "type": "meteoswiss_meteostation" },
-      { "id": "WYN", "type": "meteoswiss_meteostation" }
+      {
+        "id": "KOP",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "WYN",
+        "type": "meteoswiss_meteostation"
+      }
     ],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.001642556,
+    "f_wind": 0.538662364,
+    "p_lw": 0.999081959,
+    "snow_temp": 0.5
   },
   {
     "key": "burgseeli",
@@ -1435,8 +2478,22 @@
     "longitude": 7.886,
     "trophic_state": "Eutrophic",
     "bathymetry_datalakes_id": 82,
-    "forcing": [{ "id": "INT", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "INT",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.0033051469,
+    "f_wind": 0.264624926,
+    "p_lw": 0.972997656,
+    "snow_temp": 1.24476594,
+    "p_absorb": 0.995052839
   },
   {
     "key": "dittligsee",
@@ -1455,10 +2512,25 @@
     "trophic_state": "Eutrophic",
     "bathymetry_datalakes_id": 84,
     "forcing": [
-      { "id": "THU", "type": "meteoswiss_meteostation" },
-      { "id": "INT", "type": "meteoswiss_meteostation" }
+      {
+        "id": "THU",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "INT",
+        "type": "meteoswiss_meteostation"
+      }
     ],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.0015940987,
+    "f_wind": 0.196027238,
+    "p_lw": 0.975177627,
+    "snow_temp": 1.84106093,
+    "p_absorb": 1.19867068
   },
   {
     "key": "gerzensee",
@@ -1476,8 +2548,22 @@
     "longitude": 7.547,
     "trophic_state": "Eutrophic",
     "bathymetry_datalakes_id": 92,
-    "forcing": [{ "id": "BER", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "BER",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.00093321328,
+    "f_wind": 0.704830532,
+    "p_lw": 0.982162608,
+    "snow_temp": 0.569279188,
+    "p_absorb": 0.966347254
   },
   {
     "key": "lobsigensee",
@@ -1485,7 +2571,7 @@
     "elevation": 514.2,
     "surface_area": 0.0173,
     "type": "Natural",
-    "volume": 2.26e-5,
+    "volume": 2.26e-05,
     "max_depth": 2.5,
     "average_depth": "NA",
     "residence_time": "NA",
@@ -1495,8 +2581,22 @@
     "longitude": 7.298,
     "trophic_state": "Eutrophic",
     "bathymetry_datalakes_id": 104,
-    "forcing": [{ "id": "BER", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "BER",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 1e-05,
+    "f_wind": 1.75,
+    "p_lw": 0.937682496,
+    "snow_temp": 0.750728123,
+    "p_absorb": 1.5
   },
   {
     "key": "chlimoossee",
@@ -1504,7 +2604,7 @@
     "elevation": 520.6,
     "surface_area": 0.0171,
     "type": "Natural",
-    "volume": 2.34e-5,
+    "volume": 2.34e-05,
     "max_depth": 3,
     "average_depth": "NA",
     "residence_time": 0.6,
@@ -1514,8 +2614,22 @@
     "longitude": 7.469,
     "trophic_state": "Eutrophic",
     "bathymetry_datalakes_id": 109,
-    "forcing": [{ "id": "BER", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "BER",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 1e-05,
+    "f_wind": 1.75,
+    "p_lw": 0.950285443,
+    "snow_temp": 3.89562518,
+    "p_absorb": 1.5
   },
   {
     "key": "uebeschisee",
@@ -1533,8 +2647,22 @@
     "longitude": 7.565,
     "trophic_state": "Eutrophic",
     "bathymetry_datalakes_id": 127,
-    "forcing": [{ "id": "INT", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "INT",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.0057641259,
+    "f_wind": 0.212595399,
+    "p_lw": 0.947736957,
+    "snow_temp": 1.86877531,
+    "p_absorb": 1.30568313
   },
   {
     "key": "bret",
@@ -1552,8 +2680,21 @@
     "longitude": 6.773,
     "trophic_state": "Mesotrophic",
     "bathymetry_datalakes_id": 183,
-    "forcing": [{ "id": "PUY", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "PUY",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.010261,
+    "f_wind": 0.79209,
+    "p_lw": 0.92065,
+    "snow_temp": 0.74223
   },
   {
     "key": "brenet",
@@ -1572,10 +2713,24 @@
     "trophic_state": "Eutrophic",
     "bathymetry_datalakes_id": 175,
     "forcing": [
-      { "id": "CHB", "type": "meteoswiss_meteostation" },
-      { "id": "BIE", "type": "meteoswiss_meteostation" }
+      {
+        "id": "CHB",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "BIE",
+        "type": "meteoswiss_meteostation"
+      }
     ],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.0033439827,
+    "f_wind": 0.931947988,
+    "p_lw": 0.807418015,
+    "snow_temp": 0.5
   },
   {
     "key": "chavonnes",
@@ -1594,11 +2749,28 @@
     "trophic_state": "Oligotrophic",
     "bathymetry_datalakes_id": 184,
     "forcing": [
-      { "id": "CDM", "type": "meteoswiss_meteostation" },
-      { "id": "DIA", "type": "meteoswiss_meteostation" },
-      { "id": "PUY", "type": "meteoswiss_meteostation" }
+      {
+        "id": "CDM",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "DIA",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "PUY",
+        "type": "meteoswiss_meteostation"
+      }
     ],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 1e-05,
+    "f_wind": 0.472768941,
+    "p_lw": 0.8,
+    "snow_temp": 7.29003205
   },
   {
     "key": "bretaye",
@@ -1615,13 +2787,30 @@
     "latitude": 46.326,
     "longitude": 7.072,
     "trophic_state": "Mesotrophic",
-
     "forcing": [
-      { "id": "CDM", "type": "meteoswiss_meteostation" },
-      { "id": "DIA", "type": "meteoswiss_meteostation" },
-      { "id": "PUY", "type": "meteoswiss_meteostation" }
+      {
+        "id": "CDM",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "DIA",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "PUY",
+        "type": "meteoswiss_meteostation"
+      }
     ],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.00020256546,
+    "f_wind": 0.221034379,
+    "p_lw": 0.8,
+    "snow_temp": 1.9633073,
+    "p_absorb": 1.5
   },
   {
     "key": "lioson",
@@ -1640,11 +2829,28 @@
     "trophic_state": "Oligotrophic",
     "bathymetry_datalakes_id": 172,
     "forcing": [
-      { "id": "CDM", "type": "meteoswiss_meteostation" },
-      { "id": "DIA", "type": "meteoswiss_meteostation" },
-      { "id": "PUY", "type": "meteoswiss_meteostation" }
+      {
+        "id": "CDM",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "DIA",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "PUY",
+        "type": "meteoswiss_meteostation"
+      }
     ],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 1e-05,
+    "f_wind": 0.876889586,
+    "p_lw": 0.8,
+    "snow_temp": 8.7239741
   },
   {
     "key": "tome",
@@ -1662,8 +2868,22 @@
     "longitude": 8.69,
     "trophic_state": "Oligotrophic",
     "bathymetry_datalakes_id": 162,
-    "forcing": [{ "id": "ROE", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "ROE",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 1e-05,
+    "f_wind": 1.12678076,
+    "p_lw": 0.8,
+    "snow_temp": 4.95505514,
+    "p_absorb": 1.5
   },
   {
     "key": "barone",
@@ -1681,8 +2901,22 @@
     "longitude": 8.752,
     "trophic_state": "Oligotrophic",
     "bathymetry_datalakes_id": 161,
-    "forcing": [{ "id": "ROE", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "ROE",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.035400378,
+    "f_wind": 0.496272273,
+    "p_lw": 0.848230433,
+    "snow_temp": 2.00570898,
+    "p_absorb": 1.5
   },
   {
     "key": "superiore",
@@ -1700,8 +2934,22 @@
     "longitude": 8.585,
     "trophic_state": "Oligotrophic",
     "bathymetry_datalakes_id": 164,
-    "forcing": [{ "id": "ROE", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "ROE",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 1e-05,
+    "f_wind": 1.33011885,
+    "p_lw": 0.806609109,
+    "snow_temp": 1.93801817,
+    "p_absorb": 0.5
   },
   {
     "key": "sassolo",
@@ -1719,8 +2967,22 @@
     "longitude": 8.593,
     "trophic_state": "Oligotrophic",
     "bathymetry_datalakes_id": 163,
-    "forcing": [{ "id": "ROE", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "ROE",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 1e-05,
+    "f_wind": 1.00584508,
+    "p_lw": 0.828999874,
+    "snow_temp": 2.66074006,
+    "p_absorb": 0.62828814
   },
   {
     "key": "geistsee",
@@ -1728,7 +2990,7 @@
     "elevation": 660,
     "surface_area": 0.0095,
     "type": "Natural",
-    "volume": 2.3e-5,
+    "volume": 2.3e-05,
     "max_depth": 6.5,
     "average_depth": "NA",
     "residence_time": "NA",
@@ -1738,8 +3000,22 @@
     "longitude": 7.535,
     "trophic_state": "Eutrophic",
     "bathymetry_datalakes_id": 65,
-    "forcing": [{ "id": "THU", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "THU",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.0013035451,
+    "f_wind": 0.1,
+    "p_lw": 0.98684574,
+    "snow_temp": 1.83130561,
+    "p_absorb": 1.46285475
   },
   {
     "key": "lenkerseeli",
@@ -1747,7 +3023,7 @@
     "elevation": 1065,
     "surface_area": 0.02,
     "type": "Natural",
-    "volume": 1.6e-5,
+    "volume": 1.6e-05,
     "max_depth": 2.2,
     "average_depth": "NA",
     "residence_time": "NA",
@@ -1757,8 +3033,22 @@
     "longitude": 7.442,
     "trophic_state": "NA",
     "bathymetry_datalakes_id": 63,
-    "forcing": [{ "id": "MMLEN", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "MMLEN",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 2.2369222e-05,
+    "f_wind": 1.75,
+    "p_lw": 0.8,
+    "snow_temp": 0.501635283,
+    "p_absorb": 1.49916053
   },
   {
     "key": "stockseewli",
@@ -1776,14 +3066,29 @@
     "longitude": 8.325,
     "trophic_state": "NA",
     "forcing": [
-      { "id": "MMGTT", "type": "meteoswiss_meteostation" },
-      { "id": "GRH", "type": "meteoswiss_meteostation" }
+      {
+        "id": "MMGTT",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "GRH",
+        "type": "meteoswiss_meteostation"
+      }
     ],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 1e-05,
+    "f_wind": 1.75,
+    "p_lw": 0.8,
+    "snow_temp": 1.01746497,
+    "p_absorb": 0.5
   },
   {
     "key": "oberesbanzlauiseeli",
-    "name": "Oberes Bänzlauiseeli",
+    "name": "Oberes B\u00e4nzlauiseeli",
     "elevation": 2216.0,
     "surface_area": 0.014,
     "type": "Natural",
@@ -1797,10 +3102,25 @@
     "longitude": 8.286,
     "trophic_state": "Oligotrophic",
     "forcing": [
-      { "id": "SLFGU2", "type": "meteoswiss_meteostation" },
-      { "id": "GRH", "type": "meteoswiss_meteostation" }
+      {
+        "id": "MMGTT",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "GRH",
+        "type": "meteoswiss_meteostation"
+      }
     ],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 7.25e-05,
+    "f_wind": 0.17472701,
+    "p_lw": 0.8,
+    "snow_temp": 9.81160225,
+    "p_absorb": 0.844869968
   },
   {
     "key": "steinsee",
@@ -1819,9 +3139,25 @@
     "trophic_state": "Oligotrophic",
     "bathymetry_datalakes_id": 122,
     "forcing": [
-      { "id": "GRH", "type": "meteoswiss_meteostation" }
+      {
+        "id": "SLFGAD",
+        "type": "meteoswiss_meteostation"
+      },
+      {
+        "id": "GRH",
+        "type": "meteoswiss_meteostation"
+      }
     ],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.00050662062,
+    "f_wind": 0.103966418,
+    "p_lw": 0.8,
+    "snow_temp": 8.8724715,
+    "p_absorb": 1.5
   },
   {
     "key": "barchetsee",
@@ -1838,8 +3174,22 @@
     "latitude": 47.615,
     "longitude": 8.753,
     "trophic_state": "NA",
-    "forcing": [{ "id": "TAE", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "TAE",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 1e-05,
+    "f_wind": 1.75,
+    "p_lw": 0.94283,
+    "snow_temp": 0.5,
+    "p_absorb": 1.5
   },
   {
     "key": "bichelsee",
@@ -1856,9 +3206,22 @@
     "latitude": 47.457,
     "longitude": 8.9,
     "trophic_state": "NA",
-
-    "forcing": [{ "id": "TAE", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "TAE",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.00082512631,
+    "f_wind": 0.229653736,
+    "p_lw": 0.906852037,
+    "snow_temp": 0.836774266,
+    "p_absorb": 0.615181505
   },
   {
     "key": "hasenseeost",
@@ -1876,8 +3239,22 @@
     "longitude": 8.832,
     "trophic_state": "NA",
     "bathymetry_datalakes_id": 142,
-    "forcing": [{ "id": "TAE", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "TAE",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.00018284707,
+    "f_wind": 0.306646414,
+    "p_lw": 0.976233433,
+    "snow_temp": 1.47533954,
+    "p_absorb": 1.29875336
   },
   {
     "key": "hasenseewest",
@@ -1895,8 +3272,22 @@
     "longitude": 8.804,
     "trophic_state": "NA",
     "bathymetry_datalakes_id": 143,
-    "forcing": [{ "id": "TAE", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "TAE",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.00031540791,
+    "f_wind": 0.465042133,
+    "p_lw": 0.968217032,
+    "snow_temp": 1.83467573,
+    "p_absorb": 1.49045174
   },
   {
     "key": "hauptwilerweiher",
@@ -1913,8 +3304,22 @@
     "latitude": 47.48,
     "longitude": 9.256,
     "trophic_state": "NA",
-    "forcing": [{ "id": "TAE", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "TAE",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 1e-05,
+    "f_wind": 1.58087335,
+    "p_lw": 0.919224729,
+    "snow_temp": 4.71232214,
+    "p_absorb": 1.5
   },
   {
     "key": "hugiweiher",
@@ -1931,8 +3336,22 @@
     "latitude": 47.572,
     "longitude": 8.861,
     "trophic_state": "NA",
-    "forcing": [{ "id": "TAE", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "TAE",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 2.9052373e-05,
+    "f_wind": 1.75,
+    "p_lw": 0.965837402,
+    "snow_temp": 0.785779741,
+    "p_absorb": 1.5
   },
   {
     "key": "obererbommerweiher",
@@ -1949,12 +3368,26 @@
     "latitude": 47.618,
     "longitude": 9.156,
     "trophic_state": "NA",
-    "forcing": [{ "id": "GUT", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "GUT",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.00065549,
+    "f_wind": 1.343,
+    "p_lw": 0.92763,
+    "snow_temp": 4.147,
+    "p_absorb": 0.87098
   },
   {
     "key": "marwilermoos",
-    "name": "Märwiler Moos",
+    "name": "M\u00e4rwiler Moos",
     "elevation": 500.1,
     "surface_area": 0.028,
     "type": "Natural",
@@ -1967,8 +3400,22 @@
     "latitude": 47.539,
     "longitude": 9.075,
     "trophic_state": "NA",
-    "forcing": [{ "id": "TAE", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "TAE",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.00076703011,
+    "f_wind": 1.75,
+    "p_lw": 0.951936238,
+    "snow_temp": 0.5,
+    "p_absorb": 1.4941705
   },
   {
     "key": "nussbommersee",
@@ -1986,8 +3433,22 @@
     "longitude": 8.814,
     "trophic_state": "NA",
     "bathymetry_datalakes_id": 144,
-    "forcing": [{ "id": "TAE", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "TAE",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.0027497561,
+    "f_wind": 0.279460851,
+    "p_lw": 0.975319539,
+    "snow_temp": 0.782803194,
+    "p_absorb": 1.43205224
   },
   {
     "key": "vagoweiher",
@@ -2004,8 +3465,22 @@
     "latitude": 47.586,
     "longitude": 9.029,
     "trophic_state": "NA",
-    "forcing": [{ "id": "TAE", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "TAE",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 0.00019419328,
+    "f_wind": 0.630981438,
+    "p_lw": 0.867352366,
+    "snow_temp": 5.5366179,
+    "p_absorb": 1.5
   },
   {
     "key": "wilemersee",
@@ -2022,8 +3497,22 @@
     "latitude": 47.6,
     "longitude": 8.799,
     "trophic_state": "NA",
-    "forcing": [{ "id": "TAE", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "TAE",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 1e-05,
+    "f_wind": 1.75,
+    "p_lw": 0.99808,
+    "snow_temp": 0.5,
+    "p_absorb": 1.5
   },
   {
     "key": "wistererweiher",
@@ -2040,7 +3529,21 @@
     "latitude": 47.582,
     "longitude": 9.055,
     "trophic_state": "NA",
-    "forcing": [{ "id": "TAE", "type": "meteoswiss_meteostation" }],
-    "forcing_forecast": { "source": "MeteoSwiss", "model": "COSMO", "days": 5 }
+    "forcing": [
+      {
+        "id": "TAE",
+        "type": "meteoswiss_meteostation"
+      }
+    ],
+    "forcing_forecast": {
+      "source": "MeteoSwiss",
+      "model": "COSMO",
+      "days": 5
+    },
+    "a_seiche": 2.25e-05,
+    "f_wind": 1.09662638,
+    "p_lw": 0.806660693,
+    "snow_temp": 2.07638072,
+    "p_absorb": 1.5
   }
 ]

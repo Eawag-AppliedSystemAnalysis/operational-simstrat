@@ -4,7 +4,7 @@ import numpy as np
 from .general import datetime_to_simstrat_time, air_pressure_from_elevation, seiche_from_surface_area
 
 
-def update_par_file(simstrat_version, file_path, start_date, end_date, snapshot, parameters, args):
+def update_par_file(simstrat_version, file_path, start_date, end_date, snapshot, parameters, args, log):
     if simstrat_version in ["3.0.3", "3.0.4"]:
         with open(file_path) as f:
             par = json.load(f)
@@ -24,6 +24,7 @@ def update_par_file(simstrat_version, file_path, start_date, end_date, snapshot,
 
         for key in par["ModelParameters"].keys():
             if key in parameters:
+                log.info("Overwriting default {} value with calibrated value: {}".format(key, parameters[key]), indent=2)
                 par["ModelParameters"][key] = parameters[key]
     else:
         raise ValueError("Par file creation not implemented for Simstrat version {}".format(simstrat_version))

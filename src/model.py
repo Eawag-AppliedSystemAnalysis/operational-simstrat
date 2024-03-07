@@ -110,6 +110,8 @@ class Simstrat(object):
             elif key in self.optional_parameters.keys():
                 self.optional_parameters[key]["verify"](parameters[key])
                 self.parameters[key] = parameters[key]
+            else:
+                self.parameters[key] = parameters[key]
 
         self.snapshot = args["snapshot"]
         self.parameters["reference_date"] = datetime.strptime(self.parameters["reference_date"], "%Y%m%d").replace(
@@ -442,8 +444,8 @@ class Simstrat(object):
                 "Unable to locate default PAR file for Simstrat version {}".format(self.args["simstrat_version"]))
         self.log.info("Updating default PAR file for {}".format(self.args["simstrat_version"]), indent=1)
         par = update_par_file(self.args["simstrat_version"], file_path, self.start_date, self.end_date,
-                              self.args["snapshot"], self.parameters, self.args)
-        self.log.info("Writing default PAR file for {}".format(self.args["simstrat_version"]), indent=1)
+                              self.args["snapshot"], self.parameters, self.args, self.log)
+        self.log.info("Writing PAR file for {}".format(self.args["simstrat_version"]), indent=1)
         write_par_file(self.args["simstrat_version"], par, self.simulation_dir)
         self.log.end_stage()
 
