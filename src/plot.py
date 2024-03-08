@@ -41,11 +41,11 @@ def plot_forcing(lake):
 
 
 def plot_inflows(lake):
-    fig, axes = plt.subplots(nrows=3, ncols=1, figsize=(15, 5 * 3))
+    fig, axes = plt.subplots(nrows=4, ncols=1, figsize=(15, 5 * 3))
     fig.suptitle('Inflow Data', fontsize=16)
-    keys = ["Q", "T", "S"]
+    keys = ["Qin", "Tin", "Sin", "AED2_inflow/OXY_oxy_inflow"]
     for i in range(len(keys)):
-        file_path = os.path.join("..", "runs", lake, "{}in.dat".format(keys[i]))
+        file_path = os.path.join("..", "runs", lake, "{}.dat".format(keys[i]))
         with open(file_path, 'r') as file:
             lines = file.readlines()
             if lines[0].strip() == "No inflows":
@@ -53,15 +53,22 @@ def plot_inflows(lake):
                 plt.show()
                 return
             deep_inflows, surface_inflows = [int(d.strip()) for d in lines[1].strip().split(" ") if d != ""]
-        df = pd.read_csv(file_path, skiprows=3, delim_whitespace=True, header=None)
+        df = pd.read_csv(file_path, skiprows=2, delim_whitespace=True, header=None)
         df.columns = ["time"] + [str(c) for c in list(range(len(df.columns) - 1))]
+        depths = df.iloc[0]
+        df = df.iloc[1:]
         df['time'] = pd.to_datetime(df['time'], origin='19810101', unit='D')
+        if keys[i] == "Qin":
+            df_q = df
         for d in range(deep_inflows):
             axes[i].plot(df['time'], df[str(d)], label="Deep inflow {}".format(d))
             axes[i].set_ylabel(keys[i])
             axes[i].legend()
-        for d in range(deep_inflows, deep_inflows + surface_inflows):
-            axes[i].plot(df['time'], df[str(d)], label="Surface inflow {}".format(d - deep_inflows))
+        for d in range(deep_inflows + 1, deep_inflows + surface_inflows, 3):
+            if keys[i] == "Qin":
+                axes[i].plot(df['time'], df[str(d)] * abs(depths[d]), label="Surface inflow {}".format(d - deep_inflows))
+            else:
+                axes[i].plot(df['time'], df[str(d)] / df_q[str(d)], label="Surface inflow {}".format(d - deep_inflows))
             axes[i].set_ylabel(keys[i])
             axes[i].legend()
     plt.tight_layout(rect=[0, 0, 1, 0.96])
@@ -98,6 +105,7 @@ def plot_simstrat_files(lake):
     plot_inflows(lake)
     plot_absorption(lake)
     plot_output(lake, "T")
+    plot_output(lake, "OXY_sat")
 
 
 if __name__ == "__main__":

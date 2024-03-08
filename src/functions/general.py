@@ -257,6 +257,10 @@ def calculate_mean_wind_direction(wind_direction):
     return mean_wind_direction
 
 
+def interpolate_arrays(x1, x2, y1, y2, x):
+    return ((x - x1)/(x2 - x1)) * (y2 - y1) + y1
+
+
 def run_subprocess(command):
     result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     if result.returncode != 0:

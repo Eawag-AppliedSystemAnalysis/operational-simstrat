@@ -13,7 +13,7 @@ from functions.bathymetry import bathymetry_from_file, bathymetry_from_datalakes
 from functions.grid import grid_from_file
 from functions.aed2 import create_aed_configuration_file, compute_oxygen_inflows, compute_initial_oxygen
 from functions.inflow import collect_inflow_data, interpolate_inflow_data, quality_assurance_inflow_data, \
-    fill_inflow_data
+    fill_inflow_data, merge_surface_inflows
 from functions.forcing import metadata_from_forcing, download_forcing_data, interpolate_forcing_data, fill_forcing_data, \
     quality_assurance_forcing_data
 from functions.par import update_par_file, overwrite_par_file_dates
@@ -401,6 +401,8 @@ class Simstrat(object):
             self.log.info("Filling large data gaps", indent=1)
             inflow_data = fill_inflow_data(inflow_data, self.inflow_parameters, self.simulation_dir, self.snapshot,
                                            self.parameters["reference_date"], self.log)
+            if len(inflow_data["surface_inflows"]) > 3:
+                inflow_data["surface_inflows"] = merge_surface_inflows(inflow_data["surface_inflows"])
             write_inflows(2, self.simulation_dir, self.log, inflow_data=inflow_data)
             if self.args["couple_aed2"]:
                 self.log.info("Computing oxygen saturation", indent=1)

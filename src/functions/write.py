@@ -124,7 +124,12 @@ def write_inflows(inflow_mode, simulation_dir, log, inflow_data=None):
                 f.write('%10d %10d\n' % (len(inflow_data["deep_inflows"]), len(inflow_data["surface_inflows"])))
                 f.write('-1         ' + ' '.join(['%10.2f' % z["depth"] for z in inflow_data["deep_inflows"]]) + ' '.join(['%10.2f' % z["depth"] for z in inflow_data["surface_inflows"]]) + '\n')
                 for i in range(len(time)):
-                    if any(np.isnan([d[key][i] for d in inflow_data["deep_inflows"]])) or any(np.isnan([d[key][i] for d in inflow_data["surface_inflows"]])):
+                    nan_skip = False
+                    for k in files.keys():
+                        if any(np.isnan([d[k][i] for d in inflow_data["deep_inflows"]])) or any(
+                                np.isnan([d[k][i] for d in inflow_data["surface_inflows"]])):
+                            nan_skip = True
+                    if nan_skip:
                         continue
                     f.write('%10.4f ' % time[i])
                     f.write(' '.join(['%10.2f' % z[key][i] for z in inflow_data["deep_inflows"]]))
@@ -160,13 +165,17 @@ def write_oxygen_inflows(simulation_dir, inflow_data=None):
 
         with open(file_path, 'w', encoding='utf-8') as f:
             f.write(
-                '%10s %10s %10s %10s\n' % ('Time [d]', 'Depth [m]', 'Deep Inflows [mmol/m3]', 'Surface Inflows [mmol/m3]'))
+                '%10s %10s %10s %10s\n' % ('Time [d]', 'Depth [m]', 'Deep Inflows [mmol/m3]', 'Surface Inflows [mmol/ms]'))
             f.write('%10d %10d\n' % (len(inflow_data["deep_inflows"]), len(inflow_data["surface_inflows"])))
             f.write('-1         ' + ' '.join(['%10.2f' % z["depth"] for z in inflow_data["deep_inflows"]]) + ' '.join(
                 ['%10.2f' % z["depth"] for z in inflow_data["surface_inflows"]]) + '\n')
             for i in range(len(time)):
-                if any(np.isnan([d["oxygen"][i] for d in inflow_data["deep_inflows"]])) or any(
-                        np.isnan([d["oxygen"][i] for d in inflow_data["surface_inflows"]])):
+                nan_skip = False
+                for k in ["Q", "T", "S"]:
+                    if any(np.isnan([d[k][i] for d in inflow_data["deep_inflows"]])) or any(
+                            np.isnan([d[k][i] for d in inflow_data["surface_inflows"]])):
+                        nan_skip = True
+                if nan_skip:
                     continue
                 f.write('%10.4f ' % time[i])
                 f.write(' '.join(['%10.2f' % z["oxygen"][i] for z in inflow_data["deep_inflows"]]))

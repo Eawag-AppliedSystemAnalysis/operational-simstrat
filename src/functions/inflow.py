@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
 
-from .general import datetime_to_simstrat_time, call_url, interpolate_timeseries, fill_day_of_year
+from .general import datetime_to_simstrat_time, call_url, interpolate_timeseries, fill_day_of_year, interpolate_arrays
 
 
 def collect_inflow_data(inflows, salinity, start, end, reference_date, simulation_dir, api, log):
@@ -185,14 +185,14 @@ def parse_lake_outflow(inflow, time, simulation_dir, reference_date):
     if surface_inflows > 0:
         df["values"] = df["values"] + df.iloc[:, deep_inflows + 2] * abs(depths[deep_inflows + 2])
     df = pd.merge(df_t, df, on='time', how='left')
-    values = np.array(df["values"].values)
+    flow_values = np.array(df["values"].values)
 
     if "surface_inflow" in inflow:
-        lake_inflow[0]["Q"] = np.zeros(len(values))
-        lake_inflow[1]["Q"] = values / abs(inflow["surface_inflow"])
-        lake_inflow[2]["Q"] = values / abs(inflow["surface_inflow"])
+        lake_inflow[0]["Q"] = np.zeros(len(flow_values))
+        lake_inflow[1]["Q"] = flow_values / abs(inflow["surface_inflow"])
+        lake_inflow[2]["Q"] = flow_values / abs(inflow["surface_inflow"])
     else:
-        lake_inflow[0]["Q"] = values
+        lake_inflow[0]["Q"] = flow_values
 
     for key in ["T", "S"]:
         file_path = os.path.join(os.path.join(simulation_dir, "..", inflow["id"], "Results", "{}_out.dat".format(key)))
@@ -207,9 +207,35 @@ def parse_lake_outflow(inflow, time, simulation_dir, reference_date):
         if "surface_inflow" in inflow:
             bottom_index = min(range(len(depths)), key=lambda i: abs(depths[i] - abs(inflow["surface_inflow"])))
             lake_inflow[0][key] = np.zeros(len(values))
-            lake_inflow[1][key] = np.array(df.iloc[:, bottom_index + 2].values) / abs(inflow["surface_inflow"])
-            lake_inflow[2][key] = np.array(df.iloc[:, surface_index + 2].values) / abs(inflow["surface_inflow"])
+            lake_inflow[1][key] = np.array(df.iloc[:, bottom_index + 2].values) * (flow_values / abs(inflow["surface_inflow"]))
+            lake_inflow[2][key] = np.array(df.iloc[:, surface_index + 2].values) * (flow_values / abs(inflow["surface_inflow"]))
         else:
             lake_inflow[0][key] = np.array(df.iloc[:, surface_index + 2].values)
 
     return lake_inflow
+
+
+def merge_surface_inflows(inflows):
+    number_inflows = int(len(inflows) / 3)
+    length = len(inflows[0]["Q"])
+    depths_all = [i["depth"] for i in inflows]
+    depths_set = sorted({i["depth"] for i in inflows})
+    lake_inflow = []
+    for depth in depths_set:
+        lake_inflow.append({"depth": depth, "Q": np.zeros(length), "T": np.zeros(length), "S": np.zeros(length)})
+        if depth != depths_set[0] and depth != depths_set[-1]:
+            lake_inflow.append({"depth": depth, "Q": np.zeros(length), "T": np.zeros(length), "S": np.zeros(length)})
+    depths_out = [i["depth"] for i in lake_inflow]
+    for i in range(number_inflows):
+        depth = depths_all[i * 3]
+        index = len(depths_out) - depths_out[::-1].index(depth) - 1  # Get index of last occurrence
+        deep = inflows[i * 3 + 1]
+        shallow = inflows[i * 3 + 2]
+        for l in range(index, len(lake_inflow)):
+            depth_inflow = lake_inflow[l]["depth"]
+            for p in ["Q", "T", "S"]:
+                values = interpolate_arrays(0, depth, shallow[p], deep[p], depth_inflow)
+                lake_inflow[l][p] = lake_inflow[l][p] + values
+    lake_inflow = [{"depth": depths_set[0], "Q": np.zeros(length), "T": np.zeros(length), "S": np.zeros(length)}] + lake_inflow
+    return lake_inflow
+

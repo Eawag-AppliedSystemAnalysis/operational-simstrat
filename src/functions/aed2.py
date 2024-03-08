@@ -20,12 +20,11 @@ def compute_oxygen_inflows(inflow_data, elevation):
     for inflow in inflow_data["deep_inflows"]:
         inflow["oxygen"] = oxygen_saturation(inflow["T"], elevation)
     if len(inflow_data["surface_inflows"]) > 0:
-        depth = max(abs(item["depth"]) for item in inflow_data["surface_inflows"])
         for inflow in inflow_data["surface_inflows"]:
             if np.all(inflow["T"] == 0):
                 inflow["oxygen"] = inflow["T"]
             else:
-                inflow["oxygen"] = oxygen_saturation(inflow["T"] * depth, elevation) / depth
+                inflow["oxygen"] = oxygen_saturation(inflow["T"] / inflow["Q"], elevation) * inflow["Q"]
     return inflow_data
 
 

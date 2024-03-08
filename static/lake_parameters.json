@@ -1269,7 +1269,7 @@
         "type": "bafu_hydrostation",
         "Q": {
           "id": 2276,
-          "parameter": "PegelDrucksondeSchacht"
+          "parameter": "AbflussSchwimmer"
         },
         "T": {
           "id": 2276,
