@@ -48,23 +48,17 @@ def oxygen_saturation(temperature, altitude):
     # Benson & Krause, 1984; ignoring salinity effects
     t_k = temperature + 273.15  # Convert to kelvin
     capac = -139.34411 + 1.575701e5 / t_k - 6.642308e7 / t_k ** 2 + 1.243800e10 / t_k ** 3 - 8.621949e11 / t_k ** 4
-    o2 = np.exp(capac) * pressure_correction(temperature, altitude)  # mgL
+    o2 = np.exp(capac) * pressure_correction(altitude)  # mgL
     return o2 / 32 * 1000  # mmolm3
 
 
-def pressure_correction(temperature, altitude):
-    mmHg_mb = 0.750061683
-    mmHg_inHg = 25.3970886
-    standard_pressure_sea_level = 29.92126
-    standard_temperature_sea_level = 15 + 273.15
-    gravitational_acceleration = 9.81
-    air_molar_mass = 0.0289644
-    universal_gas_constant = 8.31447
-    baro = (1. / mmHg_mb) * mmHg_inHg * standard_pressure_sea_level * np.exp(
-        (-gravitational_acceleration * air_molar_mass * altitude) / (
-                universal_gas_constant * standard_temperature_sea_level))
-    u = 10 ** (8.10765 - 1750.286 / (235 + temperature))
-    press_corr = (baro * mmHg_mb - u) / (760 - u)
+def pressure_correction(altitude):
+    standard_pressure_sea_level = 101325  # Pa
+    standard_temperature_sea_level = 288.16  # K
+    gravitational_acceleration = 9.80665  # m2/s
+    air_molar_mass = 0.02896968  # kg/mol
+    universal_gas_constant = 8.314462681  # J/mol/K
+    press_corr = np.exp((-gravitational_acceleration * air_molar_mass * altitude) / (universal_gas_constant * standard_temperature_sea_level))
     return press_corr
 
 
