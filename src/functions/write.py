@@ -126,8 +126,9 @@ def write_inflows(inflow_mode, simulation_dir, log, inflow_data=None):
                 for i in range(len(time)):
                     nan_skip = False
                     for k in files.keys():
-                        if any(np.isnan([d[k][i] for d in inflow_data["deep_inflows"]])) or any(
-                                np.isnan([d[k][i] for d in inflow_data["surface_inflows"]])):
+                        if len(time) - i <= len(inflow_data["Time"]) and any(
+                                np.isnan([d[k][-(len(time) - i)] for d in inflow_data["deep_inflows"]])) or any(
+                                np.isnan([d[k][-(len(time) - i)] for d in inflow_data["surface_inflows"]])):
                             nan_skip = True
                     if nan_skip:
                         continue
@@ -172,8 +173,9 @@ def write_oxygen_inflows(simulation_dir, inflow_data=None):
             for i in range(len(time)):
                 nan_skip = False
                 for k in ["Q", "T", "S"]:
-                    if any(np.isnan([d[k][i] for d in inflow_data["deep_inflows"]])) or any(
-                            np.isnan([d[k][i] for d in inflow_data["surface_inflows"]])):
+                    if len(time) - i <= len(inflow_data["Time"]) and any(
+                            np.isnan([d[k][-(len(time) - i)] for d in inflow_data["deep_inflows"]])) or any(
+                            np.isnan([d[k][-(len(time) - i)] for d in inflow_data["surface_inflows"]])):
                         nan_skip = True
                 if nan_skip:
                     continue
