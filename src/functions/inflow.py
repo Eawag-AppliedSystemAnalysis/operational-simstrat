@@ -137,17 +137,22 @@ def download_bafu_hydrodata(inflow, start_date, end_date, time, salinity, api):
         if p == "S" and "S" not in inflow:
             values = np.array([salinity] * len(time))
         else:
-            data = call_url(endpoint.format(inflow[p]["id"],
+            try:
+                data = call_url(endpoint.format(inflow[p]["id"],
                                         inflow[p]["parameter"],
                                         start_date.strftime('%Y%m%d'),
                                         end_date.strftime('%Y%m%d')))
-            df = pd.DataFrame({'time': data["Time"], 'values': np.array(data[inflow[p]["parameter"]])})
-            df['time'] = pd.to_datetime(df['time'])
-            df['values'] = pd.to_numeric(df['values'], errors='coerce')
-            df = df.dropna()
-            df = df.sort_values(by='time')
-            df = pd.merge(df_t, df, on='time', how='left')
-            values = np.array(df["values"].values)
+                df = pd.DataFrame({'time': data["Time"], 'values': np.array(data[inflow[p]["parameter"]])})
+                df['time'] = pd.to_datetime(df['time'])
+                df['values'] = pd.to_numeric(df['values'], errors='coerce')
+                df = df.dropna()
+                df = df.sort_values(by='time')
+                df = pd.merge(df_t, df, on='time', how='left')
+                values = np.array(df["values"].values)
+            except Exception as e:
+                print("WARNING: Failed to access url")
+                print(e)
+                values = np.full(len(time), np.nan)
         deep_inflow[p] = values
     return deep_inflow
 
