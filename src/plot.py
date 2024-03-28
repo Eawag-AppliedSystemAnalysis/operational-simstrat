@@ -106,6 +106,7 @@ def plot_simstrat_files(lake):
     plot_absorption(lake)
     plot_output(lake, "T")
     plot_output(lake, "OXY_sat")
+    plot_output(lake, "TotalIceH")
 
 
 if __name__ == "__main__":

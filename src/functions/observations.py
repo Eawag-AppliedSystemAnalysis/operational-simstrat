@@ -45,11 +45,13 @@ def absorption_from_observations(key, start_date, end_date, api, reference_date,
         df = pd.DataFrame({"time": data["Time"], "value": data["Secchi depth [m]"]})
         df["value"] = 1.7 / df["value"]  # Convert from Secchi depth [m] to absorption [m-1]
         df["time"] = pd.to_datetime(df["time"])
+        secchi_mean = df['value'].mean()
 
         # Create monthly secchi depth array
         df["month"] = df["time"].dt.month
         month_dict = df.groupby(['month'])['value'].mean().to_dict()
-        monthly_values = [month_dict[m] if m in month_dict else 2 for m in range(1, 13)]
+        monthly_values = [month_dict[m] if m in month_dict else secchi_mean for m in range(1, 13)]
+
         df = df[(df['time'] >= start_date) & (df['time'] <= end_date)]
         time = np.array([datetime(year=start_date.year, month=1, day=15).replace(tzinfo=timezone.utc) + relativedelta(months=n) for n in range((end_date.year + 1 - start_date.year) * 12)])
         time = time[(time > start_date) & (time < end_date)]

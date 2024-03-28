@@ -97,7 +97,7 @@ def meteodata_from_meteoswiss_meteostations(start, end, forcing, elevation, lati
                     gaps = detect_gaps(df["time"], start, end)
                 elif len(gaps) > 0:
                     for gap in gaps:
-                        if gap[0] >= parameter["start_date"] and gap[1] <= parameter["end_date"]:
+                        if gap[1] >= parameter["start_date"] and gap[0] <= parameter["end_date"]:
                             log.info("{}: Trying to complete with data from station {} : {} - {}".format(
                                 p_id, f["id"], gap[0].strftime('%Y%m%d'), gap[1].strftime('%Y%m%d')), indent=2)
                             try:
