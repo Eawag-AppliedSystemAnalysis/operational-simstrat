@@ -43,5 +43,6 @@
    theta_sed_oxy = 1	! Default
    oxy_min = 0
    oxy_max = 500
+   oxy_piston_model = 10
 /
 /
