@@ -35,6 +35,15 @@
       "model": "COSMO",
       "days": 5
     },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.64,
+          "surface": 0.45,
+          "bottom": 0.33
+        }
+      }
+    },
     "a_seiche": 0.012730098,
     "f_wind": 0.550475116,
     "p_lw": 0.941027656,
@@ -67,6 +76,15 @@
       "source": "MeteoSwiss",
       "model": "COSMO",
       "days": 5
+    },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.07,
+          "surface": 1.07,
+          "bottom": 0.88
+        }
+      }
     },
     "a_seiche": 0.024503328,
     "f_wind": 0.613069291,
@@ -114,6 +132,15 @@
         }
       }
     ],
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.83,
+          "surface": 0.88,
+          "bottom": 0.52
+        }
+      }
+    },
     "a_seiche": 0.0088249651,
     "f_wind": 0.871255826,
     "p_lw": 0.960484292,
@@ -181,6 +208,15 @@
         }
       }
     ],
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.85,
+          "surface": 0.87,
+          "bottom": 0.42
+        }
+      }
+    },
     "a_seiche": 0.00058257296,
     "f_wind": 1.37410473,
     "p_lw": 1.00360502,
@@ -252,6 +288,15 @@
         }
       }
     ],
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.95,
+          "surface": 1.22,
+          "bottom": 0.39
+        }
+      }
+    },
     "a_seiche": 0.010082634,
     "f_wind": 1.25524434,
     "p_lw": 0.921585827,
@@ -299,7 +344,16 @@
         "id": "upperconstance"
       }
     ],
-    "a_seiche": 5.3874369e-05,
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.33,
+          "surface": 1.14,
+          "bottom": 1.14
+        }
+      }
+    },
+    "a_seiche": 5.3874369e-5,
     "f_wind": 1.03342539,
     "p_lw": 0.881435144,
     "snow_temp": 1.56753149
@@ -356,6 +410,15 @@
         }
       }
     ],
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.47,
+          "surface": 0.84,
+          "bottom": 0.29
+        }
+      }
+    },
     "a_seiche": 0.0096394707,
     "f_wind": 1.52206581,
     "p_lw": 1.00328962,
@@ -428,6 +491,15 @@
         }
       }
     ],
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.55,
+          "surface": 1.12,
+          "bottom": 0.22
+        }
+      }
+    },
     "a_seiche": 0.016098637,
     "f_wind": 1.22128344,
     "p_lw": 0.972159681,
@@ -518,6 +590,15 @@
         }
       }
     ],
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.91,
+          "surface": 1.29,
+          "bottom": 0.43
+        }
+      }
+    },
     "a_seiche": 0.059189,
     "f_wind": 0.97018,
     "p_lw": 0.89251,
@@ -550,6 +631,15 @@
       "source": "MeteoSwiss",
       "model": "COSMO",
       "days": 5
+    },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.85,
+          "surface": 1.21,
+          "bottom": 0.61
+        }
+      }
     },
     "a_seiche": 0.0056684225,
     "f_wind": 0.672030072,
@@ -615,6 +705,15 @@
         }
       }
     ],
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.95,
+          "surface": 2.48,
+          "bottom": 2.16
+        }
+      }
+    },
     "a_seiche": 0.443285989,
     "f_wind": 0.471895425,
     "p_lw": 1.06129016,
@@ -647,6 +746,15 @@
       "source": "MeteoSwiss",
       "model": "COSMO",
       "days": 5
+    },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.25,
+          "surface": 1.59,
+          "bottom": 0.48
+        }
+      }
     },
     "a_seiche": 0.059946936,
     "f_wind": 0.282218056,
@@ -684,6 +792,15 @@
       "source": "MeteoSwiss",
       "model": "COSMO",
       "days": 5
+    },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.1,
+          "surface": 1.16,
+          "bottom": 1.06
+        }
+      }
     },
     "a_seiche": 0.0066084,
     "f_wind": 0.9169,
@@ -753,6 +870,15 @@
         }
       }
     ],
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.76,
+          "surface": 1.19,
+          "bottom": 0.19
+        }
+      }
+    },
     "a_seiche": 0.07855248099999998,
     "f_wind": 0.940530067,
     "p_lw": 0.87581625,
@@ -798,6 +924,15 @@
         }
       }
     ],
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.61,
+          "surface": 1.1,
+          "bottom": 0.34
+        }
+      }
+    },
     "a_seiche": 0.0050542836,
     "f_wind": 1.00241374,
     "p_lw": 0.925887461,
@@ -860,6 +995,15 @@
         "surface_inflow": 5.0
       }
     ],
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.69,
+          "surface": 1.04,
+          "bottom": 0.17
+        }
+      }
+    },
     "a_seiche": 0.0079280932,
     "f_wind": 0.895982542,
     "p_lw": 0.930849464,
@@ -891,6 +1035,15 @@
       "source": "MeteoSwiss",
       "model": "COSMO",
       "days": 5
+    },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.83,
+          "surface": 0.84,
+          "bottom": 0.83
+        }
+      }
     },
     "a_seiche": 0.5,
     "f_wind": 0.471074645,
@@ -950,6 +1103,15 @@
         }
       }
     ],
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.84,
+          "surface": 0.94,
+          "bottom": 0.6
+        }
+      }
+    },
     "a_seiche": 0.0066405428,
     "f_wind": 0.876621813,
     "p_lw": 0.945298472,
@@ -1051,6 +1213,15 @@
         }
       }
     ],
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.81,
+          "surface": 0.93,
+          "bottom": 0.39
+        }
+      }
+    },
     "a_seiche": 0.013802622,
     "f_wind": 1.10544407,
     "p_lw": 0.928679167,
@@ -1083,6 +1254,15 @@
       "source": "MeteoSwiss",
       "model": "COSMO",
       "days": 5
+    },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.9,
+          "surface": 1.26,
+          "bottom": 0.7
+        }
+      }
     },
     "a_seiche": 0.0048860626,
     "f_wind": 0.652597669,
@@ -1130,6 +1310,15 @@
         }
       }
     ],
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.69,
+          "surface": 1.01,
+          "bottom": 0.28
+        }
+      }
+    },
     "a_seiche": 0.018284876,
     "f_wind": 0.867069287,
     "p_lw": 0.959916993,
@@ -1162,6 +1351,15 @@
       "source": "MeteoSwiss",
       "model": "COSMO",
       "days": 5
+    },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.78,
+          "surface": 1.51,
+          "bottom": 0.37
+        }
+      }
     },
     "a_seiche": 0.025169492,
     "f_wind": 0.931323767,
@@ -1220,6 +1418,15 @@
         }
       }
     ],
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.0,
+          "surface": 0.79,
+          "bottom": 0.57
+        }
+      }
+    },
     "a_seiche": 0.060025069,
     "f_wind": 0.495986135,
     "p_lw": 0.944463586,
@@ -1277,6 +1484,15 @@
         }
       }
     ],
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.26,
+          "surface": 0.23,
+          "bottom": 0.45
+        }
+      }
+    },
     "a_seiche": 0.0069648246,
     "f_wind": 0.79084835,
     "p_lw": 0.831976597,
@@ -1343,6 +1559,15 @@
         "surface_inflow": 100.0
       }
     ],
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.27,
+          "surface": 0.24,
+          "bottom": 0.68
+        }
+      }
+    },
     "a_seiche": 0.0079872082,
     "f_wind": 1.12189644,
     "p_lw": 0.835617709,
@@ -1389,6 +1614,15 @@
         "surface_inflow": 5.0
       }
     ],
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.93,
+          "surface": 1.01,
+          "bottom": 0.67
+        }
+      }
+    },
     "a_seiche": 0.141737632,
     "f_wind": 0.641462747,
     "p_lw": 0.939650582,
@@ -1454,6 +1688,15 @@
         }
       }
     ],
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.65,
+          "surface": 0.89,
+          "bottom": 0.39
+        }
+      }
+    },
     "a_seiche": 0.012152548,
     "f_wind": 0.840673112,
     "p_lw": 0.987217063,
@@ -1503,6 +1746,15 @@
         }
       }
     ],
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.74,
+          "surface": 0.97,
+          "bottom": 0.28
+        }
+      }
+    },
     "a_seiche": 0.0050071163,
     "f_wind": 1.23881627,
     "p_lw": 0.955591244,
@@ -1559,6 +1811,15 @@
         }
       }
     ],
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.01,
+          "surface": 0.8,
+          "bottom": 1.36
+        }
+      }
+    },
     "a_seiche": 0.01380797,
     "f_wind": 0.907450602,
     "p_lw": 0.925011947,
@@ -1604,6 +1865,15 @@
         }
       }
     ],
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.98,
+          "surface": 1.02,
+          "bottom": 0.96
+        }
+      }
+    },
     "a_seiche": 0.023978884,
     "f_wind": 0.787022564,
     "p_lw": 0.944942876,
@@ -1652,6 +1922,15 @@
         "surface_inflow": 5.0
       }
     ],
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.75,
+          "surface": 0.78,
+          "bottom": 0.31
+        }
+      }
+    },
     "a_seiche": 0.0033446664,
     "f_wind": 1.21780976,
     "p_lw": 0.941562201,
@@ -1684,6 +1963,15 @@
       "model": "COSMO",
       "days": 5
     },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.43,
+          "surface": 2.35,
+          "bottom": 0.64
+        }
+      }
+    },
     "a_seiche": 0.024482,
     "f_wind": 0.92215,
     "p_lw": 0.87889,
@@ -1715,6 +2003,15 @@
       "source": "MeteoSwiss",
       "model": "COSMO",
       "days": 5
+    },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.68,
+          "surface": 0.95,
+          "bottom": 0.54
+        }
+      }
     },
     "a_seiche": 0.0017828189,
     "f_wind": 0.856892896,
@@ -1749,6 +2046,15 @@
       "model": "COSMO",
       "days": 5
     },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.59,
+          "surface": 1.19,
+          "bottom": 0.4
+        }
+      }
+    },
     "a_seiche": 0.0029569,
     "f_wind": 0.93552,
     "p_lw": 0.86485,
@@ -1781,6 +2087,15 @@
       "source": "MeteoSwiss",
       "model": "COSMO",
       "days": 5
+    },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.41,
+          "surface": 1.74,
+          "bottom": 1.14
+        }
+      }
     },
     "a_seiche": 0.0010668751,
     "f_wind": 0.846589013,
@@ -1815,7 +2130,16 @@
       "model": "COSMO",
       "days": 5
     },
-    "a_seiche": 5.1076349e-05,
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.59,
+          "surface": 1.17,
+          "bottom": 1.91
+        }
+      }
+    },
+    "a_seiche": 5.1076349e-5,
     "f_wind": 0.899563869,
     "p_lw": 0.8,
     "snow_temp": 2.81477923,
@@ -1852,6 +2176,15 @@
       "model": "COSMO",
       "days": 5
     },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.76,
+          "surface": 0.93,
+          "bottom": 1.63
+        }
+      }
+    },
     "a_seiche": 0.0402098,
     "f_wind": 0.581223863,
     "p_lw": 0.930848735,
@@ -1884,6 +2217,15 @@
       "model": "COSMO",
       "days": 5
     },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 2.42,
+          "surface": 1.97,
+          "bottom": 2.27
+        }
+      }
+    },
     "a_seiche": 0.0018630685,
     "f_wind": 0.592261525,
     "p_lw": 0.979862399,
@@ -1915,6 +2257,15 @@
       "source": "MeteoSwiss",
       "model": "COSMO",
       "days": 5
+    },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.2,
+          "surface": 1.2,
+          "bottom": 0.7
+        }
+      }
     },
     "a_seiche": 0.00060032053,
     "f_wind": 0.441759822,
@@ -1952,7 +2303,16 @@
       "model": "COSMO",
       "days": 5
     },
-    "a_seiche": 1e-05,
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.48,
+          "surface": 1.92,
+          "bottom": 0.95
+        }
+      }
+    },
+    "a_seiche": 1e-5,
     "f_wind": 0.160015781,
     "p_lw": 0.911207681,
     "snow_temp": 1.87685111,
@@ -1984,6 +2344,15 @@
       "source": "MeteoSwiss",
       "model": "COSMO",
       "days": 5
+    },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.52,
+          "surface": 1.93,
+          "bottom": 1.21
+        }
+      }
     },
     "a_seiche": 0.0030076455,
     "f_wind": 0.760568842,
@@ -2017,7 +2386,16 @@
       "model": "COSMO",
       "days": 5
     },
-    "a_seiche": 1e-05,
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.83,
+          "surface": 0.64,
+          "bottom": 0.23
+        }
+      }
+    },
+    "a_seiche": 1e-5,
     "f_wind": 0.587953754,
     "p_lw": 0.97076586,
     "snow_temp": 4.11348732,
@@ -2049,6 +2427,15 @@
       "source": "MeteoSwiss",
       "model": "COSMO",
       "days": 5
+    },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.76,
+          "surface": 0.73,
+          "bottom": 0.26
+        }
+      }
     },
     "a_seiche": 0.011443833,
     "f_wind": 1.18895968,
@@ -2087,6 +2474,15 @@
       "model": "COSMO",
       "days": 5
     },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.73,
+          "surface": 1.12,
+          "bottom": 0.55
+        }
+      }
+    },
     "a_seiche": 0.026729057,
     "f_wind": 0.236736976,
     "p_lw": 0.971760895,
@@ -2119,7 +2515,16 @@
       "model": "COSMO",
       "days": 5
     },
-    "a_seiche": 1e-05,
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 2.18,
+          "surface": 2.34,
+          "bottom": 4.07
+        }
+      }
+    },
+    "a_seiche": 1e-5,
     "f_wind": 1.75,
     "p_lw": 0.940633698,
     "snow_temp": 0.808717138,
@@ -2151,6 +2556,15 @@
       "source": "MeteoSwiss",
       "model": "COSMO",
       "days": 5
+    },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.68,
+          "surface": 1.79,
+          "bottom": 1.34
+        }
+      }
     },
     "a_seiche": 0.0027102207,
     "f_wind": 0.274118112,
@@ -2184,7 +2598,16 @@
       "model": "COSMO",
       "days": 5
     },
-    "a_seiche": 6e-05,
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 2.09,
+          "surface": 0.76,
+          "bottom": 0.85
+        }
+      }
+    },
+    "a_seiche": 6e-5,
     "f_wind": 0.117720387,
     "p_lw": 0.8,
     "snow_temp": 10.0,
@@ -2217,6 +2640,15 @@
       "model": "COSMO",
       "days": 5
     },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 2.33,
+          "surface": 1.69,
+          "bottom": 2.56
+        }
+      }
+    },
     "a_seiche": 0.00022704534,
     "f_wind": 0.352934964,
     "p_lw": 0.930652192,
@@ -2248,6 +2680,15 @@
       "source": "MeteoSwiss",
       "model": "COSMO",
       "days": 5
+    },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.89,
+          "surface": 1.67,
+          "bottom": 1.91
+        }
+      }
     },
     "a_seiche": 0.0056114111,
     "f_wind": 0.422451294,
@@ -2285,6 +2726,15 @@
       "model": "COSMO",
       "days": 5
     },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.57,
+          "surface": 1.77,
+          "bottom": 2.23
+        }
+      }
+    },
     "a_seiche": 0.0016845317,
     "f_wind": 0.627174863,
     "p_lw": 0.90881844,
@@ -2317,6 +2767,15 @@
       "source": "MeteoSwiss",
       "model": "COSMO",
       "days": 5
+    },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 2.22,
+          "surface": 1.24,
+          "bottom": 3.37
+        }
+      }
     },
     "a_seiche": 0.00066433441,
     "f_wind": 0.297805236,
@@ -2354,6 +2813,15 @@
       "model": "COSMO",
       "days": 5
     },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 2.32,
+          "surface": 2.64,
+          "bottom": 2.92
+        }
+      }
+    },
     "a_seiche": 0.00016314154,
     "f_wind": 0.507742075,
     "p_lw": 0.928509244,
@@ -2387,6 +2855,15 @@
       "model": "COSMO",
       "days": 5
     },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 2.08,
+          "surface": 1.44,
+          "bottom": 3.26
+        }
+      }
+    },
     "a_seiche": 0.0005966991,
     "f_wind": 0.415846477,
     "p_lw": 0.933299951,
@@ -2399,7 +2876,7 @@
     "elevation": 550.1,
     "surface_area": 0.0116,
     "type": "Natural",
-    "volume": 3.96e-05,
+    "volume": 3.96e-5,
     "max_depth": 5.3,
     "average_depth": "NA",
     "residence_time": "NA",
@@ -2420,7 +2897,16 @@
       "model": "COSMO",
       "days": 5
     },
-    "a_seiche": 9.5740876e-05,
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 2.23,
+          "surface": 2.2,
+          "bottom": 3.0
+        }
+      }
+    },
+    "a_seiche": 9.5740876e-5,
     "f_wind": 0.460566303,
     "p_lw": 0.891812402,
     "snow_temp": 1.08389841,
@@ -2457,6 +2943,15 @@
       "model": "COSMO",
       "days": 5
     },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.22,
+          "surface": 2.0,
+          "bottom": 0.35
+        }
+      }
+    },
     "a_seiche": 0.001642556,
     "f_wind": 0.538662364,
     "p_lw": 0.999081959,
@@ -2488,6 +2983,15 @@
       "source": "MeteoSwiss",
       "model": "COSMO",
       "days": 5
+    },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.44,
+          "surface": 1.95,
+          "bottom": 1.22
+        }
+      }
     },
     "a_seiche": 0.0033051469,
     "f_wind": 0.264624926,
@@ -2526,6 +3030,15 @@
       "model": "COSMO",
       "days": 5
     },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 2.0,
+          "surface": 3.37,
+          "bottom": 0.8
+        }
+      }
+    },
     "a_seiche": 0.0015940987,
     "f_wind": 0.196027238,
     "p_lw": 0.975177627,
@@ -2559,6 +3072,15 @@
       "model": "COSMO",
       "days": 5
     },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.64,
+          "surface": 2.4,
+          "bottom": 1.79
+        }
+      }
+    },
     "a_seiche": 0.00093321328,
     "f_wind": 0.704830532,
     "p_lw": 0.982162608,
@@ -2571,7 +3093,7 @@
     "elevation": 514.2,
     "surface_area": 0.0173,
     "type": "Natural",
-    "volume": 2.26e-05,
+    "volume": 2.26e-5,
     "max_depth": 2.5,
     "average_depth": "NA",
     "residence_time": "NA",
@@ -2592,7 +3114,16 @@
       "model": "COSMO",
       "days": 5
     },
-    "a_seiche": 1e-05,
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 2.34,
+          "surface": 1.47,
+          "bottom": 3.3
+        }
+      }
+    },
+    "a_seiche": 1e-5,
     "f_wind": 1.75,
     "p_lw": 0.937682496,
     "snow_temp": 0.750728123,
@@ -2604,7 +3135,7 @@
     "elevation": 520.6,
     "surface_area": 0.0171,
     "type": "Natural",
-    "volume": 2.34e-05,
+    "volume": 2.34e-5,
     "max_depth": 3,
     "average_depth": "NA",
     "residence_time": 0.6,
@@ -2625,7 +3156,16 @@
       "model": "COSMO",
       "days": 5
     },
-    "a_seiche": 1e-05,
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 3.95,
+          "surface": 2.31,
+          "bottom": 4.92
+        }
+      }
+    },
+    "a_seiche": 1e-5,
     "f_wind": 1.75,
     "p_lw": 0.950285443,
     "snow_temp": 3.89562518,
@@ -2657,6 +3197,15 @@
       "source": "MeteoSwiss",
       "model": "COSMO",
       "days": 5
+    },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.26,
+          "surface": 2.04,
+          "bottom": 0.72
+        }
+      }
     },
     "a_seiche": 0.0057641259,
     "f_wind": 0.212595399,
@@ -2690,6 +3239,15 @@
       "source": "MeteoSwiss",
       "model": "COSMO",
       "days": 5
+    },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.93,
+          "surface": 1.86,
+          "bottom": 1.96
+        }
+      }
     },
     "a_seiche": 0.010261,
     "f_wind": 0.79209,
@@ -2726,6 +3284,15 @@
       "source": "MeteoSwiss",
       "model": "COSMO",
       "days": 5
+    },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.9,
+          "surface": 1.0,
+          "bottom": 1.05
+        }
+      }
     },
     "a_seiche": 0.0033439827,
     "f_wind": 0.931947988,
@@ -2767,7 +3334,16 @@
       "model": "COSMO",
       "days": 5
     },
-    "a_seiche": 1e-05,
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 2.58,
+          "surface": 2.31,
+          "bottom": 0.84
+        }
+      }
+    },
+    "a_seiche": 1e-5,
     "f_wind": 0.472768941,
     "p_lw": 0.8,
     "snow_temp": 7.29003205
@@ -2805,6 +3381,15 @@
       "source": "MeteoSwiss",
       "model": "COSMO",
       "days": 5
+    },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 2.69,
+          "surface": 3.42,
+          "bottom": 1.87
+        }
+      }
     },
     "a_seiche": 0.00020256546,
     "f_wind": 0.221034379,
@@ -2847,7 +3432,16 @@
       "model": "COSMO",
       "days": 5
     },
-    "a_seiche": 1e-05,
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 2.61,
+          "surface": 3.16,
+          "bottom": 0.59
+        }
+      }
+    },
+    "a_seiche": 1e-5,
     "f_wind": 0.876889586,
     "p_lw": 0.8,
     "snow_temp": 8.7239741
@@ -2879,7 +3473,16 @@
       "model": "COSMO",
       "days": 5
     },
-    "a_seiche": 1e-05,
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 2.26,
+          "surface": 1.65,
+          "bottom": 1.07
+        }
+      }
+    },
+    "a_seiche": 1e-5,
     "f_wind": 1.12678076,
     "p_lw": 0.8,
     "snow_temp": 4.95505514,
@@ -2911,6 +3514,15 @@
       "source": "MeteoSwiss",
       "model": "COSMO",
       "days": 5
+    },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 0.28,
+          "surface": 0.52,
+          "bottom": 0.03
+        }
+      }
     },
     "a_seiche": 0.035400378,
     "f_wind": 0.496272273,
@@ -2945,7 +3557,16 @@
       "model": "COSMO",
       "days": 5
     },
-    "a_seiche": 1e-05,
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.19,
+          "surface": 1.07,
+          "bottom": 0.87
+        }
+      }
+    },
+    "a_seiche": 1e-5,
     "f_wind": 1.33011885,
     "p_lw": 0.806609109,
     "snow_temp": 1.93801817,
@@ -2978,7 +3599,16 @@
       "model": "COSMO",
       "days": 5
     },
-    "a_seiche": 1e-05,
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.2,
+          "surface": 1.68,
+          "bottom": 0.87
+        }
+      }
+    },
+    "a_seiche": 1e-5,
     "f_wind": 1.00584508,
     "p_lw": 0.828999874,
     "snow_temp": 2.66074006,
@@ -2990,7 +3620,7 @@
     "elevation": 660,
     "surface_area": 0.0095,
     "type": "Natural",
-    "volume": 2.3e-05,
+    "volume": 2.3e-5,
     "max_depth": 6.5,
     "average_depth": "NA",
     "residence_time": "NA",
@@ -3011,6 +3641,15 @@
       "model": "COSMO",
       "days": 5
     },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.95,
+          "surface": 2.14,
+          "bottom": 2.43
+        }
+      }
+    },
     "a_seiche": 0.0013035451,
     "f_wind": 0.1,
     "p_lw": 0.98684574,
@@ -3023,7 +3662,7 @@
     "elevation": 1065,
     "surface_area": 0.02,
     "type": "Natural",
-    "volume": 1.6e-05,
+    "volume": 1.6e-5,
     "max_depth": 2.2,
     "average_depth": "NA",
     "residence_time": "NA",
@@ -3044,7 +3683,16 @@
       "model": "COSMO",
       "days": 5
     },
-    "a_seiche": 2.2369222e-05,
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 4.7,
+          "surface": 3.4,
+          "bottom": 5.31
+        }
+      }
+    },
+    "a_seiche": 2.2369222e-5,
     "f_wind": 1.75,
     "p_lw": 0.8,
     "snow_temp": 0.501635283,
@@ -3080,7 +3728,16 @@
       "model": "COSMO",
       "days": 5
     },
-    "a_seiche": 1e-05,
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 4.19,
+          "surface": 3.27,
+          "bottom": 4.56
+        }
+      }
+    },
+    "a_seiche": 1e-5,
     "f_wind": 1.75,
     "p_lw": 0.8,
     "snow_temp": 1.01746497,
@@ -3116,7 +3773,16 @@
       "model": "COSMO",
       "days": 5
     },
-    "a_seiche": 7.25e-05,
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.2,
+          "surface": 1.51,
+          "bottom": 1.53
+        }
+      }
+    },
+    "a_seiche": 7.25e-5,
     "f_wind": 0.17472701,
     "p_lw": 0.8,
     "snow_temp": 9.81160225,
@@ -3153,6 +3819,15 @@
       "model": "COSMO",
       "days": 5
     },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.41,
+          "surface": 1.82,
+          "bottom": 1.35
+        }
+      }
+    },
     "a_seiche": 0.00050662062,
     "f_wind": 0.103966418,
     "p_lw": 0.8,
@@ -3185,7 +3860,16 @@
       "model": "COSMO",
       "days": 5
     },
-    "a_seiche": 1e-05,
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 3.15,
+          "surface": 1.9,
+          "bottom": 4.53
+        }
+      }
+    },
+    "a_seiche": 1e-5,
     "f_wind": 1.75,
     "p_lw": 0.94283,
     "snow_temp": 0.5,
@@ -3216,6 +3900,15 @@
       "source": "MeteoSwiss",
       "model": "COSMO",
       "days": 5
+    },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.3,
+          "surface": 1.6,
+          "bottom": 1.14
+        }
+      }
     },
     "a_seiche": 0.00082512631,
     "f_wind": 0.229653736,
@@ -3250,6 +3943,15 @@
       "model": "COSMO",
       "days": 5
     },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 2.21,
+          "surface": 2.19,
+          "bottom": 2.5
+        }
+      }
+    },
     "a_seiche": 0.00018284707,
     "f_wind": 0.306646414,
     "p_lw": 0.976233433,
@@ -3283,6 +3985,15 @@
       "model": "COSMO",
       "days": 5
     },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 2.17,
+          "surface": 1.83,
+          "bottom": 2.98
+        }
+      }
+    },
     "a_seiche": 0.00031540791,
     "f_wind": 0.465042133,
     "p_lw": 0.968217032,
@@ -3315,7 +4026,16 @@
       "model": "COSMO",
       "days": 5
     },
-    "a_seiche": 1e-05,
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.89,
+          "surface": 1.55,
+          "bottom": 2.27
+        }
+      }
+    },
+    "a_seiche": 1e-5,
     "f_wind": 1.58087335,
     "p_lw": 0.919224729,
     "snow_temp": 4.71232214,
@@ -3347,7 +4067,16 @@
       "model": "COSMO",
       "days": 5
     },
-    "a_seiche": 2.9052373e-05,
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 2.98,
+          "surface": 2.75,
+          "bottom": 3.94
+        }
+      }
+    },
+    "a_seiche": 2.9052373e-5,
     "f_wind": 1.75,
     "p_lw": 0.965837402,
     "snow_temp": 0.785779741,
@@ -3378,6 +4107,15 @@
       "source": "MeteoSwiss",
       "model": "COSMO",
       "days": 5
+    },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.64,
+          "surface": 1.09,
+          "bottom": 2.24
+        }
+      }
     },
     "a_seiche": 0.00065549,
     "f_wind": 1.343,
@@ -3410,6 +4148,15 @@
       "source": "MeteoSwiss",
       "model": "COSMO",
       "days": 5
+    },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 2.28,
+          "surface": 2.45,
+          "bottom": 2.15
+        }
+      }
     },
     "a_seiche": 0.00076703011,
     "f_wind": 1.75,
@@ -3444,6 +4191,15 @@
       "model": "COSMO",
       "days": 5
     },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 2.37,
+          "surface": 2.09,
+          "bottom": 2.95
+        }
+      }
+    },
     "a_seiche": 0.0027497561,
     "f_wind": 0.279460851,
     "p_lw": 0.975319539,
@@ -3475,6 +4231,15 @@
       "source": "MeteoSwiss",
       "model": "COSMO",
       "days": 5
+    },
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 1.29,
+          "surface": 0.88,
+          "bottom": 1.37
+        }
+      }
     },
     "a_seiche": 0.00019419328,
     "f_wind": 0.630981438,
@@ -3508,7 +4273,16 @@
       "model": "COSMO",
       "days": 5
     },
-    "a_seiche": 1e-05,
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 2.49,
+          "surface": 1.32,
+          "bottom": 4.54
+        }
+      }
+    },
+    "a_seiche": 1e-5,
     "f_wind": 1.75,
     "p_lw": 0.99808,
     "snow_temp": 0.5,
@@ -3540,7 +4314,16 @@
       "model": "COSMO",
       "days": 5
     },
-    "a_seiche": 2.25e-05,
+    "performance": {
+      "T": {
+        "rmse": {
+          "overall": 3.41,
+          "surface": 2.62,
+          "bottom": 2.84
+        }
+      }
+    },
+    "a_seiche": 2.25e-5,
     "f_wind": 1.09662638,
     "p_lw": 0.806660693,
     "snow_temp": 2.07638072,
