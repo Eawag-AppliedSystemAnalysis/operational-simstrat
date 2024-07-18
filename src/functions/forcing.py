@@ -180,6 +180,34 @@ def meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, lo
         df["cloud"] = df["CLCT_MEAN"]
         df["rain"] = df["TOT_PREC_MEAN"]
         df = df[parameters]
+    elif forcing_forecast["model"].lower() == "icon":
+        log.info("Extending forcing files using MeteoSwiss COSMO forecast.", indent=1)
+        endpoint = api + "/meteoswiss/icon/point/forecast/icon-ch2-eps/{}/{}/{}?variables=T_2M&variables=U&variables=V&variables=GLOB&variables=RELHUM_2M&variables=CLCT&variables=TOT_PREC"
+        today = datetime.now().strftime("%Y%m%d")
+        try:
+            data = call_url(endpoint.format(today, latitude, longitude))
+        except Exception as e:
+            print(e)
+            yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y%m%d")
+            data = call_url(endpoint.format(yesterday, latitude, longitude))
+        grid_elevation = get_elevation_swisstopo(data["lat"], data["lng"])
+        data_dict = {key: data[key]["data"] for key in data.keys() if isinstance(data[key], dict)}
+        data_dict["utc_time"] = data["time"]
+        df = pd.DataFrame(data_dict)
+        df['Time'] = pd.to_datetime(df['utc_time'], utc=True)
+        df['Time'] = df.apply(lambda row: datetime_to_simstrat_time(row['Time'], reference_date), axis=1)
+        df["T_2M_MEAN"] = df["T_2M_MEAN"] - 273.15  # Kelvin to celsius
+        df["T_2M_MEAN"] = adjust_temperature_for_altitude_difference(df["T_2M_MEAN"].values, elevation - grid_elevation)
+        df["TOT_PREC_MEAN"] = df["TOT_PREC_MEAN"] * 0.001  # kg m-2 to m/hr
+        df["CLCT_MEAN"] = df["CLCT_MEAN"] * 0.01  # Percentage to fraction
+        df["u"] = df["U_MEAN"]
+        df["v"] = df["V_MEAN"]
+        df["Tair"] = df["T_2M_MEAN"]
+        df["sol"] = df["GLOB_MEAN"]
+        df["vap"] = vapor_pressure_from_relative_humidity_and_temperature(df["T_2M_MEAN"].values, df["RELHUM_2M_MEAN"])
+        df["cloud"] = df["CLCT_MEAN"]
+        df["rain"] = df["TOT_PREC_MEAN"]
+        df = df[parameters]
     else:
         raise ValueError("MeteoSwiss forecast not implemented for model: {}".format(forcing_forecast["model"]))
     df.set_index('Time', inplace=True)

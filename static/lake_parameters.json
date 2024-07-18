@@ -32,7 +32,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -74,7 +74,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -116,7 +116,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "inflows": [
@@ -170,7 +170,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "inflows": [
@@ -250,7 +250,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "inflows": [
@@ -335,7 +335,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "inflows": [
@@ -383,7 +383,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "inflows": [
@@ -453,7 +453,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "inflows": [
@@ -530,7 +530,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "inflows": [
@@ -629,7 +629,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -678,7 +678,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "inflows": [
@@ -744,7 +744,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -790,7 +790,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -832,7 +832,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "inflows": [
@@ -908,7 +908,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "inflows": [
@@ -963,7 +963,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "inflows": [
@@ -1033,7 +1033,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -1076,7 +1076,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "inflows": [
@@ -1142,7 +1142,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "inflows": [
@@ -1252,7 +1252,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -1294,7 +1294,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "inflows": [
@@ -1349,7 +1349,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -1391,7 +1391,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "inflows": [
@@ -1457,7 +1457,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "inflows": [
@@ -1527,7 +1527,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "inflows": [
@@ -1599,7 +1599,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "inflows": [
@@ -1661,7 +1661,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "inflows": [
@@ -1730,7 +1730,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "inflows": [
@@ -1784,7 +1784,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "inflows": [
@@ -1849,7 +1849,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "inflows": [
@@ -1912,7 +1912,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "inflows": [
@@ -1960,7 +1960,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -2001,7 +2001,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -2043,7 +2043,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -2085,7 +2085,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -2127,7 +2127,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -2173,7 +2173,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -2214,7 +2214,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -2255,7 +2255,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -2300,7 +2300,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -2342,7 +2342,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -2383,7 +2383,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -2425,7 +2425,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -2471,7 +2471,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -2512,7 +2512,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -2554,7 +2554,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -2595,7 +2595,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -2637,7 +2637,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -2678,7 +2678,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -2723,7 +2723,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -2765,7 +2765,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -2810,7 +2810,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -2852,7 +2852,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -2894,7 +2894,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -2940,7 +2940,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -2981,7 +2981,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -3027,7 +3027,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -3069,7 +3069,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -3111,7 +3111,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -3153,7 +3153,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -3195,7 +3195,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -3237,7 +3237,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -3282,7 +3282,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -3331,7 +3331,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -3379,7 +3379,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -3429,7 +3429,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -3470,7 +3470,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -3512,7 +3512,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -3554,7 +3554,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -3596,7 +3596,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -3638,7 +3638,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -3680,7 +3680,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -3725,7 +3725,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -3770,7 +3770,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -3816,7 +3816,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -3857,7 +3857,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -3898,7 +3898,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -3940,7 +3940,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -3982,7 +3982,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -4023,7 +4023,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -4064,7 +4064,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -4105,7 +4105,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -4146,7 +4146,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -4188,7 +4188,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -4229,7 +4229,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -4270,7 +4270,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
@@ -4311,7 +4311,7 @@
     ],
     "forcing_forecast": {
       "source": "MeteoSwiss",
-      "model": "COSMO",
+      "model": "ICON",
       "days": 5
     },
     "performance": {
