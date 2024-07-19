@@ -181,7 +181,7 @@ def meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, lo
         df["rain"] = df["TOT_PREC_MEAN"]
         df = df[parameters]
     elif forcing_forecast["model"].lower() == "icon":
-        log.info("Extending forcing files using MeteoSwiss COSMO forecast.", indent=1)
+        log.info("Extending forcing files using MeteoSwiss ICON forecast.", indent=1)
         endpoint = api + "/meteoswiss/icon/point/forecast/icon-ch2-eps/{}/{}/{}?variables=T_2M&variables=U&variables=V&variables=GLOB&variables=RELHUM_2M&variables=CLCT&variables=TOT_PREC"
         today = datetime.now().strftime("%Y%m%d")
         try:
