@@ -203,6 +203,7 @@ def meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, lo
         df["u"] = df["U_MEAN"]
         df["v"] = df["V_MEAN"]
         df["Tair"] = df["T_2M_MEAN"]
+        df.loc[df['GLOB_MEAN'] < 0, 'GLOB_MEAN'] = 0
         df["sol"] = df["GLOB_MEAN"]
         df["vap"] = vapor_pressure_from_relative_humidity_and_temperature(df["T_2M_MEAN"].values, df["RELHUM_2M_MEAN"])
         df["cloud"] = df["CLCT_MEAN"]
