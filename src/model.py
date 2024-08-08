@@ -457,7 +457,7 @@ class Simstrat(object):
             simulation_dir = os.path.join(self.args["docker_dir"], "runs", self.key)
         else:
             simulation_dir = self.simulation_dir
-        command = "docker run --user $(id -u):$(id -g) -v {}:/simstrat/run eawag/simstrat:{} Settings.par".format(
+        command = "docker run --rm --user $(id -u):$(id -g) -v {}:/simstrat/run eawag/simstrat:{} Settings.par".format(
             simulation_dir, self.args["simstrat_version"])
         month_beginning = self.forcing_end.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         snapshot_path = os.path.join(self.simulation_dir, "Results", "simulation-snapshot.dat")
