@@ -59,7 +59,8 @@ class Simstrat(object):
                                         "desc": "Vertical resolution of the output file (m)"},
             "bathymetry": {"verify": verify.verify_dict,
                            "desc": "Bathymetry data in the format { area: [12,13,...], depth: [0, 1,...] } where area is in m2 and depth in m"},
-            "bathymetry_datalakes_id": {"verify": verify.verify_integer, "desc": "Datalakes ID for bathymetry profile"},
+            "datalakes_id": {"verify": verify.verify_integer, "desc": "Datalakes ID for lake"},
+            "datalakes_bathymetry": {"verify": verify.verify_bool, "desc": "Bathymetry available on Datalakes"},
             "inflows": {"verify": verify.verify_inflows,
                         "desc": "List of inflows described by dicts with discharge and temeperature"},
             "forcing_forecast": {"verify": verify.verify_forcing_forecast,
@@ -180,18 +181,18 @@ class Simstrat(object):
             if "bathymetry" in self.parameters:
                 self.log.info("Bathymetry defined in parameters.", indent=1)
                 bathymetry = self.parameters["bathymetry"]
-            elif "bathymetry_datalakes_id" in self.parameters:
+            elif "datalakes_id" in self.parameters and "datalakes_bathymetry" in self.parameters and self.parameters["datalakes_bathymetry"]:
                 self.log.info(
-                    "Accessing bathymetry from Datalakes (id={})".format(self.parameters["bathymetry_datalakes_id"]),
+                    "Accessing bathymetry from Datalakes (id={})".format(self.parameters["datalakes_id"]),
                     indent=1)
-                bathymetry = bathymetry_from_datalakes(self.parameters["bathymetry_datalakes_id"])
+                bathymetry = bathymetry_from_datalakes(self.parameters["datalakes_id"])
             elif "max_depth" in self.parameters and "surface_area" in self.parameters:
                 self.log.info("Using surface_area and max_depth for a simple two-point bathymetry", indent=1)
                 bathymetry = {"area": [self.parameters["surface_area"] * 10 ** 6, 0],
                               "depth": [0, self.parameters["max_depth"]]}
             else:
                 raise Exception("At least one of the following parameters must be provided: bathymetry, "
-                                "bathymetry_datalakes_id, max_depth and surface_area")
+                                "datalakes_id, max_depth and surface_area")
             write_bathymetry(bathymetry, bathymetry_file)
         self.parameters["max_depth"] = max(bathymetry["depth"])
         self.log.info("Max depth set to {}m".format(self.parameters["max_depth"]), indent=1)

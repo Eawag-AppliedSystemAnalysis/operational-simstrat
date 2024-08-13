@@ -65,7 +65,8 @@ lakes already there.
     "latitude": 47.35,
     "longitude": 8.678,
     "trophic_state": "Eutrophic",
-    "bathymetry_datalakes_id": 3,
+    "datalakes_id": 3,
+    "datalakes_bathymetry": true,
     "sediment_oxygen_uptake_rate": -32.5,
     "forcing": [
       {

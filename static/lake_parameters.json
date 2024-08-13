@@ -14,7 +14,8 @@
     "latitude": 47.123,
     "longitude": 8.618,
     "trophic_state": "Oligotrophic",
-    "bathymetry_datalakes_id": 6,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 6,
     "sediment_oxygen_uptake_rate": -19.7,
     "forcing": [
       {
@@ -64,7 +65,8 @@
     "latitude": 47.197,
     "longitude": 8.261,
     "trophic_state": "Eutrophic",
-    "bathymetry_datalakes_id": 7,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 7,
     "sediment_oxygen_uptake_rate": -41.6,
     "forcing": [
       {
@@ -106,7 +108,8 @@
     "latitude": 47.279,
     "longitude": 8.214,
     "trophic_state": "Eutrophic",
-    "bathymetry_datalakes_id": 8,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 8,
     "sediment_oxygen_uptake_rate": -28.1,
     "forcing": [
       {
@@ -161,7 +164,8 @@
     "latitude": 47.104,
     "longitude": 7.198,
     "trophic_state": "Eutrophic",
-    "bathymetry_datalakes_id": 2,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 2,
     "forcing": [
       {
         "id": "CRM",
@@ -237,7 +241,8 @@
     "latitude": 47.629,
     "longitude": 9.374,
     "trophic_state": "Mesotrophic",
-    "bathymetry_datalakes_id": 10,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 10,
     "forcing": [
       {
         "id": "ARH",
@@ -317,7 +322,8 @@
     "latitude": 47.676,
     "longitude": 9.0,
     "trophic_state": "Mesotrophic",
-    "bathymetry_datalakes_id": 53,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 53,
     "sediment_oxygen_uptake_rate": -25.0,
     "forcing": [
       {
@@ -373,7 +379,8 @@
     "latitude": 46.718,
     "longitude": 7.952,
     "trophic_state": "Oligotrophic",
-    "bathymetry_datalakes_id": 12,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 12,
     "sediment_oxygen_uptake_rate": -10.6,
     "forcing": [
       {
@@ -439,7 +446,8 @@
     "latitude": 46.682,
     "longitude": 7.733,
     "trophic_state": "Oligotrophic",
-    "bathymetry_datalakes_id": 16,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 16,
     "sediment_oxygen_uptake_rate": -14.0,
     "forcing": [
       {
@@ -520,7 +528,8 @@
     "latitude": 46.453,
     "longitude": 6.589,
     "trophic_state": "Mesotrophic",
-    "bathymetry_datalakes_id": 1,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 1,
     "sediment_oxygen_uptake_rate": -37.5,
     "forcing": [
       {
@@ -619,7 +628,8 @@
     "latitude": 47.35,
     "longitude": 8.678,
     "trophic_state": "Eutrophic",
-    "bathymetry_datalakes_id": 3,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 3,
     "sediment_oxygen_uptake_rate": -32.5,
     "forcing": [
       {
@@ -661,7 +671,8 @@
     "latitude": 46.708,
     "longitude": 7.095,
     "trophic_state": "",
-    "bathymetry_datalakes_id": 19,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 19,
     "forcing": [
       {
         "id": "MAS",
@@ -735,7 +746,8 @@
     "latitude": 47.032,
     "longitude": 8.994,
     "trophic_state": "",
-    "bathymetry_datalakes_id": 20,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 20,
     "forcing": [
       {
         "id": "GLA",
@@ -777,7 +789,8 @@
     "latitude": 46.64,
     "longitude": 6.286,
     "trophic_state": "",
-    "bathymetry_datalakes_id": 17,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 17,
     "forcing": [
       {
         "id": "CHB",
@@ -822,7 +835,8 @@
     "latitude": 45.964,
     "longitude": 8.645,
     "trophic_state": "Oligotrophic",
-    "bathymetry_datalakes_id": 14,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 14,
     "sediment_oxygen_uptake_rate": -26.6,
     "forcing": [
       {
@@ -899,7 +913,8 @@
     "latitude": 46.016,
     "longitude": 9.033,
     "trophic_state": "Eutrophic",
-    "bathymetry_datalakes_id": 22,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 22,
     "forcing": [
       {
         "id": "LUG",
@@ -953,7 +968,8 @@
     "latitude": 45.958,
     "longitude": 8.897,
     "trophic_state": "Mesotrophic",
-    "bathymetry_datalakes_id": 24,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 24,
     "sediment_oxygen_uptake_rate": -33.1,
     "forcing": [
       {
@@ -1024,7 +1040,8 @@
     "latitude": 46.799,
     "longitude": 8.161,
     "trophic_state": "",
-    "bathymetry_datalakes_id": 25,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 25,
     "forcing": [
       {
         "id": "GIH",
@@ -1066,7 +1083,8 @@
     "latitude": 46.929,
     "longitude": 7.064,
     "trophic_state": "Mesotrophic",
-    "bathymetry_datalakes_id": 26,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 26,
     "sediment_oxygen_uptake_rate": -32.8,
     "forcing": [
       {
@@ -1132,7 +1150,8 @@
     "latitude": 46.904,
     "longitude": 6.843,
     "trophic_state": "Mesotrophic",
-    "bathymetry_datalakes_id": 27,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 27,
     "sediment_oxygen_uptake_rate": -27.8,
     "forcing": [
       {
@@ -1242,7 +1261,8 @@
     "latitude": 47.352,
     "longitude": 8.784,
     "trophic_state": "",
-    "bathymetry_datalakes_id": 28,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 28,
     "sediment_oxygen_uptake_rate": -23.8,
     "forcing": [
       {
@@ -1284,7 +1304,8 @@
     "latitude": 47.14,
     "longitude": 8.159,
     "trophic_state": "Mesotrophic",
-    "bathymetry_datalakes_id": 23,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 23,
     "sediment_oxygen_uptake_rate": -31.9,
     "forcing": [
       {
@@ -1339,7 +1360,8 @@
     "latitude": 46.865,
     "longitude": 8.204,
     "trophic_state": "Oligotrophic",
-    "bathymetry_datalakes_id": 29,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 29,
     "sediment_oxygen_uptake_rate": -11.3,
     "forcing": [
       {
@@ -1382,7 +1404,8 @@
     "latitude": 46.968,
     "longitude": 8.321,
     "trophic_state": "Oligotrophic",
-    "bathymetry_datalakes_id": 30,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 30,
     "forcing": [
       {
         "id": "LUZ",
@@ -1448,7 +1471,8 @@
     "latitude": 46.953,
     "longitude": 8.604,
     "trophic_state": "Oligotrophic",
-    "bathymetry_datalakes_id": 31,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 31,
     "forcing": [
       {
         "id": "ALT",
@@ -1514,7 +1538,8 @@
     "latitude": 46.979,
     "longitude": 8.504,
     "trophic_state": "Oligotrophic",
-    "bathymetry_datalakes_id": 34,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 34,
     "forcing": [
       {
         "id": "GES",
@@ -1589,7 +1614,8 @@
     "latitude": 47.013,
     "longitude": 8.429,
     "trophic_state": "Oligotrophic",
-    "bathymetry_datalakes_id": 37,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 37,
     "sediment_oxygen_uptake_rate": -10.0,
     "forcing": [
       {
@@ -1643,7 +1669,8 @@
     "latitude": 47.123,
     "longitude": 9.223,
     "trophic_state": "Oligotrophic",
-    "bathymetry_datalakes_id": 35,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 35,
     "sediment_oxygen_uptake_rate": -18.4,
     "forcing": [
       {
@@ -1717,7 +1744,8 @@
     "latitude": 47.098,
     "longitude": 8.492,
     "trophic_state": "Eutrophic",
-    "bathymetry_datalakes_id": 39,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 39,
     "forcing": [
       {
         "id": "CHZ",
@@ -1775,7 +1803,8 @@
     "latitude": 47.148,
     "longitude": 8.782,
     "trophic_state": "",
-    "bathymetry_datalakes_id": 42,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 42,
     "forcing": [
       {
         "id": "EIN",
@@ -1840,7 +1869,8 @@
     "latitude": 47.205,
     "longitude": 8.823,
     "trophic_state": "Mesotrophic",
-    "bathymetry_datalakes_id": 4,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 4,
     "forcing": [
       {
         "id": "WAE",
@@ -1894,7 +1924,8 @@
     "latitude": 47.286,
     "longitude": 8.591,
     "trophic_state": "Mesotrophic",
-    "bathymetry_datalakes_id": 5,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 5,
     "sediment_oxygen_uptake_rate": -30.3,
     "forcing": [
       {
@@ -1951,7 +1982,8 @@
     "latitude": 46.279,
     "longitude": 10.098,
     "trophic_state": "",
-    "bathymetry_datalakes_id": 51,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 51,
     "forcing": [
       {
         "id": "ROB",
@@ -1992,7 +2024,8 @@
     "latitude": 46.423,
     "longitude": 9.739,
     "trophic_state": "",
-    "bathymetry_datalakes_id": 38,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 38,
     "forcing": [
       {
         "id": "SIA",
@@ -2034,7 +2067,8 @@
     "latitude": 46.449,
     "longitude": 9.792,
     "trophic_state": "",
-    "bathymetry_datalakes_id": 40,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 40,
     "forcing": [
       {
         "id": "SIA",
@@ -2076,7 +2110,8 @@
     "latitude": 46.495,
     "longitude": 9.847,
     "trophic_state": "",
-    "bathymetry_datalakes_id": 41,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 41,
     "forcing": [
       {
         "id": "SAM",
@@ -2118,7 +2153,8 @@
     "latitude": 46.469,
     "longitude": 9.806,
     "trophic_state": "",
-    "bathymetry_datalakes_id": 136,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 136,
     "forcing": [
       {
         "id": "SAM",
@@ -2160,7 +2196,8 @@
     "latitude": 47.03,
     "longitude": 8.607,
     "trophic_state": "",
-    "bathymetry_datalakes_id": 8,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 8,
     "forcing": [
       {
         "id": "GES",
@@ -2205,7 +2242,8 @@
     "latitude": 47.07,
     "longitude": 8.316,
     "trophic_state": "Eutrophic",
-    "bathymetry_datalakes_id": 45,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 45,
     "forcing": [
       {
         "id": "LUZ",
@@ -2246,7 +2284,8 @@
     "latitude": 47.27,
     "longitude": 8.5,
     "trophic_state": "Eutrophic",
-    "bathymetry_datalakes_id": 33,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 33,
     "forcing": [
       {
         "id": "WAE",
@@ -2287,7 +2326,8 @@
     "latitude": 46.725,
     "longitude": 7.576,
     "trophic_state": "Eutrophic",
-    "bathymetry_datalakes_id": 67,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 67,
     "forcing": [
       {
         "id": "THU",
@@ -2333,7 +2373,8 @@
     "latitude": 47.022,
     "longitude": 7.48,
     "trophic_state": "Eutrophic",
-    "bathymetry_datalakes_id": 108,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 108,
     "forcing": [
       {
         "id": "BER",
@@ -2375,6 +2416,8 @@
     "latitude": 47.171,
     "longitude": 8.075,
     "trophic_state": "Eutrophic",
+    "datalakes_bathymetry": false,
+    "datalakes_id": 55,
     "forcing": [
       {
         "id": "LUZ",
@@ -2416,7 +2459,8 @@
     "latitude": 46.498,
     "longitude": 7.727,
     "trophic_state": "Oligotrophic",
-    "bathymetry_datalakes_id": 9,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 9,
     "forcing": [
       {
         "id": "ABO",
@@ -2458,7 +2502,8 @@
     "latitude": 47.091,
     "longitude": 8.081,
     "trophic_state": "Eutrophic",
-    "bathymetry_datalakes_id": 18,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 18,
     "forcing": [
       {
         "id": "EGO",
@@ -2503,7 +2548,8 @@
     "latitude": 47.198,
     "longitude": 7.664,
     "trophic_state": "Eutrophic",
-    "bathymetry_datalakes_id": 54,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 54,
     "forcing": [
       {
         "id": "WYN",
@@ -2545,7 +2591,8 @@
     "latitude": 47.61,
     "longitude": 8.844,
     "trophic_state": "Eutrophic",
-    "bathymetry_datalakes_id": 11,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 11,
     "forcing": [
       {
         "id": "SHA",
@@ -2586,7 +2633,8 @@
     "latitude": 46.55,
     "longitude": 8.712,
     "trophic_state": "Oligotrophic",
-    "bathymetry_datalakes_id": 15,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 15,
     "forcing": [
       {
         "id": "PIO",
@@ -2628,7 +2676,8 @@
     "latitude": 47.622,
     "longitude": 8.705,
     "trophic_state": "Eutrophic",
-    "bathymetry_datalakes_id": 152,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 152,
     "forcing": [
       {
         "id": "SHA",
@@ -2669,7 +2718,8 @@
     "latitude": 47.183,
     "longitude": 8.675,
     "trophic_state": "Eutrophic",
-    "bathymetry_datalakes_id": 145,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 145,
     "forcing": [
       {
         "id": "WAE",
@@ -2710,7 +2760,8 @@
     "latitude": 47.26,
     "longitude": 8.773,
     "trophic_state": "Eutrophic",
-    "bathymetry_datalakes_id": 57,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 57,
     "forcing": [
       {
         "id": "WAE",
@@ -2756,7 +2807,8 @@
     "latitude": 47.474,
     "longitude": 8.492,
     "trophic_state": "Mesotrophic",
-    "bathymetry_datalakes_id": 148,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 148,
     "forcing": [
       {
         "id": "KLO",
@@ -2797,7 +2849,8 @@
     "latitude": 47.257,
     "longitude": 8.818,
     "trophic_state": "Eutrophic",
-    "bathymetry_datalakes_id": 147,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 147,
     "forcing": [
       {
         "id": "WAE",
@@ -2843,7 +2896,8 @@
     "latitude": 47.431,
     "longitude": 8.489,
     "trophic_state": "Eutrophic",
-    "bathymetry_datalakes_id": 150,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 150,
     "forcing": [
       {
         "id": "KLO",
@@ -2885,7 +2939,8 @@
     "latitude": 47.257,
     "longitude": 8.746,
     "trophic_state": "Mesotrophic",
-    "bathymetry_datalakes_id": 154,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 154,
     "forcing": [
       {
         "id": "WAE",
@@ -2927,7 +2982,8 @@
     "latitude": 47.169,
     "longitude": 7.669,
     "trophic_state": "Eutrophic",
-    "bathymetry_datalakes_id": 72,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 72,
     "forcing": [
       {
         "id": "KOP",
@@ -2972,7 +3028,8 @@
     "latitude": 46.697,
     "longitude": 7.886,
     "trophic_state": "Eutrophic",
-    "bathymetry_datalakes_id": 82,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 82,
     "forcing": [
       {
         "id": "INT",
@@ -3014,7 +3071,8 @@
     "latitude": 46.756,
     "longitude": 7.534,
     "trophic_state": "Eutrophic",
-    "bathymetry_datalakes_id": 84,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 84,
     "forcing": [
       {
         "id": "THU",
@@ -3060,7 +3118,8 @@
     "latitude": 46.83,
     "longitude": 7.547,
     "trophic_state": "Eutrophic",
-    "bathymetry_datalakes_id": 92,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 92,
     "forcing": [
       {
         "id": "BER",
@@ -3102,7 +3161,8 @@
     "latitude": 47.031,
     "longitude": 7.298,
     "trophic_state": "Eutrophic",
-    "bathymetry_datalakes_id": 104,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 104,
     "forcing": [
       {
         "id": "BER",
@@ -3144,7 +3204,8 @@
     "latitude": 47.026,
     "longitude": 7.469,
     "trophic_state": "Eutrophic",
-    "bathymetry_datalakes_id": 109,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 109,
     "forcing": [
       {
         "id": "BER",
@@ -3186,7 +3247,8 @@
     "latitude": 46.734,
     "longitude": 7.565,
     "trophic_state": "Eutrophic",
-    "bathymetry_datalakes_id": 127,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 127,
     "forcing": [
       {
         "id": "INT",
@@ -3228,7 +3290,8 @@
     "latitude": 46.514,
     "longitude": 6.773,
     "trophic_state": "Mesotrophic",
-    "bathymetry_datalakes_id": 183,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 183,
     "forcing": [
       {
         "id": "PUY",
@@ -3269,7 +3332,8 @@
     "latitude": 46.673,
     "longitude": 6.323,
     "trophic_state": "Eutrophic",
-    "bathymetry_datalakes_id": 175,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 175,
     "forcing": [
       {
         "id": "CHB",
@@ -3314,7 +3378,8 @@
     "latitude": 46.333,
     "longitude": 7.086,
     "trophic_state": "Oligotrophic",
-    "bathymetry_datalakes_id": 184,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 184,
     "forcing": [
       {
         "id": "CDM",
@@ -3363,6 +3428,8 @@
     "latitude": 46.326,
     "longitude": 7.072,
     "trophic_state": "Mesotrophic",
+    "datalakes_bathymetry": false,
+    "datalakes_id": 176,
     "forcing": [
       {
         "id": "CDM",
@@ -3412,7 +3479,8 @@
     "latitude": 46.386,
     "longitude": 7.129,
     "trophic_state": "Oligotrophic",
-    "bathymetry_datalakes_id": 172,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 172,
     "forcing": [
       {
         "id": "CDM",
@@ -3461,7 +3529,8 @@
     "latitude": 46.363,
     "longitude": 8.69,
     "trophic_state": "Oligotrophic",
-    "bathymetry_datalakes_id": 162,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 162,
     "forcing": [
       {
         "id": "ROE",
@@ -3503,7 +3572,8 @@
     "latitude": 46.402,
     "longitude": 8.752,
     "trophic_state": "Oligotrophic",
-    "bathymetry_datalakes_id": 161,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 161,
     "forcing": [
       {
         "id": "ROE",
@@ -3545,7 +3615,8 @@
     "latitude": 46.476,
     "longitude": 8.585,
     "trophic_state": "Oligotrophic",
-    "bathymetry_datalakes_id": 164,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 164,
     "forcing": [
       {
         "id": "ROE",
@@ -3587,7 +3658,8 @@
     "latitude": 46.476,
     "longitude": 8.593,
     "trophic_state": "Oligotrophic",
-    "bathymetry_datalakes_id": 163,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 163,
     "forcing": [
       {
         "id": "ROE",
@@ -3629,7 +3701,8 @@
     "latitude": 46.761,
     "longitude": 7.535,
     "trophic_state": "Eutrophic",
-    "bathymetry_datalakes_id": 65,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 65,
     "forcing": [
       {
         "id": "THU",
@@ -3671,7 +3744,8 @@
     "latitude": 46.449,
     "longitude": 7.442,
     "trophic_state": "NA",
-    "bathymetry_datalakes_id": 63,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 63,
     "forcing": [
       {
         "id": "MMLEN",
@@ -3713,6 +3787,8 @@
     "latitude": 46.6,
     "longitude": 8.325,
     "trophic_state": "NA",
+    "datalakes_bathymetry": false,
+    "datalakes_id": 134,
     "forcing": [
       {
         "id": "MMGTT",
@@ -3758,6 +3834,8 @@
     "latitude": 46.693,
     "longitude": 8.286,
     "trophic_state": "Oligotrophic",
+    "datalakes_bathymetry": false,
+    "datalakes_id": 64,
     "forcing": [
       {
         "id": "MMGTT",
@@ -3803,7 +3881,8 @@
     "latitude": 46.725,
     "longitude": 8.433,
     "trophic_state": "Oligotrophic",
-    "bathymetry_datalakes_id": 122,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 122,
     "forcing": [
       {
         "id": "SLFGAD",
@@ -3849,6 +3928,8 @@
     "latitude": 47.615,
     "longitude": 8.753,
     "trophic_state": "NA",
+    "datalakes_bathymetry": false,
+    "datalakes_id": 191,
     "forcing": [
       {
         "id": "TAE",
@@ -3890,6 +3971,8 @@
     "latitude": 47.457,
     "longitude": 8.9,
     "trophic_state": "NA",
+    "datalakes_bathymetry": false,
+    "datalakes_id": 192,
     "forcing": [
       {
         "id": "TAE",
@@ -3931,7 +4014,8 @@
     "latitude": 47.607,
     "longitude": 8.832,
     "trophic_state": "NA",
-    "bathymetry_datalakes_id": 142,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 142,
     "forcing": [
       {
         "id": "TAE",
@@ -3973,7 +4057,8 @@
     "latitude": 46.709,
     "longitude": 8.804,
     "trophic_state": "NA",
-    "bathymetry_datalakes_id": 143,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 143,
     "forcing": [
       {
         "id": "TAE",
@@ -4015,6 +4100,8 @@
     "latitude": 47.48,
     "longitude": 9.256,
     "trophic_state": "NA",
+    "datalakes_bathymetry": false,
+    "datalakes_id": 193,
     "forcing": [
       {
         "id": "TAE",
@@ -4056,6 +4143,8 @@
     "latitude": 47.572,
     "longitude": 8.861,
     "trophic_state": "NA",
+    "datalakes_bathymetry": false,
+    "datalakes_id": 194,
     "forcing": [
       {
         "id": "TAE",
@@ -4097,6 +4186,8 @@
     "latitude": 47.618,
     "longitude": 9.156,
     "trophic_state": "NA",
+    "datalakes_bathymetry": false,
+    "datalakes_id": 195,
     "forcing": [
       {
         "id": "GUT",
@@ -4138,6 +4229,8 @@
     "latitude": 47.539,
     "longitude": 9.075,
     "trophic_state": "NA",
+    "datalakes_bathymetry": false,
+    "datalakes_id": 196,
     "forcing": [
       {
         "id": "TAE",
@@ -4179,7 +4272,8 @@
     "latitude": 47.615,
     "longitude": 8.814,
     "trophic_state": "NA",
-    "bathymetry_datalakes_id": 144,
+    "datalakes_bathymetry": true,
+    "datalakes_id": 144,
     "forcing": [
       {
         "id": "TAE",
@@ -4221,6 +4315,8 @@
     "latitude": 47.586,
     "longitude": 9.029,
     "trophic_state": "NA",
+    "datalakes_bathymetry": false,
+    "datalakes_id": 197,
     "forcing": [
       {
         "id": "TAE",
@@ -4262,6 +4358,8 @@
     "latitude": 47.6,
     "longitude": 8.799,
     "trophic_state": "NA",
+    "datalakes_bathymetry": false,
+    "datalakes_id": 198,
     "forcing": [
       {
         "id": "TAE",
@@ -4303,6 +4401,8 @@
     "latitude": 47.582,
     "longitude": 9.055,
     "trophic_state": "NA",
+    "datalakes_bathymetry": false,
+    "datalakes_id": 198,
     "forcing": [
       {
         "id": "TAE",
