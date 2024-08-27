@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from dateutil.relativedelta import relativedelta
 from functions.verify import verify_arg_file
 from functions.parallel import run_parallel_tasks
-from functions.general import process_args, edit_parameters
+from functions.general import process_args, edit_parameters, download_observations
 from functions.log import Logger
 from configuration import CalibratorConfig
 from model import Simstrat
@@ -77,6 +77,9 @@ def main(arg_file=False, overwrite_args={}):
         log = Logger()
     log.initialise("Simstrat Operational Calibration")
     log.inputs("Arguments", args)
+    if args["download_observations"]:
+        log.info("Downloading observations from {}".format(args["observations_url"]))
+        download_observations(args["observations_url"], args["observation_dir"])
     run_parallel_tasks(lake_parameters, args, task, log)
 
 if __name__ == "__main__":

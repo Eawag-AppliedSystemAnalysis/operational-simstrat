@@ -1,5 +1,7 @@
 import os
 import json
+import shutil
+import zipfile
 import requests
 import subprocess
 import numpy as np
@@ -279,3 +281,18 @@ def edit_parameters(file, key, results):
             with open(file, 'w') as file:
                 json.dump(lake_parameters, file, indent=4)
             return lake
+
+def download_observations(url, folder):
+    for item in os.listdir(folder):
+        item_path = os.path.join(folder, item)
+        if os.path.isdir(item_path):
+            shutil.rmtree(item_path)
+    file = os.path.join(folder, "observations.zip")
+    with requests.get(url, stream=True) as r:
+        r.raise_for_status()
+        with open(file, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=8192):
+                f.write(chunk)
+    with zipfile.ZipFile(file, 'r') as zip_ref:
+        zip_ref.extractall(folder)
+    os.remove(file)
