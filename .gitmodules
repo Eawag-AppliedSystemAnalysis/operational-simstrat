@@ -1,3 +1,3 @@
 [submodule "lake-calibrator"]
 	path = lake-calibrator
-	url = git@github.com:eawag-surface-waters-research/lake-calibrator.git
+	url = https://github.com/eawag-surface-waters-research/lake-calibrator.git
