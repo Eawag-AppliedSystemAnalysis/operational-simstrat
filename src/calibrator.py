@@ -3,6 +3,7 @@ import os
 import sys
 import argparse
 from datetime import datetime, timezone
+from dateutil.relativedelta import relativedelta
 from functions.verify import verify_arg_file
 from functions.parallel import run_parallel_tasks
 from functions.general import process_args, edit_parameters
@@ -36,7 +37,7 @@ def task(parameters, args):
             "file": os.path.join(args["observation_dir"], parameters["key"], "temperature.csv"),
             "parameter": "temperature",
             "unit": "degC",
-            "start": model.start_date.isoformat(),
+            "start": (model.start_date + relativedelta(years=1)).isoformat(),
             "end": datetime.strptime(args["overwrite_end_date"], "%Y%m%d").replace(tzinfo=timezone.utc).isoformat()
         }],
         "simulation": "simstrat",
