@@ -100,3 +100,31 @@ docker run -v $(pwd):/simstrat/run eawag/simstrat:3.0.4 Settings.par
 ### Locally compiled
 
 See the instructions [here](https://github.com/Eawag-AppliedSystemAnalysis/Simstrat) for details.
+
+## Calibration
+
+Simstrat operational uses [Lake-Calibrator](https://github.com/eawag-surface-waters-research/lake-calibrator) to calibrate the lakes. It is installed as a submodule as can be called as follows:
+
+```bash
+python src/calibrator.py calibration
+```
+
+Where calibration is the argument file in `args/`
+
+The arguments follow the same structure as for running simstrat operational but with some additional parameters required.
+
+### Observations
+
+Observations are required for the calibration, by default they should be located in `lake-calibrator/observations` with the structure `{lake-key}/{parameter}.csv`. For example `greifensee/temperature.csv`.
+
+Observation files should have the following structure:
+
+
+| time                      | depth | latitude | longitude | value | weight |
+|---------------------------|-------|----------|-----------|-------|--------|
+| 2024-08-12T22:27:54+00:00 | 1.6   | 46.5     | 6.67      | 18.3  | 1      |
+| 2024-08-12T23:27:54+00:00 | 8.4   | 46.5     | 6.67      | 8.5   | 1      |
+
+There should be one file per lake and per parameter and the values should all have the same units. 
+
+
