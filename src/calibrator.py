@@ -55,6 +55,10 @@ def task(parameters, args):
             "debug": False
         }
     }
+    if args["docker_dir"] != False:
+        repo_name = os.path.basename(args["docker_dir"])
+        dhcf = args["docker_dir"] + args["calibration_dir"].split(repo_name)[-1] + "/" + parameters["key"]
+        calibration_args["docker_host_calibration_folder"] = dhcf
     results = calibrator(calibration_args)
     new_parameters = edit_parameters(args["lake_parameters_dir"], parameters["key"], results)
     model = Simstrat(new_parameters["key"], new_parameters, args)
