@@ -1,4 +1,5 @@
 import os
+import json
 import requests
 import subprocess
 import numpy as np
@@ -263,3 +264,18 @@ def run_subprocess(command):
         error_message += f"Standard Output: {result.stdout}\n"
         error_message += f"Standard Error: {result.stderr}\n"
         raise RuntimeError(error_message)
+
+
+def edit_parameters(file, key, results):
+    if "parameters" not in results:
+        raise ValueError("Calibration failed, run in debug mode to see full output.")
+    with open(file, 'r') as f:
+        lake_parameters = json.load(f)
+    for lake in lake_parameters:
+        if lake["key"] == key:
+            for p in results["parameters"].keys():
+                lake[p] = results["parameters"][p]
+            lake["performance"]["T"]["rmse"] = results["error"]
+            with open(file, 'w') as file:
+                json.dump(lake_parameters, file, indent=4)
+            return lake

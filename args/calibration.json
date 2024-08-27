@@ -1,0 +1,7 @@
+{
+  "couple_aed2": true,
+  "debug": false,
+  "log": false,
+  "max_workers": 5,
+  "agents": 10
+}
