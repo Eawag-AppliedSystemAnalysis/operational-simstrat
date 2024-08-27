@@ -21,6 +21,7 @@ class Config(object):
             "data_api": {"default": "http://eaw-alplakes2:8000", "verify": verify.verify_string, "desc": "Base URL for the Alplakes API"},
             "log": {"default": True, "verify": verify.verify_bool, "desc": "Output log to file"},
             "run": {"default": True, "verify": verify.verify_bool, "desc": "Run simulations"},
+            "post_process": {"default": True, "verify": verify.verify_bool, "desc": "Post process simulation"},
             "upload": {"default": False, "verify": verify.verify_bool, "desc": "Upload results to server"},
             "server_host": {"default": "eaw-alplakes2", "verify": verify.verify_string, "desc": "Upload server host name"},
             "server_user": {"default": "alplakes", "verify": verify.verify_string, "desc": "Upload server user name"},
@@ -33,6 +34,7 @@ class Config(object):
             "results_folder_api": {"default": "/nfsmount/filesystem/media/1dsimulations/simstrat/results", "verify": verify.verify_string, "desc": "Server path to upload results"},
         }
         self.args = {k: v["default"] for k, v in self.default_args.items()}
+        self.args["lake_parameters_dir"] = self.lake_parameters_dir
 
     def load(self, arg_file, overwrite_args):
         if arg_file:
@@ -64,3 +66,17 @@ class Config(object):
         with open(self.lake_parameters_dir) as f:
             lake_parameters = json.load(f)
         return lake_parameters
+
+class CalibratorConfig(Config):
+    def __init__(self, *args, **kwargs):
+        super(CalibratorConfig, self).__init__(*args, **kwargs)
+        self.default_args["calibration_dir"] = {"default": os.path.join(self.repo_dir, "calibration"),
+                                                "verify": verify.verify_path,
+                                                "desc": "Path to the calibration directory"}
+        self.default_args["observation_dir"] = {"default": os.path.join(self.repo_dir, "lake-calibrator", "observations"),
+                                                "verify": verify.verify_path,
+                                                "desc": "Path to the observations directory"}
+        self.default_args["agents"] = {"default": 3, "verify": verify.verify_integer, "desc": "Number of PEST agents"}
+        self.default_args["overwrite_end_date"] = {"default": "20220101", "verify": verify.verify_date, "desc": "Overwrite the default end date"}
+        self.args = {k: v["default"] for k, v in self.default_args.items()}
+        self.args["lake_parameters_dir"] = self.lake_parameters_dir

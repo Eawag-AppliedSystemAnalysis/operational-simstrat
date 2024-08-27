@@ -1,6 +1,9 @@
 .idea
 args/testing.json
+args/testing_calibration.json
 runs/*
 !runs/.gitkeep
 src/__pycache__
 src/functions/__pycache__
+calibration/*
+!calibration/.gitkeep

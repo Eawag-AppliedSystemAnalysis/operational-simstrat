@@ -158,9 +158,10 @@ class Simstrat(object):
             self.create_par_file()
             if self.args["run"]:
                 self.run_simulation()
-                self.post_process()
-                if self.args["upload"]:
-                    self.upload()
+                if self.args["post_process"]:
+                    self.post_process()
+                    if self.args["upload"]:
+                        self.upload()
         except Exception as e:
             self.log.info(str(e))
             if not self.args["debug"]:
@@ -462,7 +463,7 @@ class Simstrat(object):
             simulation_dir, self.args["simstrat_version"])
         month_beginning = self.forcing_end.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         snapshot_path = os.path.join(self.simulation_dir, "Results", "simulation-snapshot.dat")
-        if self.args["snapshot"] and month_beginning != self.start_date:
+        if self.args["snapshot"] and self.args["overwrite_end_date"] == False and month_beginning != self.start_date:
             self.log.info("Splitting into two runs to create correct snapshot", indent=1)
             self.log.info("Running from {} - {}".format(self.start_date, month_beginning), indent=1)
             overwrite_par_file_dates(os.path.join(self.simulation_dir, "Settings.par"), self.start_date,
