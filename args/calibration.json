@@ -1,7 +1,7 @@
 {
   "lakes": ["greifensee"],
   "couple_aed2": true,
-  "debug": false,
+  "debug": true,
   "log": false,
   "max_workers": 5,
   "agents": 10
