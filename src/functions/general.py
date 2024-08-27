@@ -1,7 +1,5 @@
 import os
 import json
-from multiprocessing.managers import Value
-
 import requests
 import subprocess
 import numpy as np
