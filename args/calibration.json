@@ -1,4 +1,5 @@
 {
+  "lakes": ["upperconstance", "joux", "lowerlugano", "sarnen", "lucernegersauerandtreibbecken", "moossee", "inkwilersee", "huttwilersee", "bret", "brenet", "bretaye", "lioson", "tome", "superiore", "sassolo", "geistsee", "lenkerseeli", "stockseewli", "oberesbanzlauiseeli", "steinsee", "hugiweiher", "obererbommerweiher", "nussbommersee", "vagoweiher", "wistererweiher","lowerconstance", "lucernekreuztrichterandvitznauerbecken"],
   "couple_aed2": true,
   "debug": false,
   "log": false,
