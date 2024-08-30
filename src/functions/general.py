@@ -277,7 +277,10 @@ def edit_parameters(file, key, results):
         if lake["key"] == key:
             for p in results["parameters"].keys():
                 lake[p] = results["parameters"][p]
-            lake["performance"]["T"]["rmse"] = results["error"]
+            lake["performance"] = {}
+            lake["performance"]["rmse"] = results["error"]
+            for obv in results["observations"].keys():
+                lake["performance"][obv] = results["observations"][obv]
             with open(file, 'w') as file:
                 json.dump(lake_parameters, file, indent=4)
             return lake
