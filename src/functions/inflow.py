@@ -178,7 +178,7 @@ def parse_lake_outflow(inflow, time, simulation_dir, reference_date):
     file_path = os.path.join(os.path.join(simulation_dir, "..", inflow["id"], "Qin.dat"))
     with open(file_path, 'r') as file:
         lines = file.readlines()
-        if lines[0].strip() == "No inflows":
+        if lines[0].strip() == "No inflows" or len(lines) < 4:
             print("Inflow files are empty")
             return []
         deep_inflows, surface_inflows = [int(d.strip()) for d in lines[1].strip().split(" ") if d != ""]
