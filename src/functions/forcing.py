@@ -27,8 +27,8 @@ def metadata_from_meteoswiss_meteostation(forcing, api):
             data = call_url(endpoint)
             for parameter in data["parameters"]:
                 if parameter["id"] in required:
-                    parameter["start_date"] = datetime.strptime(parameter["start_date"], '%Y-%m-%dT%H:%M:%S%z')
-                    parameter["end_date"] = datetime.strptime(parameter["end_date"], '%Y-%m-%dT%H:%M:%S%z')
+                    parameter["start_date"] = datetime.strptime(parameter["start_date"], '%Y-%m-%d').replace(tzinfo=timezone.utc)
+                    parameter["end_date"] = datetime.strptime(parameter["end_date"], '%Y-%m-%d').replace(tzinfo=timezone.utc)
                     required[parameter["id"]]["start"].append(parameter["start_date"])
                     required[parameter["id"]]["end"].append(parameter["end_date"])
             f["parameters"] = data["parameters"]
@@ -87,7 +87,7 @@ def meteodata_from_meteoswiss_meteostations(start, end, forcing, elevation, lati
                     values = np.array(data[p_id])
                     if p_id == "tre200h0":
                         values = adjust_temperature_for_altitude_difference(values, elevation - f["elevation"])
-                    df = pd.DataFrame({'time': data["Time"], 'values': values})
+                    df = pd.DataFrame({'time': data["time"], 'values': values})
                     df['time'] = pd.to_datetime(df['time'])
                     df['values'] = pd.to_numeric(df['values'], errors='coerce')
                     df = df.dropna()
@@ -103,7 +103,7 @@ def meteodata_from_meteoswiss_meteostations(start, end, forcing, elevation, lati
                             try:
                                 data = call_url(
                                     endpoint.format(f["id"], p_id, gap[0].strftime('%Y%m%d'), gap[1].strftime('%Y%m%d')))
-                                df_new = pd.DataFrame({'time': data["Time"],
+                                df_new = pd.DataFrame({'time': data["time"],
                                                        'values_new': adjust_data_to_mean_and_std(data[p_id], std, mean)})
                                 df_new['time'] = pd.to_datetime(df_new['time'])
                                 df_new['values_new'] = pd.to_numeric(df_new['values_new'], errors='coerce')
@@ -114,7 +114,7 @@ def meteodata_from_meteoswiss_meteostations(start, end, forcing, elevation, lati
                                 df = df.sort_values(by='time')
                                 df.reset_index(inplace=True)
                             except Exception as e:
-                                print(e)
+                                print("ERROR", e)
                     gaps = detect_gaps(df["time"], start, end)
         if not isinstance(df, pd.core.frame.DataFrame):
             raise ValueError("Failed to collect values for {}".format(p_id))
@@ -159,7 +159,7 @@ def meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, lo
         try:
             data = call_url(endpoint.format(today, latitude, longitude))
         except Exception as e:
-            print(e)
+            print("ERROR", e)
             yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y%m%d")
             data = call_url(endpoint.format(yesterday, latitude, longitude))
         grid_elevation = get_elevation_swisstopo(data["lat"], data["lng"])
@@ -187,7 +187,7 @@ def meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, lo
         try:
             data = call_url(endpoint.format(today, latitude, longitude))
         except Exception as e:
-            print(e)
+            print("ERROR", e)
             yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y%m%d")
             data = call_url(endpoint.format(yesterday, latitude, longitude))
         grid_elevation = get_elevation_swisstopo(data["lat"], data["lng"])
