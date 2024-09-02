@@ -142,7 +142,7 @@ def download_bafu_hydrodata(inflow, start_date, end_date, time, salinity, api):
                                         inflow[p]["parameter"],
                                         start_date.strftime('%Y%m%d'),
                                         end_date.strftime('%Y%m%d')))
-                df = pd.DataFrame({'time': data["Time"], 'values': np.array(data[inflow[p]["parameter"]])})
+                df = pd.DataFrame({'time': data["time"], 'values': np.array(data[inflow[p]["parameter"]])})
                 df['time'] = pd.to_datetime(df['time'])
                 df['values'] = pd.to_numeric(df['values'], errors='coerce')
                 df = df.dropna()
