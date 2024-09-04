@@ -1,6 +1,7 @@
 import os
 import json
 import shutil
+import traceback
 import numpy as np
 from datetime import datetime, timezone, timedelta
 
@@ -164,6 +165,7 @@ class Simstrat(object):
                         self.upload()
         except Exception as e:
             self.log.info(str(e))
+            self.log.info(str(traceback.format_exc()))
             if not self.args["debug"]:
                 self.log.info("Removing input and output files of failed run (debug=False)")
                 for root, dirs, files in os.walk(self.simulation_dir):
