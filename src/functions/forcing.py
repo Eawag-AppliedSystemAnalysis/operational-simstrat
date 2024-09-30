@@ -25,15 +25,16 @@ def metadata_from_meteoswiss_meteostation(forcing, api):
         if f["type"].lower() == "meteoswiss_meteostation":
             endpoint = "{}/meteoswiss/meteodata/metadata/{}".format(api, f["id"])
             data = call_url(endpoint)
-            for parameter in data["parameters"]:
-                if parameter["id"] in required:
-                    parameter["start_date"] = datetime.strptime(parameter["start_date"], '%Y-%m-%d').replace(tzinfo=timezone.utc)
-                    parameter["end_date"] = datetime.strptime(parameter["end_date"], '%Y-%m-%d').replace(tzinfo=timezone.utc)
-                    required[parameter["id"]]["start"].append(parameter["start_date"])
-                    required[parameter["id"]]["end"].append(parameter["end_date"])
-            f["parameters"] = data["parameters"]
+            parameters = data["variables"]
+            for parameter in parameters.keys():
+                if parameter in required:
+                    parameters[parameter]["start_date"] = datetime.strptime(parameters[parameter]["start_date"], '%Y-%m-%d').replace(tzinfo=timezone.utc)
+                    parameters[parameter]["end_date"] = datetime.strptime(parameters[parameter]["end_date"], '%Y-%m-%d').replace(tzinfo=timezone.utc)
+                    required[parameter]["start"].append(parameters[parameter]["start_date"])
+                    required[parameter]["end"].append(parameters[parameter]["end_date"])
+            f["parameters"] = parameters
             f["elevation"] = data["elevation"]
-            f["latlng"] = data["latlng"]
+            f["latlng"] = [data["lat"], data["lng"]]
 
     for key in required.keys():
         if len(required[key]["start"]) == 0:
@@ -60,7 +61,7 @@ def download_forcing_data(output, start, end, forcing, forecast, forcing_forecas
 
 def meteodata_from_meteoswiss_meteostations(start, end, forcing, elevation, latitude, longitude, reference_date, output,
                                             api, log):
-    endpoint = api + "/meteoswiss/meteodata/measured/{}/{}/{}/{}"
+    endpoint = api + "/meteoswiss/meteodata/measured/{}/{}/{}?variables={}"
 
     time = start + np.arange(0, (end - start).total_seconds() / 3600 + 1, 1).astype(int) * timedelta(hours=1)
 
@@ -74,17 +75,18 @@ def meteodata_from_meteoswiss_meteostations(start, end, forcing, elevation, lati
         gaps = False
         df = False
         for f in forcing:
-            if p_id in [p["id"] for p in f["parameters"]]:
-                parameter = next((d for d in f["parameters"] if d.get("id") == p_id), None)
+            if p_id in f["parameters"].keys():
+                parameter = f["parameters"][p_id]
                 if not gaps:
                     start_date = min(max(start, parameter["start_date"]), parameter["end_date"])
                     end_date = min(end, parameter["end_date"])
                     log.info(
                         "{}: Using data from station {} : {} - {}".format(p_id, f["id"], start_date.strftime('%Y%m%d'),
                                                                           end_date.strftime('%Y%m%d')), indent=1)
-                    data = call_url(
-                        endpoint.format(f["id"], p_id, start_date.strftime('%Y%m%d'), end_date.strftime('%Y%m%d')))
-                    values = np.array(data[p_id])
+                    url = endpoint.format(f["id"], start_date.strftime('%Y%m%d'), end_date.strftime('%Y%m%d'), p_id)
+                    print(url)
+                    data = call_url(url)
+                    values = np.array(data["variables"][p_id]["data"])
                     if p_id == "tre200h0":
                         values = adjust_temperature_for_altitude_difference(values, elevation - f["elevation"])
                     df = pd.DataFrame({'time': data["time"], 'values': values})
@@ -101,10 +103,11 @@ def meteodata_from_meteoswiss_meteostations(start, end, forcing, elevation, lati
                             log.info("{}: Trying to complete with data from station {} : {} - {}".format(
                                 p_id, f["id"], gap[0].strftime('%Y%m%d'), gap[1].strftime('%Y%m%d')), indent=2)
                             try:
-                                data = call_url(
-                                    endpoint.format(f["id"], p_id, gap[0].strftime('%Y%m%d'), gap[1].strftime('%Y%m%d')))
+                                url = endpoint.format(f["id"], gap[0].strftime('%Y%m%d'), gap[1].strftime('%Y%m%d'), p_id)
+                                print(url)
+                                data = call_url(url)
                                 df_new = pd.DataFrame({'time': data["time"],
-                                                       'values_new': adjust_data_to_mean_and_std(data[p_id], std, mean)})
+                                                       'values_new': adjust_data_to_mean_and_std(data["variables"][p_id]["data"], std, mean)})
                                 df_new['time'] = pd.to_datetime(df_new['time'])
                                 df_new['values_new'] = pd.to_numeric(df_new['values_new'], errors='coerce')
                                 df = pd.merge(df, df_new, on='time', how='outer')
@@ -163,22 +166,22 @@ def meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, lo
             yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y%m%d")
             data = call_url(endpoint.format(yesterday, latitude, longitude))
         grid_elevation = get_elevation_swisstopo(data["lat"], data["lng"])
-        data_dict = {key: data[key]["data"] for key in data.keys() if isinstance(data[key], dict)}
+        data_dict = {key: data["variables"][key]["data"] for key in data["variables"].keys()}
         data_dict["utc_time"] = data["time"]
         df = pd.DataFrame(data_dict)
         df['Time'] = pd.to_datetime(df['utc_time'], utc=True)
         df['Time'] = df.apply(lambda row: datetime_to_simstrat_time(row['Time'], reference_date), axis=1)
-        df["T_2M_MEAN"] = df["T_2M_MEAN"] - 273.15  # Kelvin to celsius
-        df["T_2M_MEAN"] = adjust_temperature_for_altitude_difference(df["T_2M_MEAN"].values, elevation - grid_elevation)
-        df["TOT_PREC_MEAN"] = df["TOT_PREC_MEAN"] * 0.001  # kg m-2 to m/hr
-        df["CLCT_MEAN"] = df["CLCT_MEAN"] * 0.01  # Percentage to fraction
-        df["u"] = df["U_MEAN"]
-        df["v"] = df["V_MEAN"]
-        df["Tair"] = df["T_2M_MEAN"]
-        df["sol"] = df["GLOB_MEAN"]
-        df["vap"] = vapor_pressure_from_relative_humidity_and_temperature(df["T_2M_MEAN"].values, df["RELHUM_2M_MEAN"])
-        df["cloud"] = df["CLCT_MEAN"]
-        df["rain"] = df["TOT_PREC_MEAN"]
+        df["T_2M"] = df["T_2M"] - 273.15  # Kelvin to celsius
+        df["T_2M"] = adjust_temperature_for_altitude_difference(df["T_2M"].values, elevation - grid_elevation)
+        df["TOT_PREC"] = df["TOT_PREC"] * 0.001  # kg m-2 to m/hr
+        df["CLCT"] = df["CLCT"] * 0.01  # Percentage to fraction
+        df["u"] = df["U"]
+        df["v"] = df["V"]
+        df["Tair"] = df["T_2M"]
+        df["sol"] = df["GLOB"]
+        df["vap"] = vapor_pressure_from_relative_humidity_and_temperature(df["T_2M"].values, df["RELHUM_2M"])
+        df["cloud"] = df["CLCT"]
+        df["rain"] = df["TOT_PREC"]
         df = df[parameters]
     elif forcing_forecast["model"].lower() == "icon":
         log.info("Extending forcing files using MeteoSwiss ICON forecast.", indent=1)
@@ -191,22 +194,22 @@ def meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, lo
             yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y%m%d")
             data = call_url(endpoint.format(yesterday, latitude, longitude))
         grid_elevation = get_elevation_swisstopo(data["lat"], data["lng"])
-        data_dict = {key: data[key]["data"] for key in data.keys() if isinstance(data[key], dict)}
+        data_dict = {key: data["variables"][key]["data"] for key in data["variables"].keys()}
         data_dict["utc_time"] = data["time"]
         df = pd.DataFrame(data_dict)
         df['Time'] = pd.to_datetime(df['utc_time'], utc=True)
         df['Time'] = df.apply(lambda row: datetime_to_simstrat_time(row['Time'], reference_date), axis=1)
-        df["T_2M_MEAN"] = df["T_2M_MEAN"] - 273.15  # Kelvin to celsius
-        df["T_2M_MEAN"] = adjust_temperature_for_altitude_difference(df["T_2M_MEAN"].values, elevation - grid_elevation)
-        df["TOT_PREC_MEAN"] = df["TOT_PREC_MEAN"] * 0.001  # kg m-2 to m/hr
-        df["CLCT_MEAN"] = df["CLCT_MEAN"] * 0.01  # Percentage to fraction
-        df["u"] = df["U_MEAN"]
-        df["v"] = df["V_MEAN"]
-        df["Tair"] = df["T_2M_MEAN"]
-        df["sol"] = df["GLOB_MEAN"]
-        df["vap"] = vapor_pressure_from_relative_humidity_and_temperature(df["T_2M_MEAN"].values, df["RELHUM_2M_MEAN"])
-        df["cloud"] = df["CLCT_MEAN"]
-        df["rain"] = df["TOT_PREC_MEAN"]
+        df["T_2M"] = df["T_2M"] - 273.15  # Kelvin to celsius
+        df["T_2M"] = adjust_temperature_for_altitude_difference(df["T_2M"].values, elevation - grid_elevation)
+        df["TOT_PREC"] = df["TOT_PREC"] * 0.001  # kg m-2 to m/hr
+        df["CLCT"] = df["CLCT"] * 0.01  # Percentage to fraction
+        df["u"] = df["U"]
+        df["v"] = df["V"]
+        df["Tair"] = df["T_2M"]
+        df["sol"] = df["GLOB"]
+        df["vap"] = vapor_pressure_from_relative_humidity_and_temperature(df["T_2M"].values, df["RELHUM_2M"])
+        df["cloud"] = df["CLCT"]
+        df["rain"] = df["TOT_PREC"]
         df = df[parameters]
     else:
         raise ValueError("MeteoSwiss forecast not implemented for model: {}".format(forcing_forecast["model"]))

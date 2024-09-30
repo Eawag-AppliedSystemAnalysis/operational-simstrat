@@ -42,7 +42,7 @@ def default_initial_conditions(doy, elevation, max_depth, salinity=0.15):
 def absorption_from_observations(key, start_date, end_date, api, reference_date, days_from_observation=60):
     try:
         data = call_url("{}/insitu/secchi/{}".format(api, key))
-        df = pd.DataFrame({"time": data["time"], "value": data["Secchi depth [m]"]})
+        df = pd.DataFrame({"time": data["time"], "value": data["variable"]["data"]})
         df["value"] = 1.7 / df["value"]  # Convert from Secchi depth [m] to absorption [m-1]
         df["time"] = pd.to_datetime(df["time"])
         secchi_mean = df['value'].mean()

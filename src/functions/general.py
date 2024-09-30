@@ -94,7 +94,7 @@ def seiche_from_surface_area(surface_area):
 
 
 def adjust_temperature_for_altitude_difference(temperature, difference):
-    t = np.array(temperature)
+    t = np.array(temperature, dtype=float)
     return t - 0.0065 * difference
 
 
