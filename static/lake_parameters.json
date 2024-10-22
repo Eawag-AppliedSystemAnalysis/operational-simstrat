@@ -4713,7 +4713,7 @@
         },
         "forcing": [
             {
-                "id": "puegnago_del_garda",
+                "id": "vnt387",
                 "type": "mistral_meteostation"
             }
         ],
@@ -4790,7 +4790,7 @@
         "forcing": [
             {
                 "id": "2213",
-                "type": "arco_meteostation"
+                "type": "arso_meteostation"
             }
         ],
         "a_seiche": 1e-05,
@@ -4820,6 +4820,64 @@
             {
                 "id": "6512",
                 "type": "geosphere_meteostation"
+            }
+        ],
+        "a_seiche": 1e-05,
+        "f_wind": 1.11948664,
+        "p_lw": 0.867227187,
+        "snow_temp": 0.5,
+        "p_absorb": 1.5
+    },
+    {
+        "key": "annecy",
+        "name": "Lake Annecy",
+        "elevation": 446.97,
+        "surface_area": 27.59,
+        "type": "Natural",
+        "volume": 1.12,
+        "max_depth": 82.0,
+        "average_depth": 41.0,
+        "residence_time": 1460,
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 45.854,
+        "longitude": 6.176,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": false,
+        "datalakes_id": 203,
+        "forcing": [
+            {
+                "id": "6512",
+                "type": "meteofrance_meteostation"
+            }
+        ],
+        "a_seiche": 1e-05,
+        "f_wind": 1.11948664,
+        "p_lw": 0.867227187,
+        "snow_temp": 0.5,
+        "p_absorb": 1.5
+    },
+    {
+        "key": "bourget",
+        "name": "Lac du Bourget",
+        "elevation": 231.5,
+        "surface_area": 44.5,
+        "type": "Natural",
+        "volume": 3.6,
+        "max_depth": 145.0,
+        "average_depth": 85,
+        "residence_time": 2920,
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 45.742,
+        "longitude": 5.862,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": false,
+        "datalakes_id": 204,
+        "forcing": [
+            {
+                "id": "6512",
+                "type": "meteofrance_meteostation"
             }
         ],
         "a_seiche": 1e-05,
