@@ -1,0 +1,3 @@
+{"lakes": ["greifensee"], "couple_aed2":  true, "forecast":  false, "overwrite_simulation":  false, "run":  true,
+  "upload": false, "debug": false, "log": true, "post_process": false, "reset_date": true,
+  "remove_existing_results": false}

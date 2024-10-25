@@ -22,6 +22,8 @@ class Config(object):
             "log": {"default": True, "verify": verify.verify_bool, "desc": "Output log to file"},
             "run": {"default": True, "verify": verify.verify_bool, "desc": "Run simulations"},
             "post_process": {"default": True, "verify": verify.verify_bool, "desc": "Post process simulation"},
+            "reset_date": {"default": False, "verify": verify.verify_bool, "desc": "Reset date to simulation beginning after snapshot run"},
+            "remove_existing_results": {"default": True, "verify": verify.verify_bool, "desc": "Remove existing results when re-running"},
             "upload": {"default": False, "verify": verify.verify_bool, "desc": "Upload results to server"},
             "server_host": {"default": "eaw-alplakes2", "verify": verify.verify_string, "desc": "Upload server host name"},
             "server_user": {"default": "alplakes", "verify": verify.verify_string, "desc": "Upload server user name"},
@@ -29,8 +31,8 @@ class Config(object):
             "debug": {"default": False, "verify": verify.verify_bool, "desc": "Raise any errors in code for easier debugging"},
             "docker_dir": {"default": False, "verify": verify.verify_string, "desc": "Repository path in base filesystem for when code is run in docker container"},
             "overwrite_simulation": {"default": False, "verify": verify.verify_bool, "desc": "Remove existing simulation files and run full simulation"},
-            "overwrite_start_date": {"default": False, "verify": verify.verify_date, "desc": "Overwrites the default start date and initialises from initial conditions and NOT a snapshot"},
-            "overwrite_end_date": {"default": False, "verify": verify.verify_date, "desc": "Overwrite the default end date"},
+            "overwrite_start_date": {"default": False, "verify": verify.verify_date, "desc": "Overwrites the default start date and initialises from initial conditions and NOT a snapshot YYYYMMDD"},
+            "overwrite_end_date": {"default": False, "verify": verify.verify_date, "desc": "Overwrite the default end date YYYYMMDD"},
             "results_folder_api": {"default": "/nfsmount/filesystem/media/1dsimulations/simstrat/results", "verify": verify.verify_string, "desc": "Server path to upload results"},
         }
         self.args = {k: v["default"] for k, v in self.default_args.items()}
