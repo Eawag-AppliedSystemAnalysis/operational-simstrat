@@ -334,7 +334,8 @@ class Simstrat(object):
                 end_date = overwrite_end_date
 
         if start_date >= end_date:
-            raise ValueError("Start date {} cannot be after end date {}".format(start_date, end_date))
+            self.log.info("Start date {} must be later than end date {}".format(start_date, end_date), indent=1)
+            exit()
 
         self.log.info("Model timeframe: {} - {}".format(start_date, end_date), indent=1)
         if self.snapshot:
