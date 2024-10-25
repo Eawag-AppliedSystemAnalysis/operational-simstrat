@@ -147,7 +147,8 @@ class Simstrat(object):
             self.create_grid_file()
             self.create_output_depths_file()
             self.create_output_time_resolution_file()
-            self.set_simulation_run_period()
+            if not self.set_simulation_run_period():
+                return
             if self.snapshot:
                 self.prepare_snapshot()
             self.create_initial_conditions_file()
@@ -333,9 +334,11 @@ class Simstrat(object):
                     indent=1)
                 end_date = overwrite_end_date
 
-        if start_date >= end_date:
-            self.log.info("Start date {} must be later than end date {}".format(start_date, end_date), indent=1)
-            exit()
+        if start_date == end_date:
+            self.log.info("Start date equal to end date. Exiting without error.", indent=1)
+            return False
+        elif start_date > end_date:
+            raise ValueError("Start date {} cannot be after end date {}".format(start_date, end_date))
 
         self.log.info("Model timeframe: {} - {}".format(start_date, end_date), indent=1)
         if self.snapshot:
@@ -345,6 +348,7 @@ class Simstrat(object):
         self.start_date = start_date
         self.end_date = end_date
         self.log.end_stage()
+        return True
 
     def prepare_snapshot(self):
         self.log.begin_stage("prepare_snapshot")
