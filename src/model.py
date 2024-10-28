@@ -472,7 +472,7 @@ class Simstrat(object):
             simulation_dir, self.args["simstrat_version"])
         month_beginning = self.forcing_end.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         snapshot_path = os.path.join(self.simulation_dir, "Results", "simulation-snapshot.dat")
-        if self.args["snapshot"] and self.args["overwrite_end_date"] == False and month_beginning != self.start_date:
+        if self.args["snapshot"] and self.args["monthly_snapshot"] and month_beginning != self.start_date:
             self.log.info("Splitting into two runs to create correct snapshot", indent=1)
             self.log.info("Running from {} - {}".format(self.start_date, month_beginning), indent=1)
             overwrite_par_file_dates(os.path.join(self.simulation_dir, "Settings.par"), self.start_date,
@@ -490,8 +490,9 @@ class Simstrat(object):
             self.log.info("Running from {} - {}".format(self.start_date, self.end_date), indent=1)
             run_subprocess(command)
             if os.path.exists(snapshot_path):
-                snapshot_out_path = os.path.join(self.simulation_dir, "simulation-snapshot_{}.dat".format(self.end_date.strftime("%Y%m%d")))
-                shutil.copy(snapshot_path, snapshot_out_path)
+                if not self.args["monthly_snapshot"]:
+                    snapshot_out_path = os.path.join(self.simulation_dir, "simulation-snapshot_{}.dat".format(self.end_date.strftime("%Y%m%d")))
+                    shutil.copy(snapshot_path, snapshot_out_path)
                 os.remove(snapshot_path)
         self.log.end_stage()
 
