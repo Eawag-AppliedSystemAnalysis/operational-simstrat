@@ -380,6 +380,7 @@ class Simstrat(object):
                                              self.parameters["longitude"],
                                              self.parameters["reference_date"],
                                              self.args["data_api"],
+                                             self.args["visualcrossing_key"],
                                              self.log)
         forcing_data = quality_assurance_forcing_data(forcing_data, self.log)
         self.log.info("Interpolating small data gaps", indent=1)

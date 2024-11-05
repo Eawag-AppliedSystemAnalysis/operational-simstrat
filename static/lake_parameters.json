@@ -4793,6 +4793,11 @@
                 "type": "arso_meteostation"
             }
         ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
         "a_seiche": 1e-05,
         "f_wind": 1.11948664,
         "p_lw": 0.867227187,
@@ -4822,6 +4827,11 @@
                 "type": "geosphere_meteostation"
             }
         ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
         "a_seiche": 1e-05,
         "f_wind": 1.11948664,
         "p_lw": 0.867227187,
@@ -4855,6 +4865,11 @@
                 "type": "meteofrance_meteostation"
             }
         ],
+        "forcing_forecast": {
+            "source": "MeteoSwiss",
+            "model": "ICON",
+            "days": 5
+        },
         "a_seiche": 1e-05,
         "f_wind": 1.11948664,
         "p_lw": 0.867227187,
@@ -4888,6 +4903,11 @@
                 "type": "meteofrance_meteostation"
             }
         ],
+        "forcing_forecast": {
+            "source": "MeteoSwiss",
+            "model": "ICON",
+            "days": 5
+        },
         "a_seiche": 1e-05,
         "f_wind": 1.11948664,
         "p_lw": 0.867227187,

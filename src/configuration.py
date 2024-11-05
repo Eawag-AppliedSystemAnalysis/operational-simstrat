@@ -26,6 +26,7 @@ class Config(object):
             "server_host": {"default": "eaw-alplakes2", "verify": verify.verify_string, "desc": "Upload server host name"},
             "server_user": {"default": "alplakes", "verify": verify.verify_string, "desc": "Upload server user name"},
             "server_password": {"default": False, "verify": verify.verify_string, "desc": "Upload server password"},
+            "visualcrossing_key": {"default": False, "verify": verify.verify_string, "desc": "Visual Crossing API key"},
             "debug": {"default": False, "verify": verify.verify_bool, "desc": "Raise any errors in code for easier debugging"},
             "docker_dir": {"default": False, "verify": verify.verify_string, "desc": "Repository path in base filesystem for when code is run in docker container"},
             "overwrite_simulation": {"default": False, "verify": verify.verify_bool, "desc": "Remove existing simulation files and run full simulation"},

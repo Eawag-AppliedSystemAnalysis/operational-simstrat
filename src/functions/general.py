@@ -133,6 +133,11 @@ def get_elevation_swisstopo(latitude, longitude):
     data = call_url(endpoint.format(easting, northing))
     return float(data["height"])
 
+def get_elevation_eudem25(latitude, longitude):
+    endpoint = "https://api.opentopodata.org/v1/eudem25m?locations={},{}"
+    data = call_url(endpoint.format(latitude, longitude))
+    return float(data["results"][0]["elevation"])
+
 
 def latlng_to_ch1903(lat, lng):
     lat = lat * 3600

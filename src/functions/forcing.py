@@ -5,7 +5,7 @@ from datetime import datetime, timezone, timedelta
 from .general import (call_url, adjust_temperature_for_altitude_difference, air_pressure_from_elevation, detect_gaps,
                       adjust_data_to_mean_and_std, clear_sky_solar_radiation, datetime_to_simstrat_time,
                       calculate_mean_wind_direction, interpolate_timeseries, fill_day_of_year, get_elevation_swisstopo,
-                      vapor_pressure_from_relative_humidity_and_temperature)
+                      vapor_pressure_from_relative_humidity_and_temperature, get_elevation_eudem25)
 
 import matplotlib.pyplot as plt
 
@@ -47,7 +47,7 @@ def metadata_from_meteoswiss_meteostation(forcing, api):
     return start, end
 
 
-def download_forcing_data(output, start, end, forcing, forecast, forcing_forecast, elevation, latitude, longitude, reference_date, api, log):
+def download_forcing_data(output, start, end, forcing, forecast, forcing_forecast, elevation, latitude, longitude, reference_date, api, visualcrossing_key, log):
     if forcing[0]["type"].lower() == "meteoswiss_meteostation":
         output = meteodata_from_meteoswiss_meteostations(start, end, forcing, elevation, latitude, longitude,
                                                          reference_date, output, api, log)
@@ -56,6 +56,8 @@ def download_forcing_data(output, start, end, forcing, forecast, forcing_forecas
     if forecast:
         if forcing_forecast["source"].lower() == "meteoswiss":
             output = meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, longitude, reference_date, output, api, log)
+        elif forcing_forecast["source"].lower() == "visualcrossing":
+            output = meteodata_forecast_from_visualcrossing(forcing_forecast, elevation, latitude, longitude, reference_date, output, visualcrossing_key, log)
     return output
 
 
@@ -220,6 +222,41 @@ def meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, lo
         output[key]["data"] = df_o[key].values
     return output
 
+def meteodata_forecast_from_visualcrossing(forcing_forecast, elevation, latitude, longitude, reference_date, output, key, log):
+    parameters = ["Time", "u", "v", "Tair", "sol", "vap", "cloud", "rain"]
+    df_c = pd.DataFrame({key: output[key]["data"] for key in output.keys()})
+    df_c.set_index('Time', inplace=True)
+    start = (datetime.now() - timedelta(days=5)).strftime("%Y-%m-%d")
+    end = (datetime.now() + timedelta(days=forcing_forecast["days"])).strftime("%Y-%m-%d")
+    log.info("Extending forcing files using Visual Crossing forecast.", indent=1)
+    endpoint = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{}%2C{}/{}/{}?unitGroup=metric&include=hours&key={}&contentType=json"
+    print(endpoint.format(latitude, longitude, start, end, key))
+    try:
+        data = call_url(endpoint.format(latitude, longitude, start, end, key))
+    except Exception as e:
+        print("ERROR", e)
+        yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y%m%d")
+        data = call_url(endpoint.format(yesterday, latitude, longitude))
+    grid_elevation = get_elevation_eudem25(data["latitude"], data["longitude"])
+
+    data_flat = [hour for day in data["days"] for hour in day["hours"]]
+    data_dict = {key: [hour[key] for hour in data_flat] for key in ["datetimeEpoch", "temp", "humidity", "precip", "windspeed", "winddir", "cloudcover", "solarradiation"]}
+    df = pd.DataFrame(data_dict)
+    df['Time'] = df.apply(lambda row: datetime_to_simstrat_time(datetime.fromtimestamp(row['datetimeEpoch']).replace(tzinfo=timezone.utc), reference_date), axis=1)
+    df["Tair"] = adjust_temperature_for_altitude_difference(df["temp"].values, elevation - grid_elevation)
+    df["rain"] = df["precip"] * 0.001 # mm/hr to m/hr
+    df["sol"] = df["solarradiation"]
+    df["cloud"] = df["cloudcover"] * 0.01 # % to decimal
+    df["vap"] = vapor_pressure_from_relative_humidity_and_temperature(df["temp"].values, df["humidity"])
+    df["u"] = -df["windspeed"] * np.sin(df["winddir"] * np.pi / 180)
+    df["v"] = -df["windspeed"] * np.cos(df["winddir"] * np.pi / 180)
+    df = df[parameters]
+    df.set_index('Time', inplace=True)
+    df_o = df_c.fillna(df)
+    df_o.reset_index(inplace=True)
+    for key in df_o.columns:
+        output[key]["data"] = df_o[key].values
+    return output
 
 def quality_assurance_forcing_data(forcing_data, log):
     log.info("Running quality assurance on forcing data", indent=1)
