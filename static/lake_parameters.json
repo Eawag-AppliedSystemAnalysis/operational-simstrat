@@ -4861,8 +4861,12 @@
         },
         "forcing": [
             {
-                "id": "6512",
-                "type": "meteofrance_meteostation"
+                "id": "74182001",
+                "type": "thredds_meteostation"
+            },
+            {
+                "id": "73329001",
+                "type": "thredds_meteostation"
             }
         ],
         "forcing_forecast": {
@@ -4899,8 +4903,8 @@
         },
         "forcing": [
             {
-                "id": "6512",
-                "type": "meteofrance_meteostation"
+                "id": "73329001",
+                "type": "thredds_meteostation"
             }
         ],
         "forcing_forecast": {
