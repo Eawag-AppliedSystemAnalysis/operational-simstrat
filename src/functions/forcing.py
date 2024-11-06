@@ -69,7 +69,7 @@ def meteodata_from_meteoswiss_meteostations(start, end, forcing, elevation, lati
     df_t['time'] = pd.to_datetime(df_t['time'])
     output["Time"]["data"] = np.array([datetime_to_simstrat_time(t, reference_date) for t in time])
 
-    parameter_ids = ["fkl010h0", "dkl010h0", "rre150h0", "tre200h0", "gre000h0", "pva200h0"]
+    parameter_ids = ["wind_speed", "wind_direction", "precipitation", "air_temperature", "global_radiation", "vapour_pressure"]
     raw_data = {}
     for p_id in parameter_ids:
         gaps = False
@@ -87,7 +87,7 @@ def meteodata_from_meteoswiss_meteostations(start, end, forcing, elevation, lati
                     print(url)
                     data = call_url(url)
                     values = np.array(data["variables"][p_id]["data"])
-                    if p_id == "tre200h0":
+                    if p_id == "air_temperature":
                         values = adjust_temperature_for_altitude_difference(values, elevation - f["elevation"])
                     df = pd.DataFrame({'time': data["time"], 'values': values})
                     df['time'] = pd.to_datetime(df['time'])
@@ -125,18 +125,18 @@ def meteodata_from_meteoswiss_meteostations(start, end, forcing, elevation, lati
         raw_data[p_id] = np.array(df_m["values"])
 
     log.info("Processing wind from magnitude and direction to components", indent=1)
-    wind_direction = raw_data["dkl010h0"]
-    wind_magnitude = raw_data["fkl010h0"]
+    wind_direction = raw_data["wind_direction"]
+    wind_magnitude = raw_data["wind_speed"]
     wind_direction_mean = calculate_mean_wind_direction(wind_direction)
     log.info("Set missing direction values to average wind direction {}°".format(wind_direction_mean), indent=2)
     wind_direction[np.isnan(wind_direction)] = wind_direction_mean
     output["u"]["data"] = -wind_magnitude * np.sin(wind_direction * np.pi / 180)
     output["v"]["data"] = -wind_magnitude * np.cos(wind_direction * np.pi / 180)
 
-    output["Tair"]["data"] = raw_data["tre200h0"]
-    output["sol"]["data"] = raw_data["gre000h0"]
-    output["vap"]["data"] = raw_data["pva200h0"]
-    output["rain"]["data"] = raw_data["rre150h0"] * 0.001  # Convert mm to m
+    output["Tair"]["data"] = raw_data["air_temperature"]
+    output["sol"]["data"] = raw_data["global_radiation"]
+    output["vap"]["data"] = raw_data["vapour_pressure"]
+    output["rain"]["data"] = raw_data["precipitation"] * 0.001  # Convert mm to m
 
     log.info("Estimate cloudiness based on ratio between measured and theoretical solar radiation", indent=1)
     air_pressure = air_pressure_from_elevation(elevation)
