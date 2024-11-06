@@ -199,7 +199,7 @@ def clear_sky_solar_radiation(time, air_pressure, vapour_pressure, lat, lon):
 
 
 def adjust_data_to_mean_and_std(arr, std, mean):
-    arr = np.array(arr)
+    arr = np.array(arr, dtype=float)
     data_mean = np.nanmean(arr)
     data_std = np.nanstd(arr)
     if np.isnan(data_mean) or np.isnan(data_std) or data_std == 0:

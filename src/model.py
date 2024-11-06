@@ -128,7 +128,7 @@ class Simstrat(object):
             shutil.rmtree(self.simulation_dir)
         if not os.path.exists(self.simulation_dir):
             os.makedirs(self.simulation_dir, exist_ok=True)
-        if os.path.exists(os.path.join(self.simulation_dir, "Results")):
+        if os.path.exists(os.path.join(self.simulation_dir, "Results")) and self.args["remove_existing_results"]:
             shutil.rmtree(os.path.join(self.simulation_dir, "Results"))
         os.makedirs(os.path.join(self.simulation_dir, "Results"), exist_ok=True)
         os.chmod(os.path.join(self.simulation_dir, "Results"), 0o777)
@@ -147,7 +147,8 @@ class Simstrat(object):
             self.create_grid_file()
             self.create_output_depths_file()
             self.create_output_time_resolution_file()
-            self.set_simulation_run_period()
+            if not self.set_simulation_run_period():
+                return
             if self.snapshot:
                 self.prepare_snapshot()
             self.create_initial_conditions_file()
@@ -159,6 +160,8 @@ class Simstrat(object):
             self.create_par_file()
             if self.args["run"]:
                 self.run_simulation()
+                if self.args["reset_date"]:
+                    self.reset_date()
                 if self.args["post_process"]:
                     self.post_process()
                     if self.args["upload"]:
@@ -170,7 +173,7 @@ class Simstrat(object):
                 self.log.info("Removing input and output files of failed run (debug=False)")
                 for root, dirs, files in os.walk(self.simulation_dir):
                     for file in files:
-                        if file.endswith(".dat"):
+                        if file.endswith(".dat") or file.endswith(".nml"):
                             os.remove(os.path.join(root, file))
             raise ValueError("Processing failed. See log for details.")
 
@@ -331,7 +334,10 @@ class Simstrat(object):
                     indent=1)
                 end_date = overwrite_end_date
 
-        if start_date >= end_date:
+        if start_date == end_date:
+            self.log.info("Start date equal to end date. Exiting without error.", indent=1)
+            return False
+        elif start_date > end_date:
             raise ValueError("Start date {} cannot be after end date {}".format(start_date, end_date))
 
         self.log.info("Model timeframe: {} - {}".format(start_date, end_date), indent=1)
@@ -342,6 +348,7 @@ class Simstrat(object):
         self.start_date = start_date
         self.end_date = end_date
         self.log.end_stage()
+        return True
 
     def prepare_snapshot(self):
         self.log.begin_stage("prepare_snapshot")
@@ -466,7 +473,7 @@ class Simstrat(object):
             simulation_dir, self.args["simstrat_version"])
         month_beginning = self.forcing_end.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         snapshot_path = os.path.join(self.simulation_dir, "Results", "simulation-snapshot.dat")
-        if self.args["snapshot"] and self.args["overwrite_end_date"] == False and month_beginning != self.start_date:
+        if self.args["snapshot"] and self.args["monthly_snapshot"] and month_beginning != self.start_date:
             self.log.info("Splitting into two runs to create correct snapshot", indent=1)
             self.log.info("Running from {} - {}".format(self.start_date, month_beginning), indent=1)
             overwrite_par_file_dates(os.path.join(self.simulation_dir, "Settings.par"), self.start_date,
@@ -484,6 +491,9 @@ class Simstrat(object):
             self.log.info("Running from {} - {}".format(self.start_date, self.end_date), indent=1)
             run_subprocess(command)
             if os.path.exists(snapshot_path):
+                if not self.args["monthly_snapshot"]:
+                    snapshot_out_path = os.path.join(self.simulation_dir, "simulation-snapshot_{}.dat".format(self.end_date.strftime("%Y%m%d")))
+                    shutil.copy(snapshot_path, snapshot_out_path)
                 os.remove(snapshot_path)
         self.log.end_stage()
 
@@ -511,4 +521,13 @@ class Simstrat(object):
         remote_folder = os.path.join(self.args["results_folder_api"], self.key)
         upload_files(local_folder, remote_folder, self.args["server_host"], self.args["server_user"],
                      self.args["server_password"])
+        self.log.end_stage()
+
+    def reset_date(self):
+        self.log.begin_stage("reset_date")
+        if self.snapshot:
+            start_date = self.forcing_start
+            if start_date < self.parameters["reference_date"]:
+                start_date = self.parameters["reference_date"]
+            overwrite_par_file_dates(os.path.join(self.simulation_dir, "Settings.par"), start_date, self.end_date, self.parameters["reference_date"])
         self.log.end_stage()

@@ -7,3 +7,5 @@ src/__pycache__
 src/functions/__pycache__
 calibration/*
 !calibration/.gitkeep
+notebooks/.ipynb_checkpoints
+notebooks/example.dat
