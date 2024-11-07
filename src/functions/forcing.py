@@ -20,7 +20,7 @@ def metadata_from_forcing(forcing, api):
 
 def metadata_from_meteoswiss_meteostation(forcing, api):
     required = {key: {"start": [], "end": []} for key in
-                ["fkl010h0", "dkl010h0", "rre150h0", "tre200h0", "gre000h0", "pva200h0"]}
+                ["wind_speed", "wind_direction", "precipitation", "air_temperature", "global_radiation", "vapour_pressure"]}
     for f in forcing:
         if f["type"].lower() == "meteoswiss_meteostation":
             endpoint = "{}/meteoswiss/meteodata/metadata/{}".format(api, f["id"])
