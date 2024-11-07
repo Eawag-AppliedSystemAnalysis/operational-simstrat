@@ -98,6 +98,12 @@ def adjust_temperature_for_altitude_difference(temperature, difference):
     return t - 0.0065 * difference
 
 
+def calculate_vapor_pressure(temp_celsius, relative_humidity):
+    e_s = 6.11 * 10 ** ((7.5 * temp_celsius) / (temp_celsius + 237.3)) # Saturation vapor pressure (e_s)
+    e_a = (relative_humidity / 100) * e_s # Actual vapor pressure (e_a)
+    return e_a
+
+
 def call_url(url):
     response = requests.get(url)
     if response.status_code == 200:

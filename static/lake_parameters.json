@@ -4721,12 +4721,7 @@
             "source": "MeteoSwiss",
             "model": "ICON",
             "days": 5
-        },
-        "a_seiche": 1e-05,
-        "f_wind": 1.11948664,
-        "p_lw": 0.867227187,
-        "snow_temp": 0.5,
-        "p_absorb": 1.5
+        }
     },
     {
         "key": "caldonazzo",
@@ -4751,7 +4746,7 @@
         },
         "forcing": [
             {
-                "id": "trn217",
+                "id": "trn196",
                 "type": "mistral_meteostation"
             }
         ],
@@ -4759,12 +4754,7 @@
             "source": "MeteoSwiss",
             "model": "ICON",
             "days": 5
-        },
-        "a_seiche": 1e-05,
-        "f_wind": 1.11948664,
-        "p_lw": 0.867227187,
-        "snow_temp": 0.5,
-        "p_absorb": 1.5
+        }
     },
     {
         "key": "bled",
@@ -4797,12 +4787,7 @@
             "source": "VisualCrossing",
             "model": false,
             "days": 5
-        },
-        "a_seiche": 1e-05,
-        "f_wind": 1.11948664,
-        "p_lw": 0.867227187,
-        "snow_temp": 0.5,
-        "p_absorb": 1.5
+        }
     },
     {
         "key": "mondsee",
@@ -4831,12 +4816,7 @@
             "source": "VisualCrossing",
             "model": false,
             "days": 5
-        },
-        "a_seiche": 1e-05,
-        "f_wind": 1.11948664,
-        "p_lw": 0.867227187,
-        "snow_temp": 0.5,
-        "p_absorb": 1.5
+        }
     },
     {
         "key": "annecy",
@@ -4873,12 +4853,7 @@
             "source": "MeteoSwiss",
             "model": "ICON",
             "days": 5
-        },
-        "a_seiche": 1e-05,
-        "f_wind": 1.11948664,
-        "p_lw": 0.867227187,
-        "snow_temp": 0.5,
-        "p_absorb": 1.5
+        }
     },
     {
         "key": "bourget",
@@ -4911,11 +4886,6 @@
             "source": "MeteoSwiss",
             "model": "ICON",
             "days": 5
-        },
-        "a_seiche": 1e-05,
-        "f_wind": 1.11948664,
-        "p_lw": 0.867227187,
-        "snow_temp": 0.5,
-        "p_absorb": 1.5
+        }
     }
 ]
