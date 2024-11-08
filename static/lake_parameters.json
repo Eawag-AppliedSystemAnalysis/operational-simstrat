@@ -4721,7 +4721,12 @@
             "source": "MeteoSwiss",
             "model": "ICON",
             "days": 5
-        }
+        },
+        "a_seiche": 0.002,
+        "f_wind": 1.0,
+        "p_lw": 1.0,
+        "snow_temp": 2.0,
+        "p_absorb": 1.0
     },
     {
         "key": "caldonazzo",
@@ -4754,7 +4759,12 @@
             "source": "MeteoSwiss",
             "model": "ICON",
             "days": 5
-        }
+        },
+        "a_seiche": 0.002,
+        "f_wind": 1.0,
+        "p_lw": 1.0,
+        "snow_temp": 2.0,
+        "p_absorb": 1.0
     },
     {
         "key": "bled",
@@ -4787,7 +4797,12 @@
             "source": "VisualCrossing",
             "model": false,
             "days": 5
-        }
+        },
+        "a_seiche": 0.002,
+        "f_wind": 1.0,
+        "p_lw": 1.0,
+        "snow_temp": 2.0,
+        "p_absorb": 1.0
     },
     {
         "key": "mondsee",
@@ -4806,6 +4821,10 @@
         "trophic_state": "NA",
         "datalakes_bathymetry": false,
         "datalakes_id": 202,
+        "bathymetry": {
+            "area": [14116931,10819702,7376037,3429959,1382640,332051],
+            "depth": [0,20,40,50,60,65]
+        },
         "forcing": [
             {
                 "id": "6512",
@@ -4816,7 +4835,12 @@
             "source": "VisualCrossing",
             "model": false,
             "days": 5
-        }
+        },
+        "a_seiche": 0.002,
+        "f_wind": 1.0,
+        "p_lw": 1.0,
+        "snow_temp": 2.0,
+        "p_absorb": 1.0
     },
     {
         "key": "annecy",
@@ -4853,7 +4877,12 @@
             "source": "MeteoSwiss",
             "model": "ICON",
             "days": 5
-        }
+        },
+        "a_seiche": 0.002,
+        "f_wind": 1.0,
+        "p_lw": 1.0,
+        "snow_temp": 2.0,
+        "p_absorb": 1.0
     },
     {
         "key": "bourget",
@@ -4886,6 +4915,11 @@
             "source": "MeteoSwiss",
             "model": "ICON",
             "days": 5
-        }
+        },
+        "a_seiche": 0.002,
+        "f_wind": 1.0,
+        "p_lw": 1.0,
+        "snow_temp": 2.0,
+        "p_absorb": 1.0
     }
 ]

@@ -129,8 +129,10 @@ def meteodata_from_meteostations(start, end, forcing, elevation, latitude, longi
     output["Tair"]["data"] = raw_data["air_temperature"]
     output["sol"]["data"] = raw_data["global_radiation"]
 
+    air_pressure = air_pressure_from_elevation(elevation)
+
     if "vapour_pressure" not in raw_data:
-        raw_data["vapour_pressure"] = calculate_vapor_pressure(raw_data["air_temperature"], raw_data["relative_humidity"])
+        raw_data["vapour_pressure"] = calculate_vapor_pressure(raw_data["air_temperature"], raw_data["relative_humidity"], air_pressure)
     output["vap"]["data"] = raw_data["vapour_pressure"]
 
     if "precipitation" in raw_data:
@@ -139,7 +141,6 @@ def meteodata_from_meteostations(start, end, forcing, elevation, latitude, longi
         output["rain"]["data"] = np.zeros(len(raw_data["air_temperature"]))
 
     log.info("Estimate cloudiness based on ratio between measured and theoretical solar radiation", indent=1)
-    air_pressure = air_pressure_from_elevation(elevation)
     cssr = clear_sky_solar_radiation(time, air_pressure, output["vap"]["data"], latitude, longitude)
     df = pd.DataFrame({"cssr": cssr, "swr": output["sol"]["data"]})
     cssr_rolling = df['cssr'].rolling(window=24, center=True, min_periods=1).mean()
@@ -229,12 +230,7 @@ def meteodata_forecast_from_visualcrossing(forcing_forecast, elevation, latitude
     log.info("Extending forcing files using Visual Crossing forecast.", indent=1)
     endpoint = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{}%2C{}/{}/{}?unitGroup=metric&include=hours&key={}&contentType=json"
     print(endpoint.format(latitude, longitude, start, end, key))
-    try:
-        data = call_url(endpoint.format(latitude, longitude, start, end, key))
-    except Exception as e:
-        print("ERROR", e)
-        yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y%m%d")
-        data = call_url(endpoint.format(yesterday, latitude, longitude))
+    data = call_url(endpoint.format(latitude, longitude, start, end, key))
     grid_elevation = get_elevation_eudem25(data["latitude"], data["longitude"])
 
     data_flat = [hour for day in data["days"] for hour in day["hours"]]
