@@ -56,11 +56,11 @@ def write_initial_oxygen(depth_arr, oxygen_arr, simulation_dir):
             f.write('%7.2f    %7.3f\n' % (-abs(depth_arr[i]), oxygen_arr[i]))
 
 
-def write_absorption(absorption, file_path, log):
+def write_absorption(absorption, file_path, merge_inputs, log):
     if len(absorption["Time"]) != len(absorption["Value"]):
         raise ValueError("All input arrays must be the same length")
 
-    if os.path.exists(file_path):
+    if os.path.exists(file_path) and merge_inputs:
         time_min = absorption["Time"][0]
         df = pd.read_csv(file_path, skiprows=3, delim_whitespace=True, header=None)
         df.columns = ["Time", "Value"]
@@ -88,7 +88,7 @@ def write_par_file(simstrat_version, par, simulation_dir):
         raise ValueError("Writing par file not implemented for Simstrat version {}".format(simstrat_version))
 
 
-def write_inflows(inflow_mode, simulation_dir, log, inflow_data=None):
+def write_inflows(inflow_mode, simulation_dir, merge_inputs, log, inflow_data=None):
     files = {
         "Q": {"file": "Qin.dat", "deep_unit": "m3/s", "surface_unit": "m2/s"},
         "T": {"file": "Tin.dat", "deep_unit": "°C", "surface_unit": "°C m2/s"},
@@ -101,7 +101,7 @@ def write_inflows(inflow_mode, simulation_dir, log, inflow_data=None):
             with open(file_path, 'w', encoding='utf-8') as f:
                 f.write("No inflows")
         elif inflow_mode == 2:
-            if os.path.exists(file_path):
+            if os.path.exists(file_path) and merge_inputs:
                 time_min = inflow_data["Time"][0]
                 df = pd.read_csv(file_path, skiprows=3, delim_whitespace=True, header=None)
                 df.columns = ["Time"] + [str(c) for c in list(range(len(df.columns) - 1))]
@@ -138,14 +138,14 @@ def write_inflows(inflow_mode, simulation_dir, log, inflow_data=None):
                     f.write('\n')
 
 
-def write_oxygen_inflows(simulation_dir, inflow_data=None):
+def write_oxygen_inflows(simulation_dir, merge_inputs, inflow_data=None):
     file_path = os.path.join(simulation_dir, "AED2_inflow", "OXY_oxy_inflow.dat")
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
     if inflow_data is None:
         with open(file_path, 'w', encoding='utf-8') as f:
             f.write("No inflows")
     else:
-        if os.path.exists(file_path):
+        if os.path.exists(file_path) and merge_inputs:
             time_min = inflow_data["Time"][0]
             df = pd.read_csv(file_path, skiprows=3, delim_whitespace=True, header=None)
             df.columns = ["Time"] + [str(c) for c in list(range(len(df.columns) - 1))]
@@ -190,11 +190,11 @@ def write_outflow(simulation_dir):
         f.write("Outflow not used, lake overflows to maintain water level")
 
 
-def write_forcing_data(forcing_data, simulation_dir, log):
+def write_forcing_data(forcing_data, simulation_dir, merge_inputs, log):
     columns = ["Time", "u", "v", "Tair", "sol", "vap", "cloud", "rain"]
     file_path = os.path.join(simulation_dir, "Forcing.dat")
 
-    if os.path.exists(file_path):
+    if os.path.exists(file_path) and merge_inputs:
         time_min = forcing_data["Time"]["data"][0]
         df = pd.read_csv(file_path, skiprows=1, delim_whitespace=True, header=None)
         df.columns = columns
