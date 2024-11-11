@@ -5298,11 +5298,23 @@
             "model": "ICON",
             "days": 5
         },
-        "a_seiche": 0.002,
-        "f_wind": 1.0,
-        "p_lw": 1.0,
+        "a_seiche": 0.0033923276,
+        "f_wind": 1.0825716,
+        "p_lw": 0.950816348,
         "snow_temp": 2.0,
-        "p_absorb": 1.0
+        "p_absorb": 0.788506669,
+        "performance": {
+            "rmse": {
+                "overall": 0.6512833671978356,
+                "surface": 0.7847704839633051,
+                "bottom": 0.475511351730955
+            },
+            "temperature": {
+                "times": 192,
+                "depths": 63,
+                "total": 11861
+            }
+        }
     },
     {
         "key": "bourget",
