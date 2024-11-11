@@ -24,6 +24,7 @@ class Config(object):
             "run": {"default": True, "verify": verify.verify_bool, "desc": "Run simulations"},
             "post_process": {"default": True, "verify": verify.verify_bool, "desc": "Post process simulation"},
             "reset_date": {"default": False, "verify": verify.verify_bool, "desc": "Reset date to simulation beginning after snapshot run"},
+            "merge_inputs": {"default": True, "verify": verify.verify_bool, "desc": "Merge input files with existing if available"},
             "remove_existing_results": {"default": True, "verify": verify.verify_bool, "desc": "Remove existing results when re-running"},
             "upload": {"default": False, "verify": verify.verify_bool, "desc": "Upload results to server"},
             "server_host": {"default": "eaw-alplakes2", "verify": verify.verify_string, "desc": "Upload server host name"},

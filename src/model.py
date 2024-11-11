@@ -396,7 +396,7 @@ class Simstrat(object):
         forcing_data = fill_forcing_data(forcing_data, self.simulation_dir, self.snapshot,
                                          self.parameters["reference_date"], self.log)
         self.log.info("Writing forcing data.", indent=1)
-        write_forcing_data(forcing_data, self.simulation_dir, self.log)
+        write_forcing_data(forcing_data, self.simulation_dir, self.args["merge_inputs"], self.log)
         self.log.end_stage()
 
     def create_inflow_files(self):
@@ -415,18 +415,18 @@ class Simstrat(object):
                                            self.parameters["reference_date"], self.log)
             if len(inflow_data["surface_inflows"]) > 3:
                 inflow_data["surface_inflows"] = merge_surface_inflows(inflow_data["surface_inflows"])
-            write_inflows(2, self.simulation_dir, self.log, inflow_data=inflow_data)
+            write_inflows(2, self.simulation_dir, self.args["merge_inputs"], self.log, inflow_data=inflow_data)
             if self.args["couple_aed2"]:
                 self.log.info("Computing oxygen saturation", indent=1)
                 inflow_data = compute_oxygen_inflows(inflow_data, self.parameters["elevation"])
                 self.log.info("Creating oxygen inflow file", indent=1)
-                write_oxygen_inflows(self.simulation_dir, inflow_data=inflow_data)
+                write_oxygen_inflows(self.simulation_dir, self.args["merge_inputs"], inflow_data=inflow_data)
         else:
             self.log.info("No inflows, producing default files", indent=1)
             self.parameters["inflow_mode"] = 0
-            write_inflows(0, self.simulation_dir, self.log)
+            write_inflows(0, self.simulation_dir, self.args["merge_inputs"], self.log)
             if self.args["couple_aed2"]:
-                write_oxygen_inflows(self.simulation_dir)
+                write_oxygen_inflows(self.simulation_dir, self.args["merge_inputs"])
         write_outflow(self.simulation_dir)
         self.log.end_stage()
 
@@ -441,7 +441,7 @@ class Simstrat(object):
             absorption = default_absorption(self.parameters["trophic_state"], self.parameters["elevation"],
                                             self.start_date, self.end_date, self.parameters.get("absorption", False),
                                             self.parameters["reference_date"])
-        write_absorption(absorption, os.path.join(self.simulation_dir, "Absorption.dat"), self.log)
+        write_absorption(absorption, os.path.join(self.simulation_dir, "Absorption.dat"), self.args["merge_inputs"], self.log)
         self.log.end_stage()
 
     def create_aed2_file(self):
