@@ -81,7 +81,6 @@ class CalibratorConfig(Config):
                                                 "verify": verify.verify_path,
                                                 "desc": "Path to the observations directory"}
         self.default_args["agents"] = {"default": 3, "verify": verify.verify_integer, "desc": "Number of PEST agents"}
-        self.default_args["overwrite_end_date"] = {"default": "20220101", "verify": verify.verify_date, "desc": "Overwrite the default end date"}
         self.default_args["download_observations"] = {"default": False, "verify": verify.verify_bool, "desc": "Download observations"}
         self.default_args["observations_url"] = {"default": False, "verify": verify.verify_string, "desc": "Link to download observations"}
         self.args = {k: v["default"] for k, v in self.default_args.items()}

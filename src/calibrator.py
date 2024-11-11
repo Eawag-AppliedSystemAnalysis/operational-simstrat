@@ -38,7 +38,7 @@ def task(parameters, args):
             "parameter": "temperature",
             "unit": "degC",
             "start": (model.start_date + relativedelta(years=1)).isoformat(),
-            "end": datetime.strptime(args["overwrite_end_date"], "%Y%m%d").replace(tzinfo=timezone.utc).isoformat()
+            "end": model.end_date.isoformat()
         }],
         "simulation": "simstrat",
         "execute": "docker run --rm --user $(id -u):$(id -g) -v {calibration_folder}:/simstrat/run eawag/simstrat:3.0.4 Calibration.par",
