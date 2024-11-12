@@ -5070,11 +5070,23 @@
             "model": false,
             "days": 5
         },
-        "a_seiche": 0.002,
-        "f_wind": 1.0,
-        "p_lw": 1.0,
-        "snow_temp": 2.0,
-        "p_absorb": 1.0
+        "a_seiche": 0.0078114301,
+        "f_wind": 0.788648212,
+        "p_lw": 0.970136559,
+        "snow_temp": 1.87554235,
+        "p_absorb": 1.18495653,
+        "performance": {
+            "rmse": {
+                "overall": 1.2919111086633057,
+                "surface": 1.7753749558098464,
+                "bottom": 0.6656387852743697
+            },
+            "temperature": {
+                "times": 126,
+                "depths": 29,
+                "total": 2478
+            }
+        }
     },
     {
         "key": "mondsee",
