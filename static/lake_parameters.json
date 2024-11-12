@@ -5314,16 +5314,16 @@
             "model": "ICON",
             "days": 5
         },
-        "a_seiche": 0.0033923276,
-        "f_wind": 1.0825716,
-        "p_lw": 0.950816348,
+        "a_seiche": 0.0034517107,
+        "f_wind": 1.08218828,
+        "p_lw": 0.949830505,
         "snow_temp": 2.0,
-        "p_absorb": 0.788506669,
+        "p_absorb": 0.788731454,
         "performance": {
             "rmse": {
-                "overall": 0.6512833671978356,
-                "surface": 0.7847704839633051,
-                "bottom": 0.475511351730955
+                "overall": 0.6369336612912974,
+                "surface": 0.5458700051294264,
+                "bottom": 0.47498519187444144
             },
             "temperature": {
                 "times": 192,
@@ -5658,10 +5658,22 @@
             "model": "ICON",
             "days": 5
         },
-        "a_seiche": 0.002,
-        "f_wind": 1.0,
-        "p_lw": 1.0,
+        "a_seiche": 0.0061535142,
+        "f_wind": 1.10863503,
+        "p_lw": 0.933417108,
         "snow_temp": 2.0,
-        "p_absorb": 1.0
+        "p_absorb": 0.832240199,
+        "performance": {
+            "rmse": {
+                "overall": 0.5798498002916069,
+                "surface": 1.7600514197034132,
+                "bottom": 0.0602
+            },
+            "temperature": {
+                "times": 332,
+                "depths": 103,
+                "total": 32852
+            }
+        }
     }
 ]
