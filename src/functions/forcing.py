@@ -18,7 +18,7 @@ def metadata_from_forcing(forcing, api):
         endpoint = "{}/{}/meteodata/metadata/{}".format(api, source, f["id"])
         data = call_url(endpoint)
         for key in data["variables"].keys():
-            data["variables"][key]["start_date"] = datetime.strptime(data["variables"][key]["start_date"], '%Y-%m-%d').replace(tzinfo=timezone.utc)
+            data["variables"][key]["start_date"] = datetime.strptime(data["variables"][key]["start_date"], '%Y-%m-%d').replace(tzinfo=timezone.utc) + timedelta(days=1)
             data["variables"][key]["end_date"] = datetime.strptime(data["variables"][key]["end_date"], '%Y-%m-%d').replace(tzinfo=timezone.utc)
             if key in parameter_dict:
                 parameter_dict[key]["start"].append(data["variables"][key]["start_date"])

@@ -4857,6 +4857,10 @@
         },
         "forcing": [
             {
+                "id": "tignale_oldesio",
+                "type": "mistral_meteostation"
+            },
+            {
                 "id": "vnt387",
                 "type": "mistral_meteostation"
             }
