@@ -4870,11 +4870,23 @@
             "model": "ICON",
             "days": 5
         },
-        "a_seiche": 0.002,
-        "f_wind": 1.0,
-        "p_lw": 1.0,
+        "a_seiche": 0.236245265,
+        "f_wind": 1.14426255,
+        "p_lw": 0.8,
         "snow_temp": 2.0,
-        "p_absorb": 1.0
+        "p_absorb": 1.5,
+        "performance": {
+            "rmse": {
+                "overall": 1.275800961989558,
+                "surface": 2.352358422944939,
+                "bottom": 1.308420825756273
+            },
+            "temperature": {
+                "times": 33,
+                "depths": 98,
+                "total": 3234
+            }
+        }
     },
     {
         "key": "caldonazzo",
