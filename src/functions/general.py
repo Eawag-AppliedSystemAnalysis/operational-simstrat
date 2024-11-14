@@ -126,11 +126,16 @@ def call_url(url):
         raise ValueError(f"Unable to access url {url}. Status code: {response.status_code}. Message: {response.text}")
 
 
-def upload_files(local_folder, remote_folder, host, username, password, port=22):
-    mkdir = 'sshpass -p {} ssh -p {} {}@{} "mkdir -p {}"'.format(password, port, username, host, remote_folder)
-    subprocess.run(mkdir, check=True, shell=True)
+def upload_files(local_folder, remote_folder, host, username, password, log, port=22):
+    try:
+        mkdir = 'sshpass -p {} ssh -o StrictHostKeyChecking=no -p {} {}@{} "mkdir -p {}"'.format(password, port, username, host, remote_folder)
+        subprocess.run(mkdir, check=True, shell=True)
+    except Exception as e:
+        print(e)
+        log.info("Failed to create folder on remote server", indent=1)
+        return
     failed = []
-    cmd = "sshpass -p {} scp -P {} {} {}@{}:{}"
+    cmd = "sshpass -p {} scp -o StrictHostKeyChecking=no -P {} {} {}@{}:{}"
     for file in os.listdir(local_folder):
         if ".nc" in file:
             remote_file = os.path.join(remote_folder, file)
@@ -143,7 +148,7 @@ def upload_files(local_folder, remote_folder, host, username, password, port=22)
                 failed.append(file)
 
     if len(failed) > 0:
-        raise ValueError("Failed to upload: {}".format(", ".join(failed)))
+        log.info("Failed to upload: {}".format(", ".join(failed)), indent=1)
 
 
 def get_elevation_swisstopo(latitude, longitude):
