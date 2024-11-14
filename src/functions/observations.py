@@ -43,6 +43,7 @@ def absorption_from_observations(key, start_date, end_date, api, reference_date,
     try:
         data = call_url("{}/insitu/secchi/{}".format(api, key))
         df = pd.DataFrame({"time": data["time"], "value": data["variable"]["data"]})
+        df.loc[df['value'] < 0.05, 'value'] = 0.05 # Prevent zero values from becoming infinite
         df["value"] = 1.7 / df["value"]  # Convert from Secchi depth [m] to absorption [m-1]
         df["time"] = pd.to_datetime(df["time"])
         secchi_mean = df['value'].mean()

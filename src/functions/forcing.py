@@ -5,77 +5,69 @@ from datetime import datetime, timezone, timedelta
 from .general import (call_url, adjust_temperature_for_altitude_difference, air_pressure_from_elevation, detect_gaps,
                       adjust_data_to_mean_and_std, clear_sky_solar_radiation, datetime_to_simstrat_time,
                       calculate_mean_wind_direction, interpolate_timeseries, fill_day_of_year, get_elevation_swisstopo,
-                      vapor_pressure_from_relative_humidity_and_temperature)
+                      vapor_pressure_from_relative_humidity_and_temperature, get_elevation_eudem25, calculate_vapor_pressure)
 
 import matplotlib.pyplot as plt
 
 
 def metadata_from_forcing(forcing, api):
-    if forcing[0]["type"].lower() == "meteoswiss_meteostation":
-        start, end = metadata_from_meteoswiss_meteostation(forcing, api)
-    else:
-        raise ValueError("Not implemented for {}".format(forcing[0]["type"]))
-    return start, end
-
-
-def metadata_from_meteoswiss_meteostation(forcing, api):
-    required = {key: {"start": [], "end": []} for key in
-                ["wind_speed", "wind_direction", "precipitation", "air_temperature", "global_radiation", "vapour_pressure"]}
+    required = [["air_temperature"], ["wind_speed"], ["wind_direction"], ["global_radiation"], ["vapour_pressure", "relative_humidity"]]
+    parameter_dict = {}
     for f in forcing:
-        if f["type"].lower() == "meteoswiss_meteostation":
-            endpoint = "{}/meteoswiss/meteodata/metadata/{}".format(api, f["id"])
-            data = call_url(endpoint)
-            parameters = data["variables"]
-            for parameter in parameters.keys():
-                if parameter in required:
-                    parameters[parameter]["start_date"] = datetime.strptime(parameters[parameter]["start_date"], '%Y-%m-%d').replace(tzinfo=timezone.utc)
-                    parameters[parameter]["end_date"] = datetime.strptime(parameters[parameter]["end_date"], '%Y-%m-%d').replace(tzinfo=timezone.utc)
-                    required[parameter]["start"].append(parameters[parameter]["start_date"])
-                    required[parameter]["end"].append(parameters[parameter]["end_date"])
-            f["parameters"] = parameters
-            f["elevation"] = data["elevation"]
-            f["latlng"] = [data["lat"], data["lng"]]
+        source = f["type"].lower().split("_")[0]
+        endpoint = "{}/{}/meteodata/metadata/{}".format(api, source, f["id"])
+        data = call_url(endpoint)
+        for key in data["variables"].keys():
+            data["variables"][key]["start_date"] = datetime.strptime(data["variables"][key]["start_date"], '%Y-%m-%d').replace(tzinfo=timezone.utc) + timedelta(days=1)
+            data["variables"][key]["end_date"] = datetime.strptime(data["variables"][key]["end_date"], '%Y-%m-%d').replace(tzinfo=timezone.utc)
+            if key in parameter_dict:
+                parameter_dict[key]["start"].append(data["variables"][key]["start_date"])
+                parameter_dict[key]["end"].append(data["variables"][key]["end_date"])
+            else:
+                parameter_dict[key] = {"start": [data["variables"][key]["start_date"]], "end": [data["variables"][key]["end_date"]]}
+        f["parameters"] = data["variables"]
+        f["elevation"] = data["elevation"]
+        f["latlng"] = [data["lat"], data["lng"]]
+    start_list = []
+    end_list = []
+    for r in required:
+        error = True
+        for p in r:
+            if p in parameter_dict:
+                start_list.append(min(parameter_dict[p]["start"]))
+                end_list.append(max(parameter_dict[p]["end"]))
+                error = False
+        if error:
+            raise ValueError("Parameter {} is required, no data can be found from the stations".format(", ".join(r)))
+    return max(start_list), min(end_list)
 
-    for key in required.keys():
-        if len(required[key]["start"]) == 0:
-            raise ValueError("Parameter {} is required, no data can be found from the stations".format(key))
-        else:
-            required[key]["start"] = min(required[key]["start"])
-            required[key]["end"] = max(required[key]["end"])
-    start = max([r["start"] for r in required.values()])
-    end = min([r["end"] for r in required.values()])
-    return start, end
 
-
-def download_forcing_data(output, start, end, forcing, forecast, forcing_forecast, elevation, latitude, longitude, reference_date, api, log):
-    if forcing[0]["type"].lower() == "meteoswiss_meteostation":
-        output = meteodata_from_meteoswiss_meteostations(start, end, forcing, elevation, latitude, longitude,
-                                                         reference_date, output, api, log)
-    else:
-        raise ValueError("Unrecognised forcing type: {}".format(forcing[0]["type"].lower()))
+def download_forcing_data(output, start, end, forcing, forecast, forcing_forecast, elevation, latitude, longitude, reference_date, api, visualcrossing_key, log):
+    output = meteodata_from_meteostations(start, end, forcing, elevation, latitude, longitude, reference_date, output, api, log)
     if forecast:
         if forcing_forecast["source"].lower() == "meteoswiss":
             output = meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, longitude, reference_date, output, api, log)
+        elif forcing_forecast["source"].lower() == "visualcrossing":
+            output = meteodata_forecast_from_visualcrossing(forcing_forecast, elevation, latitude, longitude, reference_date, output, visualcrossing_key, log)
     return output
 
 
-def meteodata_from_meteoswiss_meteostations(start, end, forcing, elevation, latitude, longitude, reference_date, output,
-                                            api, log):
-    endpoint = api + "/meteoswiss/meteodata/measured/{}/{}/{}?variables={}"
+def meteodata_from_meteostations(start, end, forcing, elevation, latitude, longitude, reference_date, output, api, log):
+    endpoint = api + "/{}/meteodata/measured/{}/{}/{}?variables={}&resample=hourly"
 
     time = start + np.arange(0, (end - start).total_seconds() / 3600 + 1, 1).astype(int) * timedelta(hours=1)
-
     df_t = pd.DataFrame({'time': time})
     df_t['time'] = pd.to_datetime(df_t['time'])
     output["Time"]["data"] = np.array([datetime_to_simstrat_time(t, reference_date) for t in time])
 
-    parameter_ids = ["wind_speed", "wind_direction", "precipitation", "air_temperature", "global_radiation", "vapour_pressure"]
+    parameter_ids = ["wind_speed", "wind_direction", "precipitation", "air_temperature", "global_radiation", "vapour_pressure", "relative_humidity"]
     raw_data = {}
     for p_id in parameter_ids:
         gaps = False
         df = False
         for f in forcing:
             if p_id in f["parameters"].keys():
+                source = f["type"].lower().split("_")[0]
                 parameter = f["parameters"][p_id]
                 if not gaps:
                     start_date = min(max(start, parameter["start_date"]), parameter["end_date"])
@@ -83,13 +75,14 @@ def meteodata_from_meteoswiss_meteostations(start, end, forcing, elevation, lati
                     log.info(
                         "{}: Using data from station {} : {} - {}".format(p_id, f["id"], start_date.strftime('%Y%m%d'),
                                                                           end_date.strftime('%Y%m%d')), indent=1)
-                    url = endpoint.format(f["id"], start_date.strftime('%Y%m%d'), end_date.strftime('%Y%m%d'), p_id)
+                    url = endpoint.format(source, f["id"], start_date.strftime('%Y%m%d'), end_date.strftime('%Y%m%d'), p_id)
                     print(url)
                     data = call_url(url)
                     values = np.array(data["variables"][p_id]["data"])
                     if p_id == "air_temperature":
                         values = adjust_temperature_for_altitude_difference(values, elevation - f["elevation"])
                     df = pd.DataFrame({'time': data["time"], 'values': values})
+                    df = df.drop_duplicates(subset=['time'])
                     df['time'] = pd.to_datetime(df['time'])
                     df['values'] = pd.to_numeric(df['values'], errors='coerce')
                     df = df.dropna()
@@ -103,11 +96,12 @@ def meteodata_from_meteoswiss_meteostations(start, end, forcing, elevation, lati
                             log.info("{}: Trying to complete with data from station {} : {} - {}".format(
                                 p_id, f["id"], gap[0].strftime('%Y%m%d'), gap[1].strftime('%Y%m%d')), indent=2)
                             try:
-                                url = endpoint.format(f["id"], gap[0].strftime('%Y%m%d'), gap[1].strftime('%Y%m%d'), p_id)
+                                url = endpoint.format(source, f["id"], gap[0].strftime('%Y%m%d'), gap[1].strftime('%Y%m%d'), p_id)
                                 print(url)
                                 data = call_url(url)
                                 df_new = pd.DataFrame({'time': data["time"],
                                                        'values_new': adjust_data_to_mean_and_std(data["variables"][p_id]["data"], std, mean)})
+                                df_new = df_new.drop_duplicates(subset=['time'])
                                 df_new['time'] = pd.to_datetime(df_new['time'])
                                 df_new['values_new'] = pd.to_numeric(df_new['values_new'], errors='coerce')
                                 df = pd.merge(df, df_new, on='time', how='outer')
@@ -119,10 +113,9 @@ def meteodata_from_meteoswiss_meteostations(start, end, forcing, elevation, lati
                             except Exception as e:
                                 print("ERROR", e)
                     gaps = detect_gaps(df["time"], start, end)
-        if not isinstance(df, pd.core.frame.DataFrame):
-            raise ValueError("Failed to collect values for {}".format(p_id))
-        df_m = pd.merge(df_t, df, on='time', how='left')
-        raw_data[p_id] = np.array(df_m["values"])
+        if isinstance(df, pd.core.frame.DataFrame):
+            df_m = pd.merge(df_t, df, on='time', how='left')
+            raw_data[p_id] = np.array(df_m["values"])
 
     log.info("Processing wind from magnitude and direction to components", indent=1)
     wind_direction = raw_data["wind_direction"]
@@ -135,11 +128,19 @@ def meteodata_from_meteoswiss_meteostations(start, end, forcing, elevation, lati
 
     output["Tair"]["data"] = raw_data["air_temperature"]
     output["sol"]["data"] = raw_data["global_radiation"]
+
+    air_pressure = air_pressure_from_elevation(elevation)
+
+    if "vapour_pressure" not in raw_data:
+        raw_data["vapour_pressure"] = calculate_vapor_pressure(raw_data["air_temperature"], raw_data["relative_humidity"], air_pressure)
     output["vap"]["data"] = raw_data["vapour_pressure"]
-    output["rain"]["data"] = raw_data["precipitation"] * 0.001  # Convert mm to m
+
+    if "precipitation" in raw_data:
+        output["rain"]["data"] = raw_data["precipitation"] * 0.001  # Convert mm to m
+    else:
+        output["rain"]["data"] = np.zeros(len(raw_data["air_temperature"]))
 
     log.info("Estimate cloudiness based on ratio between measured and theoretical solar radiation", indent=1)
-    air_pressure = air_pressure_from_elevation(elevation)
     cssr = clear_sky_solar_radiation(time, air_pressure, output["vap"]["data"], latitude, longitude)
     df = pd.DataFrame({"cssr": cssr, "swr": output["sol"]["data"]})
     cssr_rolling = df['cssr'].rolling(window=24, center=True, min_periods=1).mean()
@@ -147,7 +148,6 @@ def meteodata_from_meteoswiss_meteostations(start, end, forcing, elevation, lati
     solar_index = np.interp(swr_rolling / cssr_rolling, [0, 1],
                             [0, 1])  # Flerchinger et al. (2009), Crawford and Duchon (1999)
     output["cloud"]["data"] = 1 - solar_index
-
     return output
 
 
@@ -213,6 +213,38 @@ def meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, lo
         df = df[parameters]
     else:
         raise ValueError("MeteoSwiss forecast not implemented for model: {}".format(forcing_forecast["model"]))
+    df.set_index('Time', inplace=True)
+    df_o = df_c.fillna(df)
+    df_o.reset_index(inplace=True)
+    for key in df_o.columns:
+        output[key]["data"] = df_o[key].values
+    return output
+
+
+def meteodata_forecast_from_visualcrossing(forcing_forecast, elevation, latitude, longitude, reference_date, output, key, log):
+    parameters = ["Time", "u", "v", "Tair", "sol", "vap", "cloud", "rain"]
+    df_c = pd.DataFrame({key: output[key]["data"] for key in output.keys()})
+    df_c.set_index('Time', inplace=True)
+    start = (datetime.now() - timedelta(days=5)).strftime("%Y-%m-%d")
+    end = (datetime.now() + timedelta(days=forcing_forecast["days"])).strftime("%Y-%m-%d")
+    log.info("Extending forcing files using Visual Crossing forecast.", indent=1)
+    endpoint = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{}%2C{}/{}/{}?unitGroup=metric&include=hours&key={}&contentType=json"
+    print(endpoint.format(latitude, longitude, start, end, key))
+    data = call_url(endpoint.format(latitude, longitude, start, end, key))
+    grid_elevation = get_elevation_eudem25(data["latitude"], data["longitude"])
+
+    data_flat = [hour for day in data["days"] for hour in day["hours"]]
+    data_dict = {key: [hour[key] for hour in data_flat] for key in ["datetimeEpoch", "temp", "humidity", "precip", "windspeed", "winddir", "cloudcover", "solarradiation"]}
+    df = pd.DataFrame(data_dict)
+    df['Time'] = df.apply(lambda row: datetime_to_simstrat_time(datetime.fromtimestamp(row['datetimeEpoch']).replace(tzinfo=timezone.utc), reference_date), axis=1)
+    df["Tair"] = adjust_temperature_for_altitude_difference(df["temp"].values, elevation - grid_elevation)
+    df["rain"] = df["precip"] * 0.001 # mm/hr to m/hr
+    df["sol"] = df["solarradiation"]
+    df["cloud"] = df["cloudcover"] * 0.01 # % to decimal
+    df["vap"] = vapor_pressure_from_relative_humidity_and_temperature(df["temp"].values, df["humidity"])
+    df["u"] = -df["windspeed"] * np.sin(df["winddir"] * np.pi / 180)
+    df["v"] = -df["windspeed"] * np.cos(df["winddir"] * np.pi / 180)
+    df = df[parameters]
     df.set_index('Time', inplace=True)
     df_o = df_c.fillna(df)
     df_o.reset_index(inplace=True)

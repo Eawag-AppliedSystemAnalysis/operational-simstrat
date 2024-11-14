@@ -30,6 +30,7 @@ class Config(object):
             "server_host": {"default": "eaw-alplakes2", "verify": verify.verify_string, "desc": "Upload server host name"},
             "server_user": {"default": "alplakes", "verify": verify.verify_string, "desc": "Upload server user name"},
             "server_password": {"default": False, "verify": verify.verify_string, "desc": "Upload server password"},
+            "visualcrossing_key": {"default": False, "verify": verify.verify_string, "desc": "Visual Crossing API key"},
             "debug": {"default": False, "verify": verify.verify_bool, "desc": "Raise any errors in code for easier debugging"},
             "docker_dir": {"default": False, "verify": verify.verify_string, "desc": "Repository path in base filesystem for when code is run in docker container"},
             "overwrite_simulation": {"default": False, "verify": verify.verify_bool, "desc": "Remove existing simulation files and run full simulation"},
@@ -81,8 +82,7 @@ class CalibratorConfig(Config):
                                                 "verify": verify.verify_path,
                                                 "desc": "Path to the observations directory"}
         self.default_args["agents"] = {"default": 3, "verify": verify.verify_integer, "desc": "Number of PEST agents"}
-        self.default_args["overwrite_end_date"] = {"default": "20220101", "verify": verify.verify_date, "desc": "Overwrite the default end date"}
-        self.default_args["download_observations"] = {"default": True, "verify": verify.verify_bool, "desc": "Download observations"}
-        self.default_args["observations_url"] = {"default": "https://alplakes-eawag.s3.eu-central-1.amazonaws.com/insitu/observations.zip", "verify": verify.verify_string, "desc": "Link to download observations"}
+        self.default_args["download_observations"] = {"default": False, "verify": verify.verify_bool, "desc": "Download observations"}
+        self.default_args["observations_url"] = {"default": False, "verify": verify.verify_string, "desc": "Link to download observations"}
         self.args = {k: v["default"] for k, v in self.default_args.items()}
         self.args["lake_parameters_dir"] = self.lake_parameters_dir

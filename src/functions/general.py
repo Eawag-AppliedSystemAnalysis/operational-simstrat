@@ -98,6 +98,25 @@ def adjust_temperature_for_altitude_difference(temperature, difference):
     return t - 0.0065 * difference
 
 
+def calculate_vapor_pressure(temperature, relative_humidity, air_pressure):
+    """
+    Calculate vapor_pressure using Gill 1982
+    :param temperature: in degrees celsius
+    :param relative_humidity: in percent
+    :param air_pressure:
+    :return: vapour_pressure
+    """
+    e_s = 10 ** ((0.7859 + 0.03477 * temperature) / (1 + 0.00412 * temperature))
+    e_s = e_s * (1 + 1e-6 * air_pressure * (4.5 + 0.00006 * temperature ** 2))
+    e_a = (relative_humidity / 100) * e_s # Actual vapor pressure (e_a)
+    return e_a
+
+def calculate_vapor_pressure_ss(temp_celsius, relative_humidity, air_pressure):
+    e_s = 6.11 * 10 ** ((7.5 * temp_celsius) / (temp_celsius + 237.3)) # Saturation vapor pressure (e_s)
+    e_a = (relative_humidity / 100) * e_s # Actual vapor pressure (e_a)
+    return e_a
+
+
 def call_url(url):
     response = requests.get(url)
     if response.status_code == 200:
@@ -132,6 +151,11 @@ def get_elevation_swisstopo(latitude, longitude):
     easting, northing = latlng_to_ch1903(latitude, longitude)
     data = call_url(endpoint.format(easting, northing))
     return float(data["height"])
+
+def get_elevation_eudem25(latitude, longitude):
+    endpoint = "https://api.opentopodata.org/v1/eudem25m?locations={},{}"
+    data = call_url(endpoint.format(latitude, longitude))
+    return float(data["results"][0]["elevation"])
 
 
 def latlng_to_ch1903(lat, lng):
