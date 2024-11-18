@@ -5091,6 +5091,7 @@
         "p_lw": 0.970136559,
         "snow_temp": 1.87554235,
         "p_absorb": 1.18495653,
+        "calibration_source": "Agencija Republike Slovenije za okolje [https://www.arso.gov.si/vode/podatki]",
         "performance": {
             "rmse": {
                 "overall": 1.2919111086633057,
@@ -5321,6 +5322,7 @@
         "p_lw": 0.949830505,
         "snow_temp": 2.0,
         "p_absorb": 0.788731454,
+        "calibration_source": "OLA-IS, AnaEE-France, INRAE of Thonon-les-Bains, SILA [Rimet et al. https://doi.org/10.4081/jlimnol.2020.1944]",
         "performance": {
             "rmse": {
                 "overall": 0.6369336612912974,
@@ -5665,6 +5667,7 @@
         "p_lw": 0.933417108,
         "snow_temp": 2.0,
         "p_absorb": 0.832240199,
+        "calibration_source": "OLA-IS, AnaEE-France, INRAE of Thonon-les-Bains, CISALB [Rimet et al. https://doi.org/10.4081/jlimnol.2020.1944]",
         "performance": {
             "rmse": {
                 "overall": 0.5798498002916069,
