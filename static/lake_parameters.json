@@ -5278,6 +5278,7 @@
         "p_lw": 0.92967212,
         "snow_temp": 0.5,
         "p_absorb": 1.40872122,
+        "calibration_source": "Gewässerüberwachung (GZÜV) Österreich",
         "performance": {
             "rmse": {
                 "overall": 0.8280300760547098,
