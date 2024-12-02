@@ -73,7 +73,7 @@
         "sediment_oxygen_uptake_rate": -41.6,
         "forcing": [
             {
-                "id": "MOA",
+                "id": "LUZ",
                 "type": "meteoswiss_meteostation"
             }
         ],
@@ -119,7 +119,7 @@
         "sediment_oxygen_uptake_rate": -28.1,
         "forcing": [
             {
-                "id": "MOA",
+                "id": "LUZ",
                 "type": "meteoswiss_meteostation"
             }
         ],
@@ -346,10 +346,6 @@
                 "type": "meteoswiss_meteostation"
             },
             {
-                "id": "HAI",
-                "type": "meteoswiss_meteostation"
-            },
-            {
                 "id": "GUT",
                 "type": "meteoswiss_meteostation"
             }
@@ -471,10 +467,6 @@
         "datalakes_id": 16,
         "sediment_oxygen_uptake_rate": -14.0,
         "forcing": [
-            {
-                "id": "THU",
-                "type": "meteoswiss_meteostation"
-            },
             {
                 "id": "INT",
                 "type": "meteoswiss_meteostation"
@@ -829,10 +821,6 @@
         "datalakes_id": 17,
         "forcing": [
             {
-                "id": "CHB",
-                "type": "meteoswiss_meteostation"
-            },
-            {
                 "id": "BIE",
                 "type": "meteoswiss_meteostation"
             }
@@ -1093,6 +1081,10 @@
         "forcing": [
             {
                 "id": "GIH",
+                "type": "meteoswiss_meteostation"
+            },
+            {
+                "id": "LUZ",
                 "type": "meteoswiss_meteostation"
             }
         ],
@@ -1369,7 +1361,7 @@
         "sediment_oxygen_uptake_rate": -31.9,
         "forcing": [
             {
-                "id": "EGO",
+                "id": "LUZ",
                 "type": "meteoswiss_meteostation"
             }
         ],
@@ -1429,6 +1421,10 @@
         "forcing": [
             {
                 "id": "GIH",
+                "type": "meteoswiss_meteostation"
+            },
+            {
+                "id": "LUZ",
                 "type": "meteoswiss_meteostation"
             }
         ],
@@ -1752,14 +1748,6 @@
         "sediment_oxygen_uptake_rate": -18.4,
         "forcing": [
             {
-                "id": "QUI",
-                "type": "meteoswiss_meteostation"
-            },
-            {
-                "id": "LAC",
-                "type": "meteoswiss_meteostation"
-            },
-            {
                 "id": "GLA",
                 "type": "meteoswiss_meteostation"
             }
@@ -1829,11 +1817,7 @@
         "datalakes_id": 39,
         "forcing": [
             {
-                "id": "CHZ",
-                "type": "meteoswiss_meteostation"
-            },
-            {
-                "id": "WAE",
+                "id": "LUZ",
                 "type": "meteoswiss_meteostation"
             }
         ],
@@ -2018,14 +2002,6 @@
         "datalakes_id": 5,
         "sediment_oxygen_uptake_rate": -30.3,
         "forcing": [
-            {
-                "id": "LAC",
-                "type": "meteoswiss_meteostation"
-            },
-            {
-                "id": "SCM",
-                "type": "meteoswiss_meteostation"
-            },
             {
                 "id": "WAE",
                 "type": "meteoswiss_meteostation"
@@ -2308,10 +2284,6 @@
         "datalakes_id": 8,
         "forcing": [
             {
-                "id": "GES",
-                "type": "meteoswiss_meteostation"
-            },
-            {
                 "id": "LUZ",
                 "type": "meteoswiss_meteostation"
             }
@@ -2446,10 +2418,6 @@
         "datalakes_bathymetry": true,
         "datalakes_id": 67,
         "forcing": [
-            {
-                "id": "THU",
-                "type": "meteoswiss_meteostation"
-            },
             {
                 "id": "INT",
                 "type": "meteoswiss_meteostation"
@@ -2634,10 +2602,6 @@
         "datalakes_bathymetry": true,
         "datalakes_id": 18,
         "forcing": [
-            {
-                "id": "EGO",
-                "type": "meteoswiss_meteostation"
-            },
             {
                 "id": "LUZ",
                 "type": "meteoswiss_meteostation"
@@ -2913,10 +2877,6 @@
             {
                 "id": "WAE",
                 "type": "meteoswiss_meteostation"
-            },
-            {
-                "id": "LAC",
-                "type": "meteoswiss_meteostation"
             }
         ],
         "forcing_forecast": {
@@ -3007,10 +2967,6 @@
         "forcing": [
             {
                 "id": "WAE",
-                "type": "meteoswiss_meteostation"
-            },
-            {
-                "id": "LAC",
                 "type": "meteoswiss_meteostation"
             }
         ],
@@ -3148,10 +3104,6 @@
         "datalakes_id": 72,
         "forcing": [
             {
-                "id": "KOP",
-                "type": "meteoswiss_meteostation"
-            },
-            {
                 "id": "WYN",
                 "type": "meteoswiss_meteostation"
             }
@@ -3242,10 +3194,6 @@
         "datalakes_bathymetry": true,
         "datalakes_id": 84,
         "forcing": [
-            {
-                "id": "THU",
-                "type": "meteoswiss_meteostation"
-            },
             {
                 "id": "INT",
                 "type": "meteoswiss_meteostation"
@@ -3521,10 +3469,6 @@
         "datalakes_bathymetry": true,
         "datalakes_id": 175,
         "forcing": [
-            {
-                "id": "CHB",
-                "type": "meteoswiss_meteostation"
-            },
             {
                 "id": "BIE",
                 "type": "meteoswiss_meteostation"
@@ -4057,7 +4001,7 @@
         "datalakes_id": 64,
         "forcing": [
             {
-                "id": "MMGTT",
+                "id": "SLFGU2",
                 "type": "meteoswiss_meteostation"
             },
             {
