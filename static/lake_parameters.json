@@ -5488,6 +5488,10 @@
             {
                 "id": "9643",
                 "type": "geosphere_meteostation"
+            },
+            {
+                "id": "9618",
+                "type": "geosphere_meteostation"
             }
         ],
         "forcing_forecast": {
@@ -5661,7 +5665,7 @@
         "datalakes_id": 215,
         "forcing": [
             {
-                "id": "20101",
+                "id": "20123",
                 "type": "geosphere_meteostation"
             }
         ],
@@ -5695,10 +5699,6 @@
         "datalakes_bathymetry": false,
         "datalakes_id": 216,
         "forcing": [
-            {
-                "id": "6620",
-                "type": "geosphere_meteostation"
-            },
             {
                 "id": "6621",
                 "type": "geosphere_meteostation"
@@ -5771,6 +5771,10 @@
         "forcing": [
             {
                 "id": "20220",
+                "type": "geosphere_meteostation"
+            },
+            {
+                "id": "20212",
                 "type": "geosphere_meteostation"
             }
         ],
