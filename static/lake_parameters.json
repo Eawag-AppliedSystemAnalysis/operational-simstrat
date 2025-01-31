@@ -4804,7 +4804,18 @@
         "datalakes_bathymetry": true,
         "datalakes_id": 220,
         "forcing": [
-
+            {
+                "id": "tavernola_bergamasca_gallinarga",
+                "type": "mistral_meteostation"
+            },
+            {
+                "id": "costa_volpino_v_nazionale",
+                "type": "mistral_meteostation"
+            },
+            {
+                "id": "lmb341",
+                "type": "mistral_meteostation"
+            }
         ],
         "forcing_forecast": {
             "source": "MeteoSwiss",
@@ -4836,7 +4847,18 @@
         "datalakes_bathymetry": true,
         "datalakes_id": 221,
         "forcing": [
-
+            {
+                "id": "dervio_v_s_cecilia",
+                "type": "mistral_meteostation"
+            },
+            {
+                "id": "porlezza_torrente",
+                "type": "mistral_meteostation"
+            },
+            {
+                "id": "LUG",
+                "type": "meteoswiss_meteostation"
+            }
         ],
         "forcing_forecast": {
             "source": "MeteoSwiss",
