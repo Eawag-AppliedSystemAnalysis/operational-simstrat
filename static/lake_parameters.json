@@ -4822,12 +4822,24 @@
             "model": "ICON",
             "days": 5
         },
-        "a_seiche": 0.002,
-        "f_wind": 1.0,
-        "p_lw": 1.0,
+        "a_seiche": 0.043861336,
+        "f_wind": 0.969403127,
+        "p_lw": 0.868900401,
         "snow_temp": 2.0,
-        "p_absorb": 1.0,
-        "calibration_source": "Università degli Studi di Brescia"
+        "p_absorb": 1.5,
+        "calibration_source": "Universit\u00e0 degli Studi di Brescia",
+        "performance": {
+            "rmse": {
+                "overall": 1.4832062927003236,
+                "surface": 1.4310444295185738,
+                "bottom": 0.8320742061706203
+            },
+            "temperature": {
+                "times": 2461,
+                "depths": 10,
+                "total": 7829
+            }
+        }
     },
     {
         "key": "como",
@@ -4865,12 +4877,24 @@
             "model": "ICON",
             "days": 5
         },
-        "a_seiche": 0.002,
-        "f_wind": 1.0,
-        "p_lw": 1.0,
+        "a_seiche": 0.011357727,
+        "f_wind": 1.50236649,
+        "p_lw": 0.872891903,
         "snow_temp": 2.0,
-        "p_absorb": 1.0,
-        "calibration_source": "Agenzia regionale per la protezione dell’ambiente della Lombardia"
+        "p_absorb": 1.18021002,
+        "calibration_source": "Agenzia regionale per la protezione dell\u2019ambiente della Lombardia",
+        "performance": {
+            "rmse": {
+                "overall": 0.8215825490567753,
+                "surface": 1.4511971295840698,
+                "bottom": 0.3500738826781189
+            },
+            "temperature": {
+                "times": 47,
+                "depths": 121,
+                "total": 4334
+            }
+        }
     },
     {
         "key": "bled",
@@ -4932,7 +4956,7 @@
         "mixing_regime": "NA",
         "geothermal_flux": 0.12,
         "latitude": 47.827,
-        "longitude": 13.380,
+        "longitude": 13.38,
         "trophic_state": "NA",
         "datalakes_bathymetry": true,
         "datalakes_id": 202,
@@ -4952,7 +4976,7 @@
         "p_lw": 0.92967212,
         "snow_temp": 0.5,
         "p_absorb": 1.40872122,
-        "calibration_source": "Gewässerüberwachung (GZÜV) Österreich",
+        "calibration_source": "Gew\u00e4sser\u00fcberwachung (GZ\u00dcV) \u00d6sterreich",
         "performance": {
             "rmse": {
                 "overall": 0.8280300760547098,
