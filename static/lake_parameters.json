@@ -5087,5 +5087,75 @@
                 "total": 32852
             }
         }
+    },
+    {
+        "key": "ammersee",
+        "name": "Ammersee",
+        "elevation": 532.9,
+        "surface_area": 46.6,
+        "type": "Natural",
+        "volume": 1.46,
+        "max_depth": 81.1,
+        "average_depth": 37.5,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 48.0,
+        "longitude": 11.12,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 242,
+        "forcing": [
+            {
+                "id": "",
+                "type": "dwd_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.002,
+        "f_wind": 1.0,
+        "p_lw": 1.0,
+        "snow_temp": 2.0,
+        "p_absorb": 1.0,
+        "calibration_source": ""
+    },
+    {
+        "key": "",
+        "name": "",
+        "elevation": ,
+        "surface_area": ,
+        "type": "Natural",
+        "volume": ,
+        "max_depth": ,
+        "average_depth": ,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 45.742,
+        "longitude": 5.862,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 204,
+        "forcing": [
+            {
+                "id": "",
+                "type": "dwd_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.002,
+        "f_wind": 1.0,
+        "p_lw": 1.0,
+        "snow_temp": 2.0,
+        "p_absorb": 1.0,
+        "calibration_source": ""
     }
 ]
