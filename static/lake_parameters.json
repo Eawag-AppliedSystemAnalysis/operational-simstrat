@@ -5105,7 +5105,10 @@
     "trophic_state": "NA",
     "datalakes_bathymetry": true,
     "datalakes_id": 222,
-    "forcing": [{ "id": "", "type": "dwd_meteostation" }],
+    "forcing": [
+        { "id": "2708", "type": "dwd_meteostation" },
+        { "id": "2290", "type": "dwd_meteostation" }
+    ],
     "forcing_forecast": {
       "source": "VisualCrossing",
       "model": false,
@@ -5135,7 +5138,9 @@
     "trophic_state": "NA",
     "datalakes_bathymetry": true,
     "datalakes_id": 223,
-    "forcing": [{ "id": "", "type": "dwd_meteostation" }],
+    "forcing": [
+        { "id": "5538", "type": "dwd_meteostation" }
+    ],
     "forcing_forecast": {
       "source": "VisualCrossing",
       "model": false,
@@ -5165,7 +5170,10 @@
     "trophic_state": "NA",
     "datalakes_bathymetry": true,
     "datalakes_id": 224,
-    "forcing": [{ "id": "", "type": "dwd_meteostation" }],
+    "forcing": [
+        { "id": "15214", "type": "dwd_meteostation" },
+        {"id": "11505", "type": "geosphere_meteostation"}
+    ],
     "forcing_forecast": {
       "source": "VisualCrossing",
       "model": false,
@@ -5195,7 +5203,10 @@
     "trophic_state": "NA",
     "datalakes_bathymetry": true,
     "datalakes_id": 225,
-    "forcing": [{ "id": "", "type": "dwd_meteostation" }],
+    "forcing": [
+        { "id": "3307", "type": "dwd_meteostation" },
+        { "id": "1550", "type": "dwd_meteostation" }
+    ],
     "forcing_forecast": {
       "source": "VisualCrossing",
       "model": false,
@@ -5225,7 +5236,10 @@
     "trophic_state": "NA",
     "datalakes_bathymetry": true,
     "datalakes_id": 226,
-    "forcing": [{ "id": "", "type": "dwd_meteostation" }],
+    "forcing": [
+        { "id": "2573", "type": "dwd_meteostation" },
+        { "id": "4515", "type": "geosphere_meteostation" }
+    ],
     "forcing_forecast": {
       "source": "VisualCrossing",
       "model": false,
@@ -5255,7 +5269,10 @@
     "trophic_state": "NA",
     "datalakes_bathymetry": true,
     "datalakes_id": 227,
-    "forcing": [{ "id": "", "type": "dwd_meteostation" }],
+        "forcing": [
+        { "id": "2319", "type": "dwd_meteostation" },
+        { "id": "8806", "type": "geosphere_meteostation" }
+    ],
     "forcing_forecast": {
       "source": "VisualCrossing",
       "model": false,
@@ -5285,7 +5302,10 @@
     "trophic_state": "NA",
     "datalakes_bathymetry": true,
     "datalakes_id": 228,
-    "forcing": [{ "id": "", "type": "dwd_meteostation" }],
+    "forcing": [
+        { "id": "217", "type": "dwd_meteostation" },
+        { "id": "5538", "type": "dwd_meteostation" }
+    ],
     "forcing_forecast": {
       "source": "VisualCrossing",
       "model": false,
@@ -5315,7 +5335,10 @@
     "trophic_state": "NA",
     "datalakes_bathymetry": true,
     "datalakes_id": 229,
-    "forcing": [{ "id": "", "type": "dwd_meteostation" }],
+    "forcing": [
+        { "id": "2708", "type": "dwd_meteostation" },
+        { "id": "2290", "type": "dwd_meteostation" }
+    ],
     "forcing_forecast": {
       "source": "VisualCrossing",
       "model": false,
@@ -5345,7 +5368,9 @@
     "trophic_state": "NA",
     "datalakes_bathymetry": true,
     "datalakes_id": 230,
-    "forcing": [{ "id": "", "type": "dwd_meteostation" }],
+    "forcing": [
+        { "id": "856", "type": "dwd_meteostation" }
+    ],
     "forcing_forecast": {
       "source": "VisualCrossing",
       "model": false,
@@ -5375,7 +5400,10 @@
     "trophic_state": "NA",
     "datalakes_bathymetry": true,
     "datalakes_id": 231,
-    "forcing": [{ "id": "", "type": "dwd_meteostation" }],
+    "forcing": [
+        { "id": "2319", "type": "dwd_meteostation" },
+        { "id": "856", "type": "dwd_meteostation" }
+    ],
     "forcing_forecast": {
       "source": "VisualCrossing",
       "model": false,
@@ -5405,7 +5433,10 @@
     "trophic_state": "NA",
     "datalakes_bathymetry": true,
     "datalakes_id": 232,
-    "forcing": [{ "id": "", "type": "dwd_meteostation" }],
+    "forcing": [
+        { "id": "2319", "type": "dwd_meteostation" },
+        { "id": "9016", "type": "geosphere_meteostation" }
+    ],
     "forcing_forecast": {
       "source": "VisualCrossing",
       "model": false,
@@ -5435,7 +5466,10 @@
     "trophic_state": "NA",
     "datalakes_bathymetry": true,
     "datalakes_id": 233,
-    "forcing": [{ "id": "", "type": "dwd_meteostation" }],
+    "forcing": [
+        { "id": "3857", "type": "dwd_meteostation" },
+        { "id": "2559", "type": "dwd_meteostation" }
+    ],
     "forcing_forecast": {
       "source": "VisualCrossing",
       "model": false,
@@ -5465,7 +5499,10 @@
     "trophic_state": "NA",
     "datalakes_bathymetry": true,
     "datalakes_id": 234,
-    "forcing": [{ "id": "", "type": "dwd_meteostation" }],
+    "forcing": [
+        { "id": "19856", "type": "dwd_meteostation" },
+        {"id": "9406", "type": "geosphere_meteostation"}
+    ],
     "forcing_forecast": {
       "source": "VisualCrossing",
       "model": false,
@@ -5495,7 +5532,10 @@
     "trophic_state": "NA",
     "datalakes_bathymetry": true,
     "datalakes_id": 235,
-    "forcing": [{ "id": "", "type": "dwd_meteostation" }],
+    "forcing": [
+        { "id": "3307", "type": "dwd_meteostation" },
+        { "id": "1550", "type": "dwd_meteostation" }
+    ],
     "forcing_forecast": {
       "source": "VisualCrossing",
       "model": false,
@@ -5525,7 +5565,10 @@
     "trophic_state": "NA",
     "datalakes_bathymetry": true,
     "datalakes_id": 236,
-    "forcing": [{ "id": "", "type": "dwd_meteostation" }],
+    "forcing": [
+        { "id": "15214", "type": "dwd_meteostation" },
+        {"id": "11505", "type": "geosphere_meteostation"}
+    ],
     "forcing_forecast": {
       "source": "VisualCrossing",
       "model": false,
@@ -5555,7 +5598,10 @@
     "trophic_state": "NA",
     "datalakes_bathymetry": true,
     "datalakes_id": 237,
-    "forcing": [{ "id": "", "type": "dwd_meteostation" }],
+    "forcing": [
+        { "id": "3857", "type": "dwd_meteostation" },
+        { "id": "2559", "type": "dwd_meteostation" }
+    ],
     "forcing_forecast": {
       "source": "VisualCrossing",
       "model": false,
@@ -5585,7 +5631,9 @@
     "trophic_state": "NA",
     "datalakes_bathymetry": true,
     "datalakes_id": 238,
-    "forcing": [{ "id": "", "type": "dwd_meteostation" }],
+    "forcing": [
+        { "id": "2559", "type": "dwd_meteostation" }
+    ],
     "forcing_forecast": {
       "source": "VisualCrossing",
       "model": false,
@@ -5615,7 +5663,9 @@
     "trophic_state": "NA",
     "datalakes_bathymetry": true,
     "datalakes_id": 239,
-    "forcing": [{ "id": "", "type": "dwd_meteostation" }],
+    "forcing": [
+        { "id": "1550", "type": "dwd_meteostation" }
+    ],
     "forcing_forecast": {
       "source": "VisualCrossing",
       "model": false,
@@ -5645,7 +5695,9 @@
     "trophic_state": "NA",
     "datalakes_bathymetry": true,
     "datalakes_id": 240,
-    "forcing": [{ "id": "", "type": "dwd_meteostation" }],
+    "forcing": [
+        { "id": "856", "type": "dwd_meteostation" }
+    ],
     "forcing_forecast": {
       "source": "VisualCrossing",
       "model": false,
@@ -5675,7 +5727,10 @@
     "trophic_state": "NA",
     "datalakes_bathymetry": true,
     "datalakes_id": 241,
-    "forcing": [{ "id": "", "type": "dwd_meteostation" }],
+    "forcing": [
+        { "id": "15214", "type": "dwd_meteostation" },
+        {"id": "11505", "type": "geosphere_meteostation"}
+    ],
     "forcing_forecast": {
       "source": "VisualCrossing",
       "model": false,
@@ -5705,7 +5760,9 @@
     "trophic_state": "NA",
     "datalakes_bathymetry": true,
     "datalakes_id": 242,
-    "forcing": [{ "id": "", "type": "dwd_meteostation" }],
+    "forcing": [
+        { "id": "5538", "type": "dwd_meteostation" }
+    ],
     "forcing_forecast": {
       "source": "VisualCrossing",
       "model": false,
