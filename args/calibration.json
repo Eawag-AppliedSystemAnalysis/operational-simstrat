@@ -1,8 +1,4 @@
 {
-  "lakes": ["baldegg", "hallwil", "lowerconstance", "upperconstance", "thun",
-    "joux", "lungern", "sempach", "sarnen", "walensee", "zug", "lowerzurich",
-    "upperzurich", "lauerz", "amsoldingersee", "soppensee", "lutzelsee",
-    "egelsee", "burgaschisee", "dittligsee", "brenet", "oberesbanzlauiseeli"],
   "couple_aed2": true,
   "debug": false,
   "log": false,
