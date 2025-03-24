@@ -5119,7 +5119,7 @@
     "p_lw": 1.0,
     "snow_temp": 2.0,
     "p_absorb": 1.0,
-    "calibration_source": ""
+    "calibration_source": "LfU Bayern"
   },
   {
     "key": "worthsee",
@@ -5151,7 +5151,7 @@
     "p_lw": 1.0,
     "snow_temp": 2.0,
     "p_absorb": 1.0,
-    "calibration_source": ""
+    "calibration_source": "LfU Bayern"
   },
   {
     "key": "weissensee",
@@ -5184,7 +5184,7 @@
     "p_lw": 1.0,
     "snow_temp": 2.0,
     "p_absorb": 1.0,
-    "calibration_source": ""
+    "calibration_source": "LfU Bayern"
   },
   {
     "key": "walchensee",
@@ -5217,7 +5217,7 @@
     "p_lw": 1.0,
     "snow_temp": 2.0,
     "p_absorb": 1.0,
-    "calibration_source": ""
+    "calibration_source": "LfU Bayern"
   },
   {
     "key": "tachinger",
@@ -5250,7 +5250,7 @@
     "p_lw": 1.0,
     "snow_temp": 2.0,
     "p_absorb": 1.0,
-    "calibration_source": ""
+    "calibration_source": "LfU Bayern"
   },
   {
     "key": "tegernsee",
@@ -5283,7 +5283,7 @@
     "p_lw": 1.0,
     "snow_temp": 2.0,
     "p_absorb": 1.0,
-    "calibration_source": ""
+    "calibration_source": "LfU Bayern"
   },
   {
     "key": "starnberger",
@@ -5316,7 +5316,7 @@
     "p_lw": 1.0,
     "snow_temp": 2.0,
     "p_absorb": 1.0,
-    "calibration_source": ""
+    "calibration_source": "LfU Bayern"
   },
   {
     "key": "staffelsee",
@@ -5349,7 +5349,7 @@
     "p_lw": 1.0,
     "snow_temp": 2.0,
     "p_absorb": 1.0,
-    "calibration_source": ""
+    "calibration_source": "LfU Bayern"
   },
   {
     "key": "simssee",
@@ -5381,7 +5381,7 @@
     "p_lw": 1.0,
     "snow_temp": 2.0,
     "p_absorb": 1.0,
-    "calibration_source": ""
+    "calibration_source": "LfU Bayern"
   },
   {
     "key": "seehamer",
@@ -5414,7 +5414,7 @@
     "p_lw": 1.0,
     "snow_temp": 2.0,
     "p_absorb": 1.0,
-    "calibration_source": ""
+    "calibration_source": "LfU Bayern"
   },
   {
     "key": "schliersee",
@@ -5447,7 +5447,7 @@
     "p_lw": 1.0,
     "snow_temp": 2.0,
     "p_absorb": 1.0,
-    "calibration_source": ""
+    "calibration_source": "LfU Bayern"
   },
   {
     "key": "niedersonthofener",
@@ -5480,7 +5480,7 @@
     "p_lw": 1.0,
     "snow_temp": 2.0,
     "p_absorb": 1.0,
-    "calibration_source": ""
+    "calibration_source": "LfU Bayern"
   },
   {
     "key": "konigsee",
@@ -5513,7 +5513,7 @@
     "p_lw": 1.0,
     "snow_temp": 2.0,
     "p_absorb": 1.0,
-    "calibration_source": ""
+    "calibration_source": "LfU Bayern"
   },
   {
     "key": "kochelsee",
@@ -5546,7 +5546,7 @@
     "p_lw": 1.0,
     "snow_temp": 2.0,
     "p_absorb": 1.0,
-    "calibration_source": ""
+    "calibration_source": "LfU Bayern"
   },
   {
     "key": "hopfensee",
@@ -5579,7 +5579,7 @@
     "p_lw": 1.0,
     "snow_temp": 2.0,
     "p_absorb": 1.0,
-    "calibration_source": ""
+    "calibration_source": "LfU Bayern"
   },
   {
     "key": "gruntensee",
@@ -5612,7 +5612,7 @@
     "p_lw": 1.0,
     "snow_temp": 2.0,
     "p_absorb": 1.0,
-    "calibration_source": ""
+    "calibration_source": "LfU Bayern"
   },
   {
     "key": "grosseralpsee",
@@ -5644,7 +5644,7 @@
     "p_lw": 1.0,
     "snow_temp": 2.0,
     "p_absorb": 1.0,
-    "calibration_source": ""
+    "calibration_source": "LfU Bayern"
   },
   {
     "key": "eibsee",
@@ -5676,7 +5676,7 @@
     "p_lw": 1.0,
     "snow_temp": 2.0,
     "p_absorb": 1.0,
-    "calibration_source": ""
+    "calibration_source": "LfU Bayern"
   },
   {
     "key": "chiemsee",
@@ -5708,7 +5708,7 @@
     "p_lw": 1.0,
     "snow_temp": 2.0,
     "p_absorb": 1.0,
-    "calibration_source": ""
+    "calibration_source": "LfU Bayern"
   },
   {
     "key": "bannwaldsee",
@@ -5741,7 +5741,7 @@
     "p_lw": 1.0,
     "snow_temp": 2.0,
     "p_absorb": 1.0,
-    "calibration_source": ""
+    "calibration_source": "LfU Bayern"
   },
   {
     "key": "ammersee",
@@ -5773,6 +5773,6 @@
     "p_lw": 1.0,
     "snow_temp": 2.0,
     "p_absorb": 1.0,
-    "calibration_source": ""
+    "calibration_source": "LfU Bayern"
   }
 ]
