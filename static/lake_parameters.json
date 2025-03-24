@@ -73,7 +73,7 @@
         "sediment_oxygen_uptake_rate": -41.6,
         "forcing": [
             {
-                "id": "MOA",
+                "id": "LUZ",
                 "type": "meteoswiss_meteostation"
             }
         ],
@@ -84,20 +84,20 @@
         },
         "performance": {
             "rmse": {
-                "overall": 1.05451870402043,
-                "surface": 1.0861984589942248,
-                "bottom": 0.84624050941952
+                "overall": 1.028490561148472,
+                "surface": 1.0283082404517394,
+                "bottom": 0.8628333011396555
             },
             "temperature": {
-                "times": 68,
-                "depths": 48,
-                "total": 1846
+                "times": 363,
+                "depths": 50,
+                "total": 4463
             }
         },
-        "a_seiche": 0.029870352,
-        "f_wind": 0.602756369,
-        "p_lw": 0.988881907,
-        "snow_temp": 0.5772
+        "a_seiche": 0.03533356,
+        "f_wind": 0.552526513,
+        "p_lw": 0.967156835,
+        "snow_temp": 0.5
     },
     {
         "key": "hallwil",
@@ -119,7 +119,7 @@
         "sediment_oxygen_uptake_rate": -28.1,
         "forcing": [
             {
-                "id": "MOA",
+                "id": "LUZ",
                 "type": "meteoswiss_meteostation"
             }
         ],
@@ -143,20 +143,20 @@
         ],
         "performance": {
             "rmse": {
-                "overall": 0.7362907014956087,
-                "surface": 0.7886792172259964,
-                "bottom": 0.44841074005299175
+                "overall": 0.8281604943745017,
+                "surface": 0.8510616340248753,
+                "bottom": 0.836
             },
             "temperature": {
-                "times": 98,
-                "depths": 15,
-                "total": 1304
+                "times": 499,
+                "depths": 26,
+                "total": 4261
             }
         },
-        "a_seiche": 0.0055980665,
-        "f_wind": 1.14571569,
-        "p_lw": 0.977147392,
-        "snow_temp": 2.0
+        "a_seiche": 0.008237017,
+        "f_wind": 0.919738873,
+        "p_lw": 0.957361168,
+        "snow_temp": 0.90627406
     },
     {
         "key": "biel",
@@ -307,19 +307,19 @@
         ],
         "performance": {
             "rmse": {
-                "overall": 1.3890951715327413,
-                "surface": 1.4127846825935895,
-                "bottom": 0.5173764055308282
+                "overall": 1.3897479454117672,
+                "surface": 1.4108854872177496,
+                "bottom": 0.4859526952286611
             },
             "temperature": {
-                "times": 773,
+                "times": 783,
                 "depths": 33,
-                "total": 3143
+                "total": 3158
             }
         },
-        "a_seiche": 0.016499202,
-        "f_wind": 1.2161339,
-        "p_lw": 0.891907364,
+        "a_seiche": 0.01608834,
+        "f_wind": 1.22068432,
+        "p_lw": 0.89058664,
         "snow_temp": 2.0
     },
     {
@@ -346,10 +346,6 @@
                 "type": "meteoswiss_meteostation"
             },
             {
-                "id": "HAI",
-                "type": "meteoswiss_meteostation"
-            },
-            {
                 "id": "GUT",
                 "type": "meteoswiss_meteostation"
             }
@@ -367,20 +363,20 @@
         ],
         "performance": {
             "rmse": {
-                "overall": 1.5874711768151741,
-                "surface": 1.1137294654814527,
-                "bottom": 1.0963
+                "overall": 1.5478283815921074,
+                "surface": 1.1011898369613673,
+                "bottom": 1.0187
             },
             "temperature": {
-                "times": 692,
+                "times": 697,
                 "depths": 34,
-                "total": 2780
+                "total": 2787
             }
         },
-        "a_seiche": 0.00015428934,
-        "f_wind": 1.16887501,
-        "p_lw": 0.918109551,
-        "snow_temp": 1.76648601
+        "a_seiche": 8.552416799999998e-05,
+        "f_wind": 1.1857908,
+        "p_lw": 0.959871595,
+        "snow_temp": 1.17761718
     },
     {
         "key": "brienz",
@@ -472,10 +468,6 @@
         "sediment_oxygen_uptake_rate": -14.0,
         "forcing": [
             {
-                "id": "THU",
-                "type": "meteoswiss_meteostation"
-            },
-            {
                 "id": "INT",
                 "type": "meteoswiss_meteostation"
             }
@@ -522,19 +514,19 @@
         ],
         "performance": {
             "rmse": {
-                "overall": 0.6592763004487067,
-                "surface": 0.9623181767379513,
-                "bottom": 0.22241019300071946
+                "overall": 0.6317401931480462,
+                "surface": 0.881003925621496,
+                "bottom": 0.23568310157458483
             },
             "temperature": {
-                "times": 364,
+                "times": 380,
                 "depths": 37,
-                "total": 5850
+                "total": 6145
             }
         },
-        "a_seiche": 0.0092247576,
-        "f_wind": 1.68080203,
-        "p_lw": 0.961100387,
+        "a_seiche": 0.0066421194,
+        "f_wind": 1.50267132,
+        "p_lw": 0.991206448,
         "snow_temp": 2.0
     },
     {
@@ -829,10 +821,6 @@
         "datalakes_id": 17,
         "forcing": [
             {
-                "id": "CHB",
-                "type": "meteoswiss_meteostation"
-            },
-            {
                 "id": "BIE",
                 "type": "meteoswiss_meteostation"
             }
@@ -844,9 +832,9 @@
         },
         "performance": {
             "rmse": {
-                "overall": 1.0842748571263399,
-                "surface": 1.2450031168270588,
-                "bottom": 1.126596941326013
+                "overall": 1.0545903377782522,
+                "surface": 1.2149134447751635,
+                "bottom": 0.8284867688465798
             },
             "temperature": {
                 "times": 121,
@@ -854,10 +842,10 @@
                 "total": 766
             }
         },
-        "a_seiche": 0.023813356,
-        "f_wind": 0.562001065,
-        "p_lw": 0.872076018,
-        "snow_temp": 0.562039869
+        "a_seiche": 0.0066224374,
+        "f_wind": 0.956016465,
+        "p_lw": 0.858998726,
+        "snow_temp": 0.687843275
     },
     {
         "key": "maggiore",
@@ -1094,6 +1082,10 @@
             {
                 "id": "GIH",
                 "type": "meteoswiss_meteostation"
+            },
+            {
+                "id": "LUZ",
+                "type": "meteoswiss_meteostation"
             }
         ],
         "forcing_forecast": {
@@ -1103,19 +1095,19 @@
         },
         "performance": {
             "rmse": {
-                "overall": 0.8142174465480078,
-                "surface": 0.7908070450495494,
-                "bottom": 0.0858
+                "overall": 0.9741450486176422,
+                "surface": 1.2344461094526797,
+                "bottom": 0.2006
             },
             "temperature": {
-                "times": 4,
-                "depths": 13,
-                "total": 38
+                "times": 15,
+                "depths": 23,
+                "total": 134
             }
         },
-        "a_seiche": 0.459462968,
-        "f_wind": 0.410261212,
-        "p_lw": 0.935597705,
+        "a_seiche": 0.472981803,
+        "f_wind": 0.438062998,
+        "p_lw": 0.915570424,
         "snow_temp": 2.5,
         "p_absorb": 1.5
     },
@@ -1369,7 +1361,7 @@
         "sediment_oxygen_uptake_rate": -31.9,
         "forcing": [
             {
-                "id": "EGO",
+                "id": "LUZ",
                 "type": "meteoswiss_meteostation"
             }
         ],
@@ -1393,20 +1385,20 @@
         ],
         "performance": {
             "rmse": {
-                "overall": 0.7267890765888884,
-                "surface": 1.0573393823864952,
-                "bottom": 0.3302033427565015
+                "overall": 0.75962910808601,
+                "surface": 0.9459301162842936,
+                "bottom": 0.0162
             },
             "temperature": {
-                "times": 89,
-                "depths": 34,
-                "total": 2661
+                "times": 416,
+                "depths": 37,
+                "total": 5494
             }
         },
-        "a_seiche": 0.009402838,
-        "f_wind": 0.743538131,
-        "p_lw": 0.951019338,
-        "snow_temp": 2.0
+        "a_seiche": 0.014048646,
+        "f_wind": 0.941017634,
+        "p_lw": 0.957365957,
+        "snow_temp": 2.45950428
     },
     {
         "key": "sarnen",
@@ -1430,6 +1422,10 @@
             {
                 "id": "GIH",
                 "type": "meteoswiss_meteostation"
+            },
+            {
+                "id": "LUZ",
+                "type": "meteoswiss_meteostation"
             }
         ],
         "forcing_forecast": {
@@ -1439,20 +1435,20 @@
         },
         "performance": {
             "rmse": {
-                "overall": 1.6270700114650858,
-                "surface": 1.8002677054895397,
-                "bottom": 0.5713
+                "overall": 1.5686206076640186,
+                "surface": 2.247230735816863,
+                "bottom": 1.3752386186888927
             },
             "temperature": {
-                "times": 26,
-                "depths": 53,
-                "total": 756
+                "times": 37,
+                "depths": 54,
+                "total": 850
             }
         },
-        "a_seiche": 2.1376712e-05,
-        "f_wind": 0.928576515,
-        "p_lw": 0.918902987,
-        "snow_temp": 1.99421206,
+        "a_seiche": 1e-05,
+        "f_wind": 0.824700449,
+        "p_lw": 0.827557983,
+        "snow_temp": 0.561793646,
         "p_absorb": 1.5
     },
     {
@@ -1752,14 +1748,6 @@
         "sediment_oxygen_uptake_rate": -18.4,
         "forcing": [
             {
-                "id": "QUI",
-                "type": "meteoswiss_meteostation"
-            },
-            {
-                "id": "LAC",
-                "type": "meteoswiss_meteostation"
-            },
-            {
                 "id": "GLA",
                 "type": "meteoswiss_meteostation"
             }
@@ -1795,19 +1783,19 @@
         ],
         "performance": {
             "rmse": {
-                "overall": 0.8359629004553402,
-                "surface": 1.1587187916680028,
-                "bottom": 0.6025546631678018
+                "overall": 0.7259417366329127,
+                "surface": 1.128369288342695,
+                "bottom": 0.4678501913849639
             },
             "temperature": {
-                "times": 273,
+                "times": 275,
                 "depths": 46,
-                "total": 3050
+                "total": 3127
             }
         },
-        "a_seiche": 0.0096960981,
-        "f_wind": 1.21671106,
-        "p_lw": 0.95613995,
+        "a_seiche": 0.010742212,
+        "f_wind": 0.927774367,
+        "p_lw": 0.989453764,
         "snow_temp": 2.0
     },
     {
@@ -1829,11 +1817,7 @@
         "datalakes_id": 39,
         "forcing": [
             {
-                "id": "CHZ",
-                "type": "meteoswiss_meteostation"
-            },
-            {
-                "id": "WAE",
+                "id": "LUZ",
                 "type": "meteoswiss_meteostation"
             }
         ],
@@ -1857,9 +1841,9 @@
         ],
         "performance": {
             "rmse": {
-                "overall": 1.0297455187124378,
-                "surface": 1.3238480809619608,
-                "bottom": 0.24566125290014823
+                "overall": 0.9263401254821927,
+                "surface": 0.9952970390792891,
+                "bottom": 0.2527660776290996
             },
             "temperature": {
                 "times": 422,
@@ -1867,10 +1851,10 @@
                 "total": 2942
             }
         },
-        "a_seiche": 0.0064928962,
-        "f_wind": 1.26894665,
-        "p_lw": 0.922328098,
-        "snow_temp": 0.82312
+        "a_seiche": 0.0049327642,
+        "f_wind": 1.2973882,
+        "p_lw": 0.959898816,
+        "snow_temp": 0.830944193
     },
     {
         "key": "sihlsee",
@@ -1984,19 +1968,19 @@
         ],
         "performance": {
             "rmse": {
-                "overall": 0.9586490183199047,
-                "surface": 1.0563339584819307,
-                "bottom": 1.1441361521998343
+                "overall": 0.9550554214798127,
+                "surface": 1.0527963672586658,
+                "bottom": 1.1260476640096642
             },
             "temperature": {
-                "times": 358,
+                "times": 361,
                 "depths": 12,
-                "total": 2057
+                "total": 2082
             }
         },
-        "a_seiche": 0.049011998,
-        "f_wind": 0.618478596,
-        "p_lw": 0.94126972,
+        "a_seiche": 0.048782945,
+        "f_wind": 0.618450472,
+        "p_lw": 0.941638862,
         "snow_temp": 0.5
     },
     {
@@ -2019,14 +2003,6 @@
         "sediment_oxygen_uptake_rate": -30.3,
         "forcing": [
             {
-                "id": "LAC",
-                "type": "meteoswiss_meteostation"
-            },
-            {
-                "id": "SCM",
-                "type": "meteoswiss_meteostation"
-            },
-            {
                 "id": "WAE",
                 "type": "meteoswiss_meteostation"
             }
@@ -2045,20 +2021,20 @@
         ],
         "performance": {
             "rmse": {
-                "overall": 0.8688903747515583,
-                "surface": 0.7936105509373851,
-                "bottom": 0.31495581700719016
+                "overall": 0.8189784468369733,
+                "surface": 0.6973973967874675,
+                "bottom": 0.36685791454821676
             },
             "temperature": {
-                "times": 421,
+                "times": 426,
                 "depths": 45,
-                "total": 3891
+                "total": 4073
             }
         },
-        "a_seiche": 0.001996212,
-        "f_wind": 1.23683087,
-        "p_lw": 0.949222616,
-        "snow_temp": 2.0
+        "a_seiche": 0.0019091719,
+        "f_wind": 1.30352624,
+        "p_lw": 0.980532925,
+        "snow_temp": 1.1659343
     },
     {
         "key": "poschiavo",
@@ -2308,10 +2284,6 @@
         "datalakes_id": 8,
         "forcing": [
             {
-                "id": "GES",
-                "type": "meteoswiss_meteostation"
-            },
-            {
                 "id": "LUZ",
                 "type": "meteoswiss_meteostation"
             }
@@ -2323,9 +2295,9 @@
         },
         "performance": {
             "rmse": {
-                "overall": 2.487746001874085,
-                "surface": 0.964405788555834,
-                "bottom": 2.6401950590818095
+                "overall": 2.4145662065978586,
+                "surface": 1.1492955048637403,
+                "bottom": 2.601290887873429
             },
             "temperature": {
                 "times": 78,
@@ -2333,10 +2305,10 @@
                 "total": 1949
             }
         },
-        "a_seiche": 1e-05,
-        "f_wind": 0.269650046,
-        "p_lw": 0.8,
-        "snow_temp": 2.67827335
+        "a_seiche": 1.1154346e-05,
+        "f_wind": 0.213553434,
+        "p_lw": 0.800164169,
+        "snow_temp": 2.76085017
     },
     {
         "key": "rotsee",
@@ -2447,10 +2419,6 @@
         "datalakes_id": 67,
         "forcing": [
             {
-                "id": "THU",
-                "type": "meteoswiss_meteostation"
-            },
-            {
                 "id": "INT",
                 "type": "meteoswiss_meteostation"
             }
@@ -2462,21 +2430,21 @@
         },
         "performance": {
             "rmse": {
-                "overall": 1.582183414398001,
-                "surface": 2.765150597373287,
-                "bottom": 0.83057577243139
+                "overall": 1.618232754045543,
+                "surface": 1.9707821000512342,
+                "bottom": 1.0786101326159598
             },
             "temperature": {
-                "times": 13,
+                "times": 17,
                 "depths": 16,
-                "total": 103
+                "total": 158
             }
         },
-        "a_seiche": 1e-05,
-        "f_wind": 0.232928911,
-        "p_lw": 0.887185365,
-        "snow_temp": 2.15562885,
-        "p_absorb": 1.41086872
+        "a_seiche": 1.470392e-05,
+        "f_wind": 0.21535538,
+        "p_lw": 0.925202769,
+        "snow_temp": 2.13768065,
+        "p_absorb": 1.37617055
     },
     {
         "key": "moossee",
@@ -2635,10 +2603,6 @@
         "datalakes_id": 18,
         "forcing": [
             {
-                "id": "EGO",
-                "type": "meteoswiss_meteostation"
-            },
-            {
                 "id": "LUZ",
                 "type": "meteoswiss_meteostation"
             }
@@ -2650,9 +2614,9 @@
         },
         "performance": {
             "rmse": {
-                "overall": 0.7295479508287851,
-                "surface": 1.510003734866356,
-                "bottom": 0.5285027496273187
+                "overall": 0.6474287472593241,
+                "surface": 1.0246066242625793,
+                "bottom": 0.5494808789790928
             },
             "temperature": {
                 "times": 29,
@@ -2660,10 +2624,10 @@
                 "total": 684
             }
         },
-        "a_seiche": 0.01754498,
-        "f_wind": 0.166656823,
-        "p_lw": 0.960845947,
-        "snow_temp": 1.67150421
+        "a_seiche": 0.026598962,
+        "f_wind": 0.205743857,
+        "p_lw": 0.966857551,
+        "snow_temp": 0.732054353
     },
     {
         "key": "inkwilersee",
@@ -2913,10 +2877,6 @@
             {
                 "id": "WAE",
                 "type": "meteoswiss_meteostation"
-            },
-            {
-                "id": "LAC",
-                "type": "meteoswiss_meteostation"
             }
         ],
         "forcing_forecast": {
@@ -2926,9 +2886,9 @@
         },
         "performance": {
             "rmse": {
-                "overall": 1.523280989037845,
-                "surface": 1.6321554910112015,
-                "bottom": 2.9186902028135844
+                "overall": 1.5213949951808554,
+                "surface": 1.633160240280499,
+                "bottom": 2.9321052163931633
             },
             "temperature": {
                 "times": 191,
@@ -2936,11 +2896,11 @@
                 "total": 797
             }
         },
-        "a_seiche": 0.0036873147,
-        "f_wind": 0.514527134,
-        "p_lw": 0.918329355,
+        "a_seiche": 0.0039451276,
+        "f_wind": 0.505916753,
+        "p_lw": 0.918394246,
         "snow_temp": 0.5,
-        "p_absorb": 1.27810262
+        "p_absorb": 1.27244377
     },
     {
         "key": "mettmenhaslisee",
@@ -3008,10 +2968,6 @@
             {
                 "id": "WAE",
                 "type": "meteoswiss_meteostation"
-            },
-            {
-                "id": "LAC",
-                "type": "meteoswiss_meteostation"
             }
         ],
         "forcing_forecast": {
@@ -3021,9 +2977,9 @@
         },
         "performance": {
             "rmse": {
-                "overall": 2.050889322453638,
-                "surface": 2.285194573901445,
-                "bottom": 2.1280758359787066
+                "overall": 2.050552884765863,
+                "surface": 2.2820457968271484,
+                "bottom": 2.128780200746013
             },
             "temperature": {
                 "times": 96,
@@ -3031,11 +2987,11 @@
                 "total": 449
             }
         },
-        "a_seiche": 0.00047530961,
-        "f_wind": 0.280691945,
-        "p_lw": 0.924087213,
-        "snow_temp": 0.500003878,
-        "p_absorb": 0.744555878
+        "a_seiche": 0.00049914187,
+        "f_wind": 0.280714338,
+        "p_lw": 0.92406894,
+        "snow_temp": 0.5,
+        "p_absorb": 0.744562
     },
     {
         "key": "untererchatzensee",
@@ -3148,10 +3104,6 @@
         "datalakes_id": 72,
         "forcing": [
             {
-                "id": "KOP",
-                "type": "meteoswiss_meteostation"
-            },
-            {
                 "id": "WYN",
                 "type": "meteoswiss_meteostation"
             }
@@ -3163,20 +3115,20 @@
         },
         "performance": {
             "rmse": {
-                "overall": 1.5832996073064152,
-                "surface": 2.0602423083167456,
-                "bottom": 0.4279959986632993
+                "overall": 1.4350769309029843,
+                "surface": 2.258045567138612,
+                "bottom": 0.4302067927448491
             },
             "temperature": {
-                "times": 124,
+                "times": 128,
                 "depths": 38,
-                "total": 1302
+                "total": 1410
             }
         },
-        "a_seiche": 0.0010472619,
-        "f_wind": 0.11064371,
-        "p_lw": 0.847551615,
-        "snow_temp": 0.654709719
+        "a_seiche": 0.0012967832,
+        "f_wind": 0.135334578,
+        "p_lw": 0.907190729,
+        "snow_temp": 0.532765933
     },
     {
         "key": "burgseeli",
@@ -3243,10 +3195,6 @@
         "datalakes_id": 84,
         "forcing": [
             {
-                "id": "THU",
-                "type": "meteoswiss_meteostation"
-            },
-            {
                 "id": "INT",
                 "type": "meteoswiss_meteostation"
             }
@@ -3258,21 +3206,21 @@
         },
         "performance": {
             "rmse": {
-                "overall": 1.398680802938357,
-                "surface": 3.2105915864525656,
-                "bottom": 0.5099375171808517
+                "overall": 1.4049855617460485,
+                "surface": 2.397922127824653,
+                "bottom": 1.0975963689311792
             },
             "temperature": {
-                "times": 14,
+                "times": 18,
                 "depths": 22,
-                "total": 181
+                "total": 249
             }
         },
-        "a_seiche": 0.0029913203,
-        "f_wind": 0.218833393,
-        "p_lw": 0.901823749,
-        "snow_temp": 1.28878019,
-        "p_absorb": 0.938405702
+        "a_seiche": 0.0032210949,
+        "f_wind": 0.203141504,
+        "p_lw": 0.966260568,
+        "snow_temp": 1.16962839,
+        "p_absorb": 0.946906331
     },
     {
         "key": "gerzensee",
@@ -3522,10 +3470,6 @@
         "datalakes_id": 175,
         "forcing": [
             {
-                "id": "CHB",
-                "type": "meteoswiss_meteostation"
-            },
-            {
                 "id": "BIE",
                 "type": "meteoswiss_meteostation"
             }
@@ -3537,9 +3481,9 @@
         },
         "performance": {
             "rmse": {
-                "overall": 1.1940663337805337,
-                "surface": 1.1717339401595137,
-                "bottom": 2.604244569928101
+                "overall": 1.1676643155589654,
+                "surface": 1.0911553234989049,
+                "bottom": 2.026027744133826
             },
             "temperature": {
                 "times": 26,
@@ -3547,9 +3491,9 @@
                 "total": 94
             }
         },
-        "a_seiche": 0.010738954,
-        "f_wind": 0.416409518,
-        "p_lw": 0.836604366,
+        "a_seiche": 0.0031240826,
+        "f_wind": 0.708271488,
+        "p_lw": 0.80865645,
         "snow_temp": 0.5
     },
     {
@@ -4057,7 +4001,7 @@
         "datalakes_id": 64,
         "forcing": [
             {
-                "id": "MMGTT",
+                "id": "SLFGU2",
                 "type": "meteoswiss_meteostation"
             },
             {
@@ -4072,21 +4016,21 @@
         },
         "performance": {
             "rmse": {
-                "overall": 5.288684881060803,
-                "surface": 6.85795679380576,
-                "bottom": 4.1489729569920355
+                "overall": 3.1191326307637457,
+                "surface": 1.4822562091215834,
+                "bottom": 2.1410174596401124
             },
             "temperature": {
-                "times": 692,
-                "depths": 11,
-                "total": 2667
+                "times": 2241,
+                "depths": 17,
+                "total": 7362
             }
         },
-        "a_seiche": 2.25e-05,
-        "f_wind": 0.194234405,
+        "a_seiche": 1e-05,
+        "f_wind": 0.1,
         "p_lw": 0.8,
-        "snow_temp": 9.72220947,
-        "p_absorb": 0.827983681
+        "snow_temp": 9.60133782,
+        "p_absorb": 0.629693307
     },
     {
         "key": "steinsee",
