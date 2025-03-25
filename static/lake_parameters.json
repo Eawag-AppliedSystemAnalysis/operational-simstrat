@@ -5083,7 +5083,8 @@
     "datalakes_bathymetry": true,
     "datalakes_id": 223,
     "forcing": [
-        { "id": "5538", "type": "dwd_meteostation" }
+        { "id": "5538", "type": "dwd_meteostation" },
+        { "id": "2290", "type": "dwd_meteostation" }
     ],
     "forcing_forecast": {
       "source": "VisualCrossing",
@@ -5248,7 +5249,8 @@
     "datalakes_id": 228,
     "forcing": [
         { "id": "217", "type": "dwd_meteostation" },
-        { "id": "5538", "type": "dwd_meteostation" }
+        { "id": "5538", "type": "dwd_meteostation" },
+        { "id": "2290", "type": "dwd_meteostation" }
     ],
     "forcing_forecast": {
       "source": "VisualCrossing",
@@ -5705,7 +5707,8 @@
     "datalakes_bathymetry": true,
     "datalakes_id": 242,
     "forcing": [
-        { "id": "5538", "type": "dwd_meteostation" }
+        { "id": "5538", "type": "dwd_meteostation" },
+        { "id": "2290", "type": "dwd_meteostation" }
     ],
     "forcing_forecast": {
       "source": "VisualCrossing",
