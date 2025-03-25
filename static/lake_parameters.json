@@ -5033,693 +5033,1062 @@
         }
     },
     {
-    "key": "riegsee",
-    "name": "Riegsee",
-    "elevation": 655.6,
-    "surface_area": 1.88,
-    "type": "Natural",
-    "volume": "NA",
-    "max_depth": 15.4,
-    "average_depth": 6.78,
-    "residence_time": "NA",
-    "mixing_regime": "NA",
-    "geothermal_flux": 0.12,
-    "latitude": 47.7,
-    "longitude": 11.226,
-    "trophic_state": "NA",
-    "datalakes_bathymetry": true,
-    "datalakes_id": 222,
-    "forcing": [
-        { "id": "2708", "type": "dwd_meteostation" },
-        { "id": "2290", "type": "dwd_meteostation" }
-    ],
-    "forcing_forecast": {
-      "source": "VisualCrossing",
-      "model": false,
-      "days": 5
-    },
-    "a_seiche": 0.002,
-    "f_wind": 1.0,
-    "p_lw": 1.0,
-    "snow_temp": 2.0,
-    "p_absorb": 1.0,
-    "calibration_source": "LfU Bayern"
-  },
-  {
-    "key": "worthsee",
-    "name": "W\u00f6rthsee",
-    "elevation": 560.4,
-    "surface_area": 4.33,
-    "type": "Natural",
-    "volume": "NA",
-    "max_depth": 34.0,
-    "average_depth": 14.66,
-    "residence_time": "NA",
-    "mixing_regime": "NA",
-    "geothermal_flux": 0.12,
-    "latitude": 48.058,
-    "longitude": 11.179,
-    "trophic_state": "NA",
-    "datalakes_bathymetry": true,
-    "datalakes_id": 223,
-    "forcing": [
-        { "id": "5538", "type": "dwd_meteostation" },
-        { "id": "2290", "type": "dwd_meteostation" }
-    ],
-    "forcing_forecast": {
-      "source": "VisualCrossing",
-      "model": false,
-      "days": 5
-    },
-    "a_seiche": 0.002,
-    "f_wind": 1.0,
-    "p_lw": 1.0,
-    "snow_temp": 2.0,
-    "p_absorb": 1.0,
-    "calibration_source": "LfU Bayern"
-  },
-  {
-    "key": "weissensee",
-    "name": "Weissensee",
-    "elevation": 787.3,
-    "surface_area": 1.35,
-    "type": "Natural",
-    "volume": "NA",
-    "max_depth": 24.7,
-    "average_depth": 12.24,
-    "residence_time": "NA",
-    "mixing_regime": "NA",
-    "geothermal_flux": 0.12,
-    "latitude": 47.572,
-    "longitude": 10.637,
-    "trophic_state": "NA",
-    "datalakes_bathymetry": true,
-    "datalakes_id": 224,
-    "forcing": [
-        { "id": "15214", "type": "dwd_meteostation" },
-        {"id": "11505", "type": "geosphere_meteostation"}
-    ],
-    "forcing_forecast": {
-      "source": "VisualCrossing",
-      "model": false,
-      "days": 5
-    },
-    "a_seiche": 0.002,
-    "f_wind": 1.0,
-    "p_lw": 1.0,
-    "snow_temp": 2.0,
-    "p_absorb": 1.0,
-    "calibration_source": "LfU Bayern"
-  },
-  {
-    "key": "walchensee",
-    "name": "Walchensee",
-    "elevation": 800.8,
-    "surface_area": 16.11,
-    "type": "Natural",
-    "volume": "NA",
-    "max_depth": 189.5,
-    "average_depth": 80.8,
-    "residence_time": "NA",
-    "mixing_regime": "NA",
-    "geothermal_flux": 0.12,
-    "latitude": 47.59,
-    "longitude": 11.347,
-    "trophic_state": "NA",
-    "datalakes_bathymetry": true,
-    "datalakes_id": 225,
-    "forcing": [
-        { "id": "3307", "type": "dwd_meteostation" },
-        { "id": "1550", "type": "dwd_meteostation" }
-    ],
-    "forcing_forecast": {
-      "source": "VisualCrossing",
-      "model": false,
-      "days": 5
-    },
-    "a_seiche": 0.002,
-    "f_wind": 1.0,
-    "p_lw": 1.0,
-    "snow_temp": 2.0,
-    "p_absorb": 1.0,
-    "calibration_source": "LfU Bayern"
-  },
-  {
-    "key": "tachinger",
-    "name": "Tachinger See",
-    "elevation": 442.1,
-    "surface_area": 2.36,
-    "type": "Natural",
-    "volume": "NA",
-    "max_depth": 16.5,
-    "average_depth": 9.15,
-    "residence_time": "NA",
-    "mixing_regime": "NA",
-    "geothermal_flux": 0.12,
-    "latitude": 47.971,
-    "longitude": 12.743,
-    "trophic_state": "NA",
-    "datalakes_bathymetry": true,
-    "datalakes_id": 226,
-    "forcing": [
-        { "id": "2573", "type": "dwd_meteostation" },
-        { "id": "4515", "type": "geosphere_meteostation" }
-    ],
-    "forcing_forecast": {
-      "source": "VisualCrossing",
-      "model": false,
-      "days": 5
-    },
-    "a_seiche": 0.002,
-    "f_wind": 1.0,
-    "p_lw": 1.0,
-    "snow_temp": 2.0,
-    "p_absorb": 1.0,
-    "calibration_source": "LfU Bayern"
-  },
-  {
-    "key": "tegernsee",
-    "name": "Tegernsee",
-    "elevation": 725.5,
-    "surface_area": 8.9,
-    "type": "Natural",
-    "volume": "NA",
-    "max_depth": 72.6,
-    "average_depth": 36.3,
-    "residence_time": "NA",
-    "mixing_regime": "NA",
-    "geothermal_flux": 0.12,
-    "latitude": 47.719,
-    "longitude": 11.739,
-    "trophic_state": "NA",
-    "datalakes_bathymetry": true,
-    "datalakes_id": 227,
+        "key": "riegsee",
+        "name": "Riegsee",
+        "elevation": 655.6,
+        "surface_area": 1.88,
+        "type": "Natural",
+        "volume": "NA",
+        "max_depth": 15.4,
+        "average_depth": 6.78,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.7,
+        "longitude": 11.226,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 222,
         "forcing": [
-        { "id": "2319", "type": "dwd_meteostation" },
-        { "id": "8806", "type": "geosphere_meteostation" }
-    ],
-    "forcing_forecast": {
-      "source": "VisualCrossing",
-      "model": false,
-      "days": 5
+            {
+                "id": "2708",
+                "type": "dwd_meteostation"
+            },
+            {
+                "id": "2290",
+                "type": "dwd_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 1e-05,
+        "f_wind": 1.75,
+        "p_lw": 0.953266895,
+        "snow_temp": 0.5,
+        "p_absorb": 1.5,
+        "calibration_source": "LfU Bayern",
+        "performance": {
+            "rmse": {
+                "overall": 3.7051861876574725,
+                "surface": 2.2774505679798707,
+                "bottom": 1.4302459858360028
+            },
+            "temperature": {
+                "times": 55,
+                "depths": 15,
+                "total": 675
+            }
+        }
     },
-    "a_seiche": 0.002,
-    "f_wind": 1.0,
-    "p_lw": 1.0,
-    "snow_temp": 2.0,
-    "p_absorb": 1.0,
-    "calibration_source": "LfU Bayern"
-  },
-  {
-    "key": "starnberger",
-    "name": "Starnberger See",
-    "elevation": 584.2,
-    "surface_area": 56.36,
-    "type": "Natural",
-    "volume": "NA",
-    "max_depth": 127.8,
-    "average_depth": 53.21,
-    "residence_time": "NA",
-    "mixing_regime": "NA",
-    "geothermal_flux": 0.12,
-    "latitude": 47.9,
-    "longitude": 11.317,
-    "trophic_state": "NA",
-    "datalakes_bathymetry": true,
-    "datalakes_id": 228,
-    "forcing": [
-        { "id": "217", "type": "dwd_meteostation" },
-        { "id": "5538", "type": "dwd_meteostation" },
-        { "id": "2290", "type": "dwd_meteostation" }
-    ],
-    "forcing_forecast": {
-      "source": "VisualCrossing",
-      "model": false,
-      "days": 5
+    {
+        "key": "worthsee",
+        "name": "W\u00f6rthsee",
+        "elevation": 560.4,
+        "surface_area": 4.33,
+        "type": "Natural",
+        "volume": "NA",
+        "max_depth": 34.0,
+        "average_depth": 14.66,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 48.058,
+        "longitude": 11.179,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 223,
+        "forcing": [
+            {
+                "id": "5538",
+                "type": "dwd_meteostation"
+            },
+            {
+                "id": "2290",
+                "type": "dwd_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.0029572806,
+        "f_wind": 0.874630838,
+        "p_lw": 0.966077523,
+        "snow_temp": 1.82645545,
+        "p_absorb": 0.753663673,
+        "calibration_source": "LfU Bayern",
+        "performance": {
+            "rmse": {
+                "overall": 0.9876685685729001,
+                "surface": 1.213513668178955,
+                "bottom": 0.6655852356453611
+            },
+            "temperature": {
+                "times": 50,
+                "depths": 22,
+                "total": 839
+            }
+        }
     },
-    "a_seiche": 0.002,
-    "f_wind": 1.0,
-    "p_lw": 1.0,
-    "snow_temp": 2.0,
-    "p_absorb": 1.0,
-    "calibration_source": "LfU Bayern"
-  },
-  {
-    "key": "staffelsee",
-    "name": "Staffelsee",
-    "elevation": 648.6,
-    "surface_area": 7.66,
-    "type": "Natural",
-    "volume": "NA",
-    "max_depth": 39.4,
-    "average_depth": 9.78,
-    "residence_time": "NA",
-    "mixing_regime": "NA",
-    "geothermal_flux": 0.12,
-    "latitude": 47.69,
-    "longitude": 11.161,
-    "trophic_state": "NA",
-    "datalakes_bathymetry": true,
-    "datalakes_id": 229,
-    "forcing": [
-        { "id": "2708", "type": "dwd_meteostation" },
-        { "id": "2290", "type": "dwd_meteostation" }
-    ],
-    "forcing_forecast": {
-      "source": "VisualCrossing",
-      "model": false,
-      "days": 5
+    {
+        "key": "weissensee",
+        "name": "Weissensee",
+        "elevation": 787.3,
+        "surface_area": 1.35,
+        "type": "Natural",
+        "volume": "NA",
+        "max_depth": 24.7,
+        "average_depth": 12.24,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.572,
+        "longitude": 10.637,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 224,
+        "forcing": [
+            {
+                "id": "15214",
+                "type": "dwd_meteostation"
+            },
+            {
+                "id": "11505",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.0012591934,
+        "f_wind": 0.768295011,
+        "p_lw": 0.899282978,
+        "snow_temp": 0.652166589,
+        "p_absorb": 0.873175695,
+        "calibration_source": "LfU Bayern",
+        "performance": {
+            "rmse": {
+                "overall": 0.8559434208683955,
+                "surface": 1.0426304271851594,
+                "bottom": 0.7448888923020668
+            },
+            "temperature": {
+                "times": 27,
+                "depths": 21,
+                "total": 294
+            }
+        }
     },
-    "a_seiche": 0.002,
-    "f_wind": 1.0,
-    "p_lw": 1.0,
-    "snow_temp": 2.0,
-    "p_absorb": 1.0,
-    "calibration_source": "LfU Bayern"
-  },
-  {
-    "key": "simssee",
-    "name": "Simssee",
-    "elevation": 470.1,
-    "surface_area": 6.49,
-    "type": "Natural",
-    "volume": "NA",
-    "max_depth": 22.5,
-    "average_depth": 13.41,
-    "residence_time": "NA",
-    "mixing_regime": "NA",
-    "geothermal_flux": 0.12,
-    "latitude": 47.873,
-    "longitude": 12.239,
-    "trophic_state": "NA",
-    "datalakes_bathymetry": true,
-    "datalakes_id": 230,
-    "forcing": [
-        { "id": "856", "type": "dwd_meteostation" }
-    ],
-    "forcing_forecast": {
-      "source": "VisualCrossing",
-      "model": false,
-      "days": 5
+    {
+        "key": "walchensee",
+        "name": "Walchensee",
+        "elevation": 800.8,
+        "surface_area": 16.11,
+        "type": "Natural",
+        "volume": "NA",
+        "max_depth": 189.5,
+        "average_depth": 80.8,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.59,
+        "longitude": 11.347,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 225,
+        "forcing": [
+            {
+                "id": "3307",
+                "type": "dwd_meteostation"
+            },
+            {
+                "id": "1550",
+                "type": "dwd_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.05912469,
+        "f_wind": 0.887940865,
+        "p_lw": 0.919965163,
+        "snow_temp": 1.5,
+        "p_absorb": 1.5,
+        "calibration_source": "LfU Bayern",
+        "performance": {
+            "rmse": {
+                "overall": 0.9522029515552178,
+                "surface": 1.142986079814032,
+                "bottom": 0.4140014975818324
+            },
+            "temperature": {
+                "times": 38,
+                "depths": 28,
+                "total": 747
+            }
+        }
     },
-    "a_seiche": 0.002,
-    "f_wind": 1.0,
-    "p_lw": 1.0,
-    "snow_temp": 2.0,
-    "p_absorb": 1.0,
-    "calibration_source": "LfU Bayern"
-  },
-  {
-    "key": "seehamer",
-    "name": "Seehamer See",
-    "elevation": 653.0,
-    "surface_area": 1.11,
-    "type": "Natural",
-    "volume": "NA",
-    "max_depth": 16.5,
-    "average_depth": 5.42,
-    "residence_time": "NA",
-    "mixing_regime": "NA",
-    "geothermal_flux": 0.12,
-    "latitude": 47.85,
-    "longitude": 11.855,
-    "trophic_state": "NA",
-    "datalakes_bathymetry": true,
-    "datalakes_id": 231,
-    "forcing": [
-        { "id": "2319", "type": "dwd_meteostation" },
-        { "id": "856", "type": "dwd_meteostation" }
-    ],
-    "forcing_forecast": {
-      "source": "VisualCrossing",
-      "model": false,
-      "days": 5
+    {
+        "key": "tachinger",
+        "name": "Tachinger See",
+        "elevation": 442.1,
+        "surface_area": 2.36,
+        "type": "Natural",
+        "volume": "NA",
+        "max_depth": 16.5,
+        "average_depth": 9.15,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.971,
+        "longitude": 12.743,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 226,
+        "forcing": [
+            {
+                "id": "2573",
+                "type": "dwd_meteostation"
+            },
+            {
+                "id": "4515",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.0016601597,
+        "f_wind": 0.840073045,
+        "p_lw": 0.986321553,
+        "snow_temp": 1.73721984,
+        "p_absorb": 0.993619737,
+        "calibration_source": "LfU Bayern",
+        "performance": {
+            "rmse": {
+                "overall": 1.4508739515373952,
+                "surface": 1.69979295600376,
+                "bottom": 0.2959588822792788
+            },
+            "temperature": {
+                "times": 31,
+                "depths": 20,
+                "total": 379
+            }
+        }
     },
-    "a_seiche": 0.002,
-    "f_wind": 1.0,
-    "p_lw": 1.0,
-    "snow_temp": 2.0,
-    "p_absorb": 1.0,
-    "calibration_source": "LfU Bayern"
-  },
-  {
-    "key": "schliersee",
-    "name": "Schliersee",
-    "elevation": 776.8,
-    "surface_area": 2.22,
-    "type": "Natural",
-    "volume": "NA",
-    "max_depth": 40.5,
-    "average_depth": 23.93,
-    "residence_time": "NA",
-    "mixing_regime": "NA",
-    "geothermal_flux": 0.12,
-    "latitude": 47.723,
-    "longitude": 11.862,
-    "trophic_state": "NA",
-    "datalakes_bathymetry": true,
-    "datalakes_id": 232,
-    "forcing": [
-        { "id": "2319", "type": "dwd_meteostation" },
-        { "id": "9016", "type": "geosphere_meteostation" }
-    ],
-    "forcing_forecast": {
-      "source": "VisualCrossing",
-      "model": false,
-      "days": 5
+    {
+        "key": "tegernsee",
+        "name": "Tegernsee",
+        "elevation": 725.5,
+        "surface_area": 8.9,
+        "type": "Natural",
+        "volume": "NA",
+        "max_depth": 72.6,
+        "average_depth": 36.3,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.719,
+        "longitude": 11.739,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 227,
+        "forcing": [
+            {
+                "id": "2319",
+                "type": "dwd_meteostation"
+            },
+            {
+                "id": "8806",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.0066265943,
+        "f_wind": 0.960549361,
+        "p_lw": 0.9550871,
+        "snow_temp": 10.0,
+        "p_absorb": 1.05964176,
+        "calibration_source": "LfU Bayern",
+        "performance": {
+            "rmse": {
+                "overall": 1.1762117463798343,
+                "surface": 1.3809669183125584,
+                "bottom": 1.1015139515161012
+            },
+            "temperature": {
+                "times": 20,
+                "depths": 23,
+                "total": 379
+            }
+        }
     },
-    "a_seiche": 0.002,
-    "f_wind": 1.0,
-    "p_lw": 1.0,
-    "snow_temp": 2.0,
-    "p_absorb": 1.0,
-    "calibration_source": "LfU Bayern"
-  },
-  {
-    "key": "niedersonthofener",
-    "name": "Niedersonthofener See",
-    "elevation": 703.0,
-    "surface_area": 1.35,
-    "type": "Natural",
-    "volume": "NA",
-    "max_depth": 21.3,
-    "average_depth": 10.0,
-    "residence_time": "NA",
-    "mixing_regime": "NA",
-    "geothermal_flux": 0.12,
-    "latitude": 47.635,
-    "longitude": 10.266,
-    "trophic_state": "NA",
-    "datalakes_bathymetry": true,
-    "datalakes_id": 233,
-    "forcing": [
-        { "id": "3857", "type": "dwd_meteostation" },
-        { "id": "2559", "type": "dwd_meteostation" }
-    ],
-    "forcing_forecast": {
-      "source": "VisualCrossing",
-      "model": false,
-      "days": 5
+    {
+        "key": "starnberger",
+        "name": "Starnberger See",
+        "elevation": 584.2,
+        "surface_area": 56.36,
+        "type": "Natural",
+        "volume": "NA",
+        "max_depth": 127.8,
+        "average_depth": 53.21,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.9,
+        "longitude": 11.317,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 228,
+        "forcing": [
+            {
+                "id": "217",
+                "type": "dwd_meteostation"
+            },
+            {
+                "id": "5538",
+                "type": "dwd_meteostation"
+            },
+            {
+                "id": "2290",
+                "type": "dwd_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.0062149695,
+        "f_wind": 1.01416876,
+        "p_lw": 0.879855523,
+        "snow_temp": 0.5,
+        "p_absorb": 0.803941121,
+        "calibration_source": "LfU Bayern",
+        "performance": {
+            "rmse": {
+                "overall": 0.938456638903493,
+                "surface": 0.9546244348111259,
+                "bottom": 0.2156837464009249
+            },
+            "temperature": {
+                "times": 74,
+                "depths": 26,
+                "total": 1225
+            }
+        }
     },
-    "a_seiche": 0.002,
-    "f_wind": 1.0,
-    "p_lw": 1.0,
-    "snow_temp": 2.0,
-    "p_absorb": 1.0,
-    "calibration_source": "LfU Bayern"
-  },
-  {
-    "key": "konigsee",
-    "name": "K\u00f6nigssee",
-    "elevation": 603.3,
-    "surface_area": 5.22,
-    "type": "Natural",
-    "volume": "NA",
-    "max_depth": 190.0,
-    "average_depth": 98.08,
-    "residence_time": "NA",
-    "mixing_regime": "NA",
-    "geothermal_flux": 0.12,
-    "latitude": 47.553,
-    "longitude": 12.978,
-    "trophic_state": "NA",
-    "datalakes_bathymetry": true,
-    "datalakes_id": 234,
-    "forcing": [
-        { "id": "19856", "type": "dwd_meteostation" },
-        {"id": "9406", "type": "geosphere_meteostation"}
-    ],
-    "forcing_forecast": {
-      "source": "VisualCrossing",
-      "model": false,
-      "days": 5
+    {
+        "key": "staffelsee",
+        "name": "Staffelsee",
+        "elevation": 648.6,
+        "surface_area": 7.66,
+        "type": "Natural",
+        "volume": "NA",
+        "max_depth": 39.4,
+        "average_depth": 9.78,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.69,
+        "longitude": 11.161,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 229,
+        "forcing": [
+            {
+                "id": "2708",
+                "type": "dwd_meteostation"
+            },
+            {
+                "id": "2290",
+                "type": "dwd_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.0040865152,
+        "f_wind": 0.43031422,
+        "p_lw": 0.952321771,
+        "snow_temp": 0.5,
+        "p_absorb": 1.5,
+        "calibration_source": "LfU Bayern",
+        "performance": {
+            "rmse": {
+                "overall": 1.0693619980578246,
+                "surface": 1.1607855362129047,
+                "bottom": 0.9639747751590064
+            },
+            "temperature": {
+                "times": 78,
+                "depths": 22,
+                "total": 1220
+            }
+        }
     },
-    "a_seiche": 0.002,
-    "f_wind": 1.0,
-    "p_lw": 1.0,
-    "snow_temp": 2.0,
-    "p_absorb": 1.0,
-    "calibration_source": "LfU Bayern"
-  },
-  {
-    "key": "kochelsee",
-    "name": "Kochelsee",
-    "elevation": 598.8,
-    "surface_area": 5.95,
-    "type": "Natural",
-    "volume": "NA",
-    "max_depth": 65.9,
-    "average_depth": 31.04,
-    "residence_time": "NA",
-    "mixing_regime": "NA",
-    "geothermal_flux": 0.12,
-    "latitude": 47.647,
-    "longitude": 11.34,
-    "trophic_state": "NA",
-    "datalakes_bathymetry": true,
-    "datalakes_id": 235,
-    "forcing": [
-        { "id": "3307", "type": "dwd_meteostation" },
-        { "id": "1550", "type": "dwd_meteostation" }
-    ],
-    "forcing_forecast": {
-      "source": "VisualCrossing",
-      "model": false,
-      "days": 5
+    {
+        "key": "simssee",
+        "name": "Simssee",
+        "elevation": 470.1,
+        "surface_area": 6.49,
+        "type": "Natural",
+        "volume": "NA",
+        "max_depth": 22.5,
+        "average_depth": 13.41,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.873,
+        "longitude": 12.239,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 230,
+        "forcing": [
+            {
+                "id": "856",
+                "type": "dwd_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.0030854982,
+        "f_wind": 0.567500463,
+        "p_lw": 0.962915301,
+        "snow_temp": 1.14930534,
+        "p_absorb": 0.849944566,
+        "calibration_source": "LfU Bayern",
+        "performance": {
+            "rmse": {
+                "overall": 0.971832718799141,
+                "surface": 1.1217141780573614,
+                "bottom": 1.1409526607182265
+            },
+            "temperature": {
+                "times": 58,
+                "depths": 21,
+                "total": 694
+            }
+        }
     },
-    "a_seiche": 0.002,
-    "f_wind": 1.0,
-    "p_lw": 1.0,
-    "snow_temp": 2.0,
-    "p_absorb": 1.0,
-    "calibration_source": "LfU Bayern"
-  },
-  {
-    "key": "hopfensee",
-    "name": "Hopfensee",
-    "elevation": 783.8,
-    "surface_area": 1.94,
-    "type": "Natural",
-    "volume": "NA",
-    "max_depth": 10.4,
-    "average_depth": 4.63,
-    "residence_time": "NA",
-    "mixing_regime": "NA",
-    "geothermal_flux": 0.12,
-    "latitude": 47.601,
-    "longitude": 10.671,
-    "trophic_state": "NA",
-    "datalakes_bathymetry": true,
-    "datalakes_id": 236,
-    "forcing": [
-        { "id": "15214", "type": "dwd_meteostation" },
-        {"id": "11505", "type": "geosphere_meteostation"}
-    ],
-    "forcing_forecast": {
-      "source": "VisualCrossing",
-      "model": false,
-      "days": 5
+    {
+        "key": "seehamer",
+        "name": "Seehamer See",
+        "elevation": 653.0,
+        "surface_area": 1.11,
+        "type": "Natural",
+        "volume": "NA",
+        "max_depth": 16.5,
+        "average_depth": 5.42,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.85,
+        "longitude": 11.855,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 231,
+        "forcing": [
+            {
+                "id": "2319",
+                "type": "dwd_meteostation"
+            },
+            {
+                "id": "856",
+                "type": "dwd_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 1e-05,
+        "f_wind": 0.895637454,
+        "p_lw": 0.82105519,
+        "snow_temp": 0.5,
+        "p_absorb": 1.5,
+        "calibration_source": "LfU Bayern",
+        "performance": {
+            "rmse": {
+                "overall": 2.4297198411658645,
+                "surface": 2.0473507944550087,
+                "bottom": 3.409881411264751
+            },
+            "temperature": {
+                "times": 44,
+                "depths": 14,
+                "total": 414
+            }
+        }
     },
-    "a_seiche": 0.002,
-    "f_wind": 1.0,
-    "p_lw": 1.0,
-    "snow_temp": 2.0,
-    "p_absorb": 1.0,
-    "calibration_source": "LfU Bayern"
-  },
-  {
-    "key": "gruntensee",
-    "name": "Gr\u00fcntensee",
-    "elevation": 876.0,
-    "surface_area": 1.25,
-    "type": "Natural",
-    "volume": "NA",
-    "max_depth": 11.2,
-    "average_depth": 4.08,
-    "residence_time": "NA",
-    "mixing_regime": "NA",
-    "geothermal_flux": 0.12,
-    "latitude": 47.618,
-    "longitude": 10.448,
-    "trophic_state": "NA",
-    "datalakes_bathymetry": true,
-    "datalakes_id": 237,
-    "forcing": [
-        { "id": "3857", "type": "dwd_meteostation" },
-        { "id": "2559", "type": "dwd_meteostation" }
-    ],
-    "forcing_forecast": {
-      "source": "VisualCrossing",
-      "model": false,
-      "days": 5
+    {
+        "key": "schliersee",
+        "name": "Schliersee",
+        "elevation": 776.8,
+        "surface_area": 2.22,
+        "type": "Natural",
+        "volume": "NA",
+        "max_depth": 40.5,
+        "average_depth": 23.93,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.723,
+        "longitude": 11.862,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 232,
+        "forcing": [
+            {
+                "id": "2319",
+                "type": "dwd_meteostation"
+            },
+            {
+                "id": "9016",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.011850304,
+        "f_wind": 0.800491698,
+        "p_lw": 0.964973033,
+        "snow_temp": 2.21276299,
+        "p_absorb": 1.4298121,
+        "calibration_source": "LfU Bayern",
+        "performance": {
+            "rmse": {
+                "overall": 1.24820111680089,
+                "surface": 1.5892529124897468,
+                "bottom": 0.1956
+            },
+            "temperature": {
+                "times": 90,
+                "depths": 23,
+                "total": 823
+            }
+        }
     },
-    "a_seiche": 0.002,
-    "f_wind": 1.0,
-    "p_lw": 1.0,
-    "snow_temp": 2.0,
-    "p_absorb": 1.0,
-    "calibration_source": "LfU Bayern"
-  },
-  {
-    "key": "grosseralpsee",
-    "name": "Gro\u00dfer Alpsee",
-    "elevation": 724.6,
-    "surface_area": 2.47,
-    "type": "Natural",
-    "volume": "NA",
-    "max_depth": 22.7,
-    "average_depth": 13.23,
-    "residence_time": "NA",
-    "mixing_regime": "NA",
-    "geothermal_flux": 0.12,
-    "latitude": 47.572,
-    "longitude": 10.175,
-    "trophic_state": "NA",
-    "datalakes_bathymetry": true,
-    "datalakes_id": 238,
-    "forcing": [
-        { "id": "2559", "type": "dwd_meteostation" }
-    ],
-    "forcing_forecast": {
-      "source": "VisualCrossing",
-      "model": false,
-      "days": 5
+    {
+        "key": "niedersonthofener",
+        "name": "Niedersonthofener See",
+        "elevation": 703.0,
+        "surface_area": 1.35,
+        "type": "Natural",
+        "volume": "NA",
+        "max_depth": 21.3,
+        "average_depth": 10.0,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.635,
+        "longitude": 10.266,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 233,
+        "forcing": [
+            {
+                "id": "3857",
+                "type": "dwd_meteostation"
+            },
+            {
+                "id": "2559",
+                "type": "dwd_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.0046993667,
+        "f_wind": 0.848013158,
+        "p_lw": 0.920831883,
+        "snow_temp": 1.76651619,
+        "p_absorb": 1.5,
+        "calibration_source": "LfU Bayern",
+        "performance": {
+            "rmse": {
+                "overall": 1.0332776634684575,
+                "surface": 1.2539203378350492,
+                "bottom": 0.9541141559058852
+            },
+            "temperature": {
+                "times": 50,
+                "depths": 21,
+                "total": 508
+            }
+        }
     },
-    "a_seiche": 0.002,
-    "f_wind": 1.0,
-    "p_lw": 1.0,
-    "snow_temp": 2.0,
-    "p_absorb": 1.0,
-    "calibration_source": "LfU Bayern"
-  },
-  {
-    "key": "eibsee",
-    "name": "Eibsee",
-    "elevation": 972.7,
-    "surface_area": 1.77,
-    "type": "Natural",
-    "volume": "NA",
-    "max_depth": 36.0,
-    "average_depth": 15.0,
-    "residence_time": "NA",
-    "mixing_regime": "NA",
-    "geothermal_flux": 0.12,
-    "latitude": 47.458,
-    "longitude": 10.974,
-    "trophic_state": "NA",
-    "datalakes_bathymetry": true,
-    "datalakes_id": 239,
-    "forcing": [
-        { "id": "1550", "type": "dwd_meteostation" }
-    ],
-    "forcing_forecast": {
-      "source": "VisualCrossing",
-      "model": false,
-      "days": 5
+    {
+        "key": "konigsee",
+        "name": "K\u00f6nigssee",
+        "elevation": 603.3,
+        "surface_area": 5.22,
+        "type": "Natural",
+        "volume": "NA",
+        "max_depth": 190.0,
+        "average_depth": 98.08,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.553,
+        "longitude": 12.978,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 234,
+        "forcing": [
+            {
+                "id": "19856",
+                "type": "dwd_meteostation"
+            },
+            {
+                "id": "9406",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.0040221702,
+        "f_wind": 0.140809914,
+        "p_lw": 0.8,
+        "snow_temp": 2.20580978,
+        "p_absorb": 1.5,
+        "calibration_source": "LfU Bayern",
+        "performance": {
+            "rmse": {
+                "overall": 1.9017010239555443,
+                "surface": 2.9101323494043627,
+                "bottom": 0.5764
+            },
+            "temperature": {
+                "times": 45,
+                "depths": 28,
+                "total": 578
+            }
+        }
     },
-    "a_seiche": 0.002,
-    "f_wind": 1.0,
-    "p_lw": 1.0,
-    "snow_temp": 2.0,
-    "p_absorb": 1.0,
-    "calibration_source": "LfU Bayern"
-  },
-  {
-    "key": "chiemsee",
-    "name": "Chiemsee",
-    "elevation": 518.2,
-    "surface_area": 79.9,
-    "type": "Natural",
-    "volume": "NA",
-    "max_depth": 73.4,
-    "average_depth": 25.63,
-    "residence_time": "NA",
-    "mixing_regime": "NA",
-    "geothermal_flux": 0.12,
-    "latitude": 47.878,
-    "longitude": 12.451,
-    "trophic_state": "NA",
-    "datalakes_bathymetry": true,
-    "datalakes_id": 240,
-    "forcing": [
-        { "id": "856", "type": "dwd_meteostation" }
-    ],
-    "forcing_forecast": {
-      "source": "VisualCrossing",
-      "model": false,
-      "days": 5
+    {
+        "key": "kochelsee",
+        "name": "Kochelsee",
+        "elevation": 598.8,
+        "surface_area": 5.95,
+        "type": "Natural",
+        "volume": "NA",
+        "max_depth": 65.9,
+        "average_depth": 31.04,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.647,
+        "longitude": 11.34,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 235,
+        "forcing": [
+            {
+                "id": "3307",
+                "type": "dwd_meteostation"
+            },
+            {
+                "id": "1550",
+                "type": "dwd_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.151558988,
+        "f_wind": 0.91165918,
+        "p_lw": 0.833333327,
+        "snow_temp": 6.0,
+        "p_absorb": 1.5,
+        "calibration_source": "LfU Bayern",
+        "performance": {
+            "rmse": {
+                "overall": 1.5784161080840822,
+                "surface": 2.132768754459798,
+                "bottom": 2.055822419946076
+            },
+            "temperature": {
+                "times": 43,
+                "depths": 25,
+                "total": 887
+            }
+        }
     },
-    "a_seiche": 0.002,
-    "f_wind": 1.0,
-    "p_lw": 1.0,
-    "snow_temp": 2.0,
-    "p_absorb": 1.0,
-    "calibration_source": "LfU Bayern"
-  },
-  {
-    "key": "bannwaldsee",
-    "name": "Bannwaldsee",
-    "elevation": 785.9,
-    "surface_area": 2.28,
-    "type": "Natural",
-    "volume": "NA",
-    "max_depth": 12.0,
-    "average_depth": 6.18,
-    "residence_time": "NA",
-    "mixing_regime": "NA",
-    "geothermal_flux": 0.12,
-    "latitude": 47.6,
-    "longitude": 10.776,
-    "trophic_state": "NA",
-    "datalakes_bathymetry": true,
-    "datalakes_id": 241,
-    "forcing": [
-        { "id": "15214", "type": "dwd_meteostation" },
-        {"id": "11505", "type": "geosphere_meteostation"}
-    ],
-    "forcing_forecast": {
-      "source": "VisualCrossing",
-      "model": false,
-      "days": 5
+    {
+        "key": "hopfensee",
+        "name": "Hopfensee",
+        "elevation": 783.8,
+        "surface_area": 1.94,
+        "type": "Natural",
+        "volume": "NA",
+        "max_depth": 10.4,
+        "average_depth": 4.63,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.601,
+        "longitude": 10.671,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 236,
+        "forcing": [
+            {
+                "id": "15214",
+                "type": "dwd_meteostation"
+            },
+            {
+                "id": "11505",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.00040859036,
+        "f_wind": 0.519066937,
+        "p_lw": 0.921538688,
+        "snow_temp": 1.63655357,
+        "p_absorb": 1.5,
+        "calibration_source": "LfU Bayern",
+        "performance": {
+            "rmse": {
+                "overall": 1.3470235380183193,
+                "surface": 1.5615875952949123,
+                "bottom": 1.106656189834946
+            },
+            "temperature": {
+                "times": 44,
+                "depths": 10,
+                "total": 256
+            }
+        }
     },
-    "a_seiche": 0.002,
-    "f_wind": 1.0,
-    "p_lw": 1.0,
-    "snow_temp": 2.0,
-    "p_absorb": 1.0,
-    "calibration_source": "LfU Bayern"
-  },
-  {
-    "key": "ammersee",
-    "name": "Ammersee",
-    "elevation": 532.9,
-    "surface_area": 46.6,
-    "type": "Natural",
-    "volume": "NA",
-    "max_depth": 81.1,
-    "average_depth": 37.55,
-    "residence_time": "NA",
-    "mixing_regime": "NA",
-    "geothermal_flux": 0.12,
-    "latitude": 48.002,
-    "longitude": 11.125,
-    "trophic_state": "NA",
-    "datalakes_bathymetry": true,
-    "datalakes_id": 242,
-    "forcing": [
-        { "id": "5538", "type": "dwd_meteostation" },
-        { "id": "2290", "type": "dwd_meteostation" }
-    ],
-    "forcing_forecast": {
-      "source": "VisualCrossing",
-      "model": false,
-      "days": 5
+    {
+        "key": "gruntensee",
+        "name": "Gr\u00fcntensee",
+        "elevation": 876.0,
+        "surface_area": 1.25,
+        "type": "Natural",
+        "volume": "NA",
+        "max_depth": 11.2,
+        "average_depth": 4.08,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.618,
+        "longitude": 10.448,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 237,
+        "forcing": [
+            {
+                "id": "3857",
+                "type": "dwd_meteostation"
+            },
+            {
+                "id": "2559",
+                "type": "dwd_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 1e-05,
+        "f_wind": 1.75,
+        "p_lw": 0.835779971,
+        "snow_temp": 0.5,
+        "p_absorb": 1.5,
+        "calibration_source": "LfU Bayern",
+        "performance": {
+            "rmse": {
+                "overall": 2.284848500805472,
+                "surface": 1.853324876935144,
+                "bottom": 4.8894988976376705
+            },
+            "temperature": {
+                "times": 35,
+                "depths": 10,
+                "total": 209
+            }
+        }
     },
-    "a_seiche": 0.002,
-    "f_wind": 1.0,
-    "p_lw": 1.0,
-    "snow_temp": 2.0,
-    "p_absorb": 1.0,
-    "calibration_source": "LfU Bayern"
-  }
+    {
+        "key": "grosseralpsee",
+        "name": "Gro\u00dfer Alpsee",
+        "elevation": 724.6,
+        "surface_area": 2.47,
+        "type": "Natural",
+        "volume": "NA",
+        "max_depth": 22.7,
+        "average_depth": 13.23,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.572,
+        "longitude": 10.175,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 238,
+        "forcing": [
+            {
+                "id": "2559",
+                "type": "dwd_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.0038187882,
+        "f_wind": 0.928738277,
+        "p_lw": 0.897779691,
+        "snow_temp": 2.05816401,
+        "p_absorb": 0.930848799,
+        "calibration_source": "LfU Bayern",
+        "performance": {
+            "rmse": {
+                "overall": 1.1759147538043666,
+                "surface": 1.3535328890913039,
+                "bottom": 0.9755392320147868
+            },
+            "temperature": {
+                "times": 66,
+                "depths": 21,
+                "total": 717
+            }
+        }
+    },
+    {
+        "key": "eibsee",
+        "name": "Eibsee",
+        "elevation": 972.7,
+        "surface_area": 1.77,
+        "type": "Natural",
+        "volume": "NA",
+        "max_depth": 36.0,
+        "average_depth": 15.0,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.458,
+        "longitude": 10.974,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 239,
+        "forcing": [
+            {
+                "id": "1550",
+                "type": "dwd_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.0044306646,
+        "f_wind": 0.1,
+        "p_lw": 0.885871027,
+        "snow_temp": 4.54942447,
+        "p_absorb": 1.5,
+        "calibration_source": "LfU Bayern",
+        "performance": {
+            "rmse": {
+                "overall": 1.4403846010621546,
+                "surface": 0.7971347543964362,
+                "bottom": 1.8220241326612556
+            },
+            "temperature": {
+                "times": 21,
+                "depths": 22,
+                "total": 391
+            }
+        }
+    },
+    {
+        "key": "chiemsee",
+        "name": "Chiemsee",
+        "elevation": 518.2,
+        "surface_area": 79.9,
+        "type": "Natural",
+        "volume": "NA",
+        "max_depth": 73.4,
+        "average_depth": 25.63,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.878,
+        "longitude": 12.451,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 240,
+        "forcing": [
+            {
+                "id": "856",
+                "type": "dwd_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.0054356808,
+        "f_wind": 0.829894308,
+        "p_lw": 0.941951356,
+        "snow_temp": 0.5,
+        "p_absorb": 1.10107433,
+        "calibration_source": "LfU Bayern",
+        "performance": {
+            "rmse": {
+                "overall": 0.9068375214142765,
+                "surface": 1.1321831758111158,
+                "bottom": 0.39757350606808894
+            },
+            "temperature": {
+                "times": 94,
+                "depths": 31,
+                "total": 969
+            }
+        }
+    },
+    {
+        "key": "bannwaldsee",
+        "name": "Bannwaldsee",
+        "elevation": 785.9,
+        "surface_area": 2.28,
+        "type": "Natural",
+        "volume": "NA",
+        "max_depth": 12.0,
+        "average_depth": 6.18,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.6,
+        "longitude": 10.776,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 241,
+        "forcing": [
+            {
+                "id": "15214",
+                "type": "dwd_meteostation"
+            },
+            {
+                "id": "11505",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.0028765208,
+        "f_wind": 0.353729945,
+        "p_lw": 0.880815904,
+        "snow_temp": 1.70530658,
+        "p_absorb": 1.5,
+        "calibration_source": "LfU Bayern",
+        "performance": {
+            "rmse": {
+                "overall": 1.4328489266650415,
+                "surface": 1.4405189325378547,
+                "bottom": 1.957648449458346
+            },
+            "temperature": {
+                "times": 25,
+                "depths": 11,
+                "total": 155
+            }
+        }
+    },
+    {
+        "key": "ammersee",
+        "name": "Ammersee",
+        "elevation": 532.9,
+        "surface_area": 46.6,
+        "type": "Natural",
+        "volume": "NA",
+        "max_depth": 81.1,
+        "average_depth": 37.55,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 48.002,
+        "longitude": 11.125,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 242,
+        "forcing": [
+            {
+                "id": "5538",
+                "type": "dwd_meteostation"
+            },
+            {
+                "id": "2290",
+                "type": "dwd_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.0155741,
+        "f_wind": 0.916449851,
+        "p_lw": 0.938456088,
+        "snow_temp": 1.08921621,
+        "p_absorb": 0.795098257,
+        "calibration_source": "LfU Bayern",
+        "performance": {
+            "rmse": {
+                "overall": 1.015659483390684,
+                "surface": 1.2658905560908496,
+                "bottom": 0.7046065364797576
+            },
+            "temperature": {
+                "times": 148,
+                "depths": 28,
+                "total": 1956
+            }
+        }
+    }
 ]
