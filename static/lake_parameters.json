@@ -177,7 +177,7 @@
         "datalakes_id": 2,
         "forcing": [
             {
-                "id": "CRM",
+                "id": "NEU",
                 "type": "meteoswiss_meteostation"
             }
         ],
@@ -223,19 +223,19 @@
         ],
         "performance": {
             "rmse": {
-                "overall": 1.2458585267111781,
-                "surface": 1.4200297306924319,
-                "bottom": 0.5170322093008767
+                "overall": 0.8750663033437136,
+                "surface": 0.7527733616879556,
+                "bottom": 0.45133069361611117
             },
             "temperature": {
-                "times": 122,
-                "depths": 22,
-                "total": 2280
+                "times": 494,
+                "depths": 28,
+                "total": 6451
             }
         },
-        "a_seiche": 1e-05,
-        "f_wind": 1.36465753,
-        "p_lw": 0.958289419,
+        "a_seiche": 0.00060723657,
+        "f_wind": 1.52482797,
+        "p_lw": 1.01999466,
         "snow_temp": 2.0
     },
     {
