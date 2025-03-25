@@ -12,7 +12,7 @@ def plot_absorption(lake):
     df.columns = ["time", "data"]
     df['time'] = pd.to_datetime(df['time'], origin='19810101', unit='D')
     plt.plot(df['time'], df['data'])
-    plt.title("Absorption")
+    plt.title("Absorption: {}".format(lake))
     plt.ylabel("m")
     plt.tight_layout(rect=[0, 0, 1, 0.96])
     plt.show()
@@ -30,7 +30,7 @@ def plot_forcing(lake):
     num_rows = num_subplots // 2 + num_subplots % 2
     num_cols = 2
     fig, axes = plt.subplots(nrows=num_rows, ncols=num_cols, figsize=(15, 5 * num_rows))
-    fig.suptitle('Forcing Data', fontsize=16)
+    fig.suptitle('Forcing Data: {}'.format(lake), fontsize=16)
     for i, col in enumerate(variable_columns):
         row_index = i // num_cols
         col_index = i % num_cols
@@ -42,7 +42,7 @@ def plot_forcing(lake):
 
 def plot_inflows(lake):
     fig, axes = plt.subplots(nrows=4, ncols=1, figsize=(15, 5 * 3))
-    fig.suptitle('Inflow Data', fontsize=16)
+    fig.suptitle('Inflow Data: {}'.format(lake), fontsize=16)
     keys = ["Qin", "Tin", "Sin", "AED2_inflow/OXY_oxy_inflow"]
     for i in range(len(keys)):
         file_path = os.path.join("..", "runs", lake, "{}.dat".format(keys[i]))
@@ -85,7 +85,7 @@ def plot_output(lake, parameter):
     df.set_index('Datetime', inplace=True)
     if len(df.columns) > 2:
         fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(15, 5 * 2))
-        fig.suptitle('Results for {}'.format(parameter), fontsize=16)
+        fig.suptitle('Results for {} {}'.format(parameter, lake), fontsize=16)
         axes[0].plot(df.index, df.iloc[:, -1], label="Surface")
         axes[0].plot(df.index, df.iloc[:, 0], label="Bottom")
         axes[0].margins(x=0)
@@ -97,21 +97,22 @@ def plot_output(lake, parameter):
         plt.show()
     else:
         plt.plot(df.index, df.iloc[:, 0])
-        plt.title('Results for {}'.format(parameter))
+        plt.title('Results for {} {}'.format(parameter, lake))
         plt.show()
 
 
-def plot_simstrat_files(lake):
-    plot_forcing(lake)
-    plot_inflows(lake)
-    plot_absorption(lake)
-    plot_output(lake, "T")
-    plot_output(lake, "OXY_sat")
-    plot_output(lake, "TotalIceH")
+def plot_simstrat_files(lakes):
+    for lake in lakes:
+        plot_forcing(lake)
+        plot_inflows(lake)
+        plot_absorption(lake)
+        plot_output(lake, "T")
+        plot_output(lake, "OXY_sat")
+        plot_output(lake, "TotalIceH")
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
+    if len(sys.argv) != 2:
         raise ValueError("Usage: python plot.py lake_key")
     else:
-        plot_simstrat_files(sys.argv[1])
+        plot_simstrat_files(sys.argv[1].split(","))
