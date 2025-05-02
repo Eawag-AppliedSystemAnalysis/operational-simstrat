@@ -4935,6 +4935,53 @@
         }
     },
     {
+        "key": "traunsee",
+        "name": "Traunsee",
+        "elevation": 423,
+        "surface_area": 24.35,
+        "type": "Natural",
+        "volume": "NA",
+        "max_depth": 191.0,
+        "average_depth": 95.0,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.868,
+        "longitude": 13.796,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 216,
+        "forcing": [
+            {
+                "id": "6621",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.189167834,
+        "f_wind": 0.685154396,
+        "p_lw": 0.8605558,
+        "snow_temp": 2.5,
+        "p_absorb": 1.5,
+        "calibration_source": "Gew\u00e4sser\u00fcberwachung (GZ\u00dcV) \u00d6sterreich",
+        "performance": {
+            "rmse": {
+                "overall": 1.059802542158104,
+                "surface": 1.5802387360469385,
+                "bottom": 0.548295880758868
+            },
+            "temperature": {
+                "times": 32,
+                "depths": 20,
+                "total": 318
+            }
+        }
+    },
+    {
         "key": "annecy",
         "name": "Lake Annecy",
         "elevation": 446.97,
