@@ -69,6 +69,8 @@ def meteodata_from_meteostations(start, end, forcing, elevation, latitude, longi
             if p_id in f["parameters"].keys():
                 source = f["type"].lower().split("_")[0]
                 parameter = f["parameters"][p_id]
+                if parameter["end_date"] < start:
+                    continue
                 if not gaps:
                     start_date = min(max(start, parameter["start_date"]), parameter["end_date"])
                     end_date = min(end, parameter["end_date"])
@@ -87,6 +89,7 @@ def meteodata_from_meteostations(start, end, forcing, elevation, latitude, longi
                     df['values'] = pd.to_numeric(df['values'], errors='coerce')
                     df = df.dropna()
                     df = df.sort_values(by='time')
+                    adjust = True if len(df) > 1000 else False
                     mean = df["values"].mean()
                     std = df["values"].std()
                     gaps = detect_gaps(df["time"], start, end)
@@ -99,8 +102,11 @@ def meteodata_from_meteostations(start, end, forcing, elevation, latitude, longi
                                 url = endpoint.format(source, f["id"], gap[0].strftime('%Y%m%d'), gap[1].strftime('%Y%m%d'), p_id)
                                 print(url)
                                 data = call_url(url)
-                                df_new = pd.DataFrame({'time': data["time"],
-                                                       'values_new': adjust_data_to_mean_and_std(data["variables"][p_id]["data"], std, mean)})
+                                if adjust:
+                                    d_new = adjust_data_to_mean_and_std(data["variables"][p_id]["data"], std, mean)
+                                else:
+                                    d_new = np.array(data["variables"][p_id]["data"], dtype=float)
+                                df_new = pd.DataFrame({'time': data["time"], 'values_new': d_new})
                                 df_new = df_new.drop_duplicates(subset=['time'])
                                 df_new['time'] = pd.to_datetime(df_new['time'])
                                 df_new['values_new'] = pd.to_numeric(df_new['values_new'], errors='coerce')
@@ -197,6 +203,8 @@ def meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, lo
         data_dict = {key: data["variables"][key]["data"] for key in data["variables"].keys()}
         data_dict["utc_time"] = data["time"]
         df = pd.DataFrame(data_dict)
+        if pd.isna(df.loc[0, 'GLOB']):
+            df.loc[0, 'GLOB'] = 0.0
         df['Time'] = pd.to_datetime(df['utc_time'], utc=True)
         df['Time'] = df.apply(lambda row: datetime_to_simstrat_time(row['Time'], reference_date), axis=1)
         df["T_2M"] = df["T_2M"] - 273.15  # Kelvin to celsius
