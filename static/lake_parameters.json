@@ -4808,10 +4808,6 @@
                 "type": "mistral_meteostation"
             },
             {
-                "id": "porlezza_torrente",
-                "type": "mistral_meteostation"
-            },
-            {
                 "id": "LUG",
                 "type": "meteoswiss_meteostation"
             }
@@ -4821,22 +4817,22 @@
             "model": "ICON",
             "days": 5
         },
-        "a_seiche": 0.011357727,
-        "f_wind": 1.50236649,
-        "p_lw": 0.872891903,
+        "a_seiche": 0.021606344,
+        "f_wind": 0.867833159,
+        "p_lw": 0.902477533,
         "snow_temp": 2.0,
-        "p_absorb": 1.18021002,
+        "p_absorb": 1.23120485,
         "calibration_source": "Agenzia regionale per la protezione dell\u2019ambiente della Lombardia",
         "performance": {
             "rmse": {
-                "overall": 0.8215825490567753,
-                "surface": 1.4511971295840698,
-                "bottom": 0.3500738826781189
+                "overall": 1.0031729436360177,
+                "surface": 1.4827188526305135,
+                "bottom": 0.6193882519604862
             },
             "temperature": {
-                "times": 47,
+                "times": 38,
                 "depths": 121,
-                "total": 4334
+                "total": 3543
             }
         }
     },
