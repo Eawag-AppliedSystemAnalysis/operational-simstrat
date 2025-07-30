@@ -4916,7 +4916,7 @@
         "p_lw": 0.92967212,
         "snow_temp": 0.5,
         "p_absorb": 1.40872122,
-        "calibration_source": "Gew\u00e4sser\u00fcberwachung (GZ\u00dcV) \u00d6sterreich",
+        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen",
         "performance": {
             "rmse": {
                 "overall": 0.8280300760547098,
@@ -4963,7 +4963,7 @@
         "p_lw": 0.8605558,
         "snow_temp": 2.5,
         "p_absorb": 1.5,
-        "calibration_source": "Gew\u00e4sser\u00fcberwachung (GZ\u00dcV) \u00d6sterreich",
+        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen",
         "performance": {
             "rmse": {
                 "overall": 1.059802542158104,
