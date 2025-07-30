@@ -1,4 +1,19 @@
 {
+  "lakes": [
+    "faaker",
+    "millstaetter",
+    "worthersee",
+    "ossiacher",
+    "irrsee",
+    "attersee",
+    "wolfgangsee",
+    "fuschlsee",
+    "grabensee",
+    "mattsee",
+    "obertrumer",
+    "wallersee",
+    "zeller"
+  ],
   "couple_aed2": true,
   "debug": false,
   "log": false,

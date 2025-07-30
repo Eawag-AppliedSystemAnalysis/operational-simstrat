@@ -4978,6 +4978,504 @@
         }
     },
     {
+        "key": "attersee",
+        "name": "Attersee",
+        "elevation": 469,
+        "surface_area": 46.2,
+        "type": "Natural",
+        "volume": 3.943,
+        "max_depth": 169.0,
+        "average_depth": 85.0,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.88,
+        "longitude": 13.55,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 205,
+        "forcing": [
+            {
+                "id": "4821",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.002,
+        "f_wind": 1.0,
+        "p_lw": 1.0,
+        "snow_temp": 2.0,
+        "p_absorb": 1.0,
+        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen"
+    },
+    {
+        "key": "faaker",
+        "name": "Faaker See",
+        "elevation": 554,
+        "surface_area": 2.2,
+        "type": "Natural",
+        "volume": 0.03524,
+        "max_depth": 29.5,
+        "average_depth": 16.1,
+        "residence_time": 1.8,
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 46.58,
+        "longitude": 13.93,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 206,
+        "forcing": [
+            {
+                "id": "20123",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.002,
+        "f_wind": 1.0,
+        "p_lw": 1.0,
+        "snow_temp": 2.0,
+        "p_absorb": 1.0,
+        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen"
+    },
+    {
+        "key": "fuschlsee",
+        "name": "Fuschlsee",
+        "elevation": 664,
+        "surface_area": 2.7,
+        "type": "Natural",
+        "volume": "NA",
+        "max_depth": 66.0,
+        "average_depth": "NA",
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.8,
+        "longitude": 13.28,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 207,
+        "forcing": [
+            {
+                "id": "6512",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.002,
+        "f_wind": 1.0,
+        "p_lw": 1.0,
+        "snow_temp": 2.0,
+        "p_absorb": 1.0,
+        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen"
+    },
+    {
+        "key": "wolfgangsee",
+        "name": "Wolfgangsee",
+        "elevation": 538,
+        "surface_area": 13.0,
+        "type": "Natural",
+        "volume": "NA",
+        "max_depth": 114.0,
+        "average_depth": "NA",
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.75,
+        "longitude": 13.39,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 208,
+        "forcing": [
+            {
+                "id": "9618",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.002,
+        "f_wind": 1.0,
+        "p_lw": 1.0,
+        "snow_temp": 2.0,
+        "p_absorb": 1.0,
+        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen"
+    },
+    {
+        "key": "grabensee",
+        "name": "Grabensee",
+        "elevation": 503,
+        "surface_area": 1.3,
+        "type": "Natural",
+        "volume": 0.012,
+        "max_depth": 14.0,
+        "average_depth": 9.0,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.99,
+        "longitude": 13.09,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 209,
+        "forcing": [
+            {
+                "id": "6415",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.002,
+        "f_wind": 1.0,
+        "p_lw": 1.0,
+        "snow_temp": 2.0,
+        "p_absorb": 1.0,
+        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen"
+    },
+    {
+        "key": "hallstaetter",
+        "name": "Hallst\u00e4tter",
+        "elevation": 508,
+        "surface_area": 8.55,
+        "type": "Natural",
+        "volume": 0.5581,
+        "max_depth": 125.0,
+        "average_depth": 65.0,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.576,
+        "longitude": 13.662,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 210,
+        "forcing": [
+            {
+                "id": "9643",
+                "type": "geosphere_meteostation"
+            },
+            {
+                "id": "9618",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.002,
+        "f_wind": 1.0,
+        "p_lw": 1.0,
+        "snow_temp": 2.0,
+        "p_absorb": 1.0,
+        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen"
+    },
+    {
+        "key": "irrsee",
+        "name": "Irrsee",
+        "elevation": 553,
+        "surface_area": 3.5,
+        "type": "Natural",
+        "volume": "NA",
+        "max_depth": 32.0,
+        "average_depth": "NA",
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.91,
+        "longitude": 13.307,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 211,
+        "forcing": [
+            {
+                "id": "6512",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.002,
+        "f_wind": 1.0,
+        "p_lw": 1.0,
+        "snow_temp": 2.0,
+        "p_absorb": 1.0,
+        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen"
+    },
+    {
+        "key": "mattsee",
+        "name": "Mattsee",
+        "elevation": 503,
+        "surface_area": 3.6,
+        "type": "Natural",
+        "volume": "NA",
+        "max_depth": 42.0,
+        "average_depth": "NA",
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.983,
+        "longitude": 13.122,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 212,
+        "forcing": [
+            {
+                "id": "6415",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.002,
+        "f_wind": 1.0,
+        "p_lw": 1.0,
+        "snow_temp": 2.0,
+        "p_absorb": 1.0,
+        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen"
+    },
+    {
+        "key": "millstaetter",
+        "name": "Millst\u00e4tter See",
+        "elevation": 588,
+        "surface_area": 13.28,
+        "type": "Natural",
+        "volume": 1.205,
+        "max_depth": 142.0,
+        "average_depth": 89.0,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 46.794,
+        "longitude": 13.584,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 213,
+        "forcing": [
+            {
+                "id": "18225",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.002,
+        "f_wind": 1.0,
+        "p_lw": 1.0,
+        "snow_temp": 2.0,
+        "p_absorb": 1.0,
+        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen"
+    },
+    {
+        "key": "obertrumer",
+        "name": "Obertrumer",
+        "elevation": 503,
+        "surface_area": 4.88,
+        "type": "Natural",
+        "volume": 0.08463,
+        "max_depth": 36.0,
+        "average_depth": 17.0,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.964,
+        "longitude": 13.087,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 214,
+        "forcing": [
+            {
+                "id": "6415",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.002,
+        "f_wind": 1.0,
+        "p_lw": 1.0,
+        "snow_temp": 2.0,
+        "p_absorb": 1.0,
+        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen"
+    },
+    {
+        "key": "ossiacher",
+        "name": "Ossiacher See",
+        "elevation": 501,
+        "surface_area": 10.38,
+        "type": "Natural",
+        "volume": "NA",
+        "max_depth": 52.6,
+        "average_depth": 19.6,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 46.666,
+        "longitude": 13.956,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 215,
+        "forcing": [
+            {
+                "id": "20123",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.002,
+        "f_wind": 1.0,
+        "p_lw": 1.0,
+        "snow_temp": 2.0,
+        "p_absorb": 1.0,
+        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen"
+    },
+    {
+        "key": "wallersee",
+        "name": "Wallersee",
+        "elevation": 505,
+        "surface_area": 6.1,
+        "type": "Natural",
+        "volume": 0.0763,
+        "max_depth": 23.3,
+        "average_depth": 13.3,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.912,
+        "longitude": 13.169,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 217,
+        "forcing": [
+            {
+                "id": "6415",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.002,
+        "f_wind": 1.0,
+        "p_lw": 1.0,
+        "snow_temp": 2.0,
+        "p_absorb": 1.0,
+        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen"
+    },
+    {
+        "key": "worthersee",
+        "name": "W\u00f6rthersee",
+        "elevation": 439,
+        "surface_area": 19.39,
+        "type": "Natural",
+        "volume": "NA",
+        "max_depth": 85.2,
+        "average_depth": 42.1,
+        "residence_time": 10.5,
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 46.627,
+        "longitude": 14.11,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 218,
+        "forcing": [
+            {
+                "id": "20220",
+                "type": "geosphere_meteostation"
+            },
+            {
+                "id": "20212",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.002,
+        "f_wind": 1.0,
+        "p_lw": 1.0,
+        "snow_temp": 2.0,
+        "p_absorb": 1.0,
+        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen"
+    },
+    {
+        "key": "zeller",
+        "name": "Zeller",
+        "elevation": 750,
+        "surface_area": 4.55,
+        "type": "Natural",
+        "volume": 0.1782,
+        "max_depth": 69.8,
+        "average_depth": 39.0,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.322,
+        "longitude": 12.807,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 219,
+        "forcing": [
+            {
+                "id": "12311",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.002,
+        "f_wind": 1.0,
+        "p_lw": 1.0,
+        "snow_temp": 2.0,
+        "p_absorb": 1.0,
+        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen"
+    },
+    {
         "key": "annecy",
         "name": "Lake Annecy",
         "elevation": 446.97,
