@@ -5322,12 +5322,24 @@
             "model": false,
             "days": 5
         },
-        "a_seiche": 0.002,
-        "f_wind": 1.0,
-        "p_lw": 1.0,
-        "snow_temp": 2.0,
-        "p_absorb": 1.0,
-        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen"
+        "a_seiche": 0.010598076,
+        "f_wind": 1.05475641,
+        "p_lw": 0.985692974,
+        "snow_temp": 3.31021589,
+        "p_absorb": 1.12985894,
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
+        "performance": {
+            "rmse": {
+                "overall": 0.628626941503539,
+                "surface": 1.0271288600439261,
+                "bottom": 0.3339641253821337
+            },
+            "temperature": {
+                "times": 74,
+                "depths": 22,
+                "total": 1544
+            }
+        }
     },
     {
         "key": "obertrumer",
@@ -5490,12 +5502,24 @@
             "model": false,
             "days": 5
         },
-        "a_seiche": 0.002,
-        "f_wind": 1.0,
-        "p_lw": 1.0,
-        "snow_temp": 2.0,
-        "p_absorb": 1.0,
-        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen"
+        "a_seiche": 0.0029572806,
+        "f_wind": 0.874630838,
+        "p_lw": 0.966077523,
+        "snow_temp": 1.82645545,
+        "p_absorb": 0.753663673,
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
+        "performance": {
+            "rmse": {
+                "overall": 0.9876685685729001,
+                "surface": 1.213513668178955,
+                "bottom": 0.6655852356453611
+            },
+            "temperature": {
+                "times": 50,
+                "depths": 22,
+                "total": 839
+            }
+        }
     },
     {
         "key": "zeller",
