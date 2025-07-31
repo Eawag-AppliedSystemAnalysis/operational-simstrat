@@ -4916,7 +4916,7 @@
         "p_lw": 0.92967212,
         "snow_temp": 0.5,
         "p_absorb": 1.40872122,
-        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen",
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
         "performance": {
             "rmse": {
                 "overall": 0.8280300760547098,
@@ -4963,7 +4963,7 @@
         "p_lw": 0.8605558,
         "snow_temp": 2.5,
         "p_absorb": 1.5,
-        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen",
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
         "performance": {
             "rmse": {
                 "overall": 1.059802542158104,
@@ -5005,12 +5005,24 @@
             "model": false,
             "days": 5
         },
-        "a_seiche": 0.002,
-        "f_wind": 1.0,
-        "p_lw": 1.0,
-        "snow_temp": 2.0,
-        "p_absorb": 1.0,
-        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen"
+        "a_seiche": 0.014938898,
+        "f_wind": 0.860323207,
+        "p_lw": 0.953993471,
+        "snow_temp": 10.0,
+        "p_absorb": 1.01492655,
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
+        "performance": {
+            "rmse": {
+                "overall": 1.030129729172496,
+                "surface": 0.7566691898636345,
+                "bottom": 0.13914780464837215
+            },
+            "temperature": {
+                "times": 56,
+                "depths": 15,
+                "total": 400
+            }
+        }
     },
     {
         "key": "faaker",
@@ -5040,12 +5052,24 @@
             "model": false,
             "days": 5
         },
-        "a_seiche": 0.002,
-        "f_wind": 1.0,
-        "p_lw": 1.0,
-        "snow_temp": 2.0,
-        "p_absorb": 1.0,
-        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen"
+        "a_seiche": 1.935563e-05,
+        "f_wind": 0.461688255,
+        "p_lw": 0.890572023,
+        "snow_temp": 1.73544021,
+        "p_absorb": 1.32238009,
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
+        "performance": {
+            "rmse": {
+                "overall": 1.297918402613468,
+                "surface": 1.5291265429530796,
+                "bottom": 0.6213131738503539
+            },
+            "temperature": {
+                "times": 65,
+                "depths": 11,
+                "total": 445
+            }
+        }
     },
     {
         "key": "fuschlsee",
@@ -5080,7 +5104,7 @@
         "p_lw": 1.0,
         "snow_temp": 2.0,
         "p_absorb": 1.0,
-        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen"
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen"
     },
     {
         "key": "wolfgangsee",
@@ -5110,12 +5134,24 @@
             "model": false,
             "days": 5
         },
-        "a_seiche": 0.002,
-        "f_wind": 1.0,
-        "p_lw": 1.0,
-        "snow_temp": 2.0,
-        "p_absorb": 1.0,
-        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen"
+        "a_seiche": 0.025652583,
+        "f_wind": 1.07715219,
+        "p_lw": 0.918421244,
+        "snow_temp": 0.909131671,
+        "p_absorb": 1.5,
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
+        "performance": {
+            "rmse": {
+                "overall": 1.3510975234092883,
+                "surface": 1.5452044573737547,
+                "bottom": 0.6153216162962922
+            },
+            "temperature": {
+                "times": 61,
+                "depths": 8,
+                "total": 460
+            }
+        }
     },
     {
         "key": "grabensee",
@@ -5145,12 +5181,24 @@
             "model": false,
             "days": 5
         },
-        "a_seiche": 0.002,
-        "f_wind": 1.0,
-        "p_lw": 1.0,
-        "snow_temp": 2.0,
-        "p_absorb": 1.0,
-        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen"
+        "a_seiche": 0.00021862949,
+        "f_wind": 0.278045079,
+        "p_lw": 0.858833936,
+        "snow_temp": 1.76986783,
+        "p_absorb": 1.5,
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
+        "performance": {
+            "rmse": {
+                "overall": 1.1978578332943064,
+                "surface": 1.305965592100343,
+                "bottom": 0.9684417982318297
+            },
+            "temperature": {
+                "times": 45,
+                "depths": 6,
+                "total": 181
+            }
+        }
     },
     {
         "key": "hallstaetter",
@@ -5189,7 +5237,7 @@
         "p_lw": 1.0,
         "snow_temp": 2.0,
         "p_absorb": 1.0,
-        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen"
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen"
     },
     {
         "key": "irrsee",
@@ -5219,12 +5267,24 @@
             "model": false,
             "days": 5
         },
-        "a_seiche": 0.002,
-        "f_wind": 1.0,
-        "p_lw": 1.0,
-        "snow_temp": 2.0,
-        "p_absorb": 1.0,
-        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen"
+        "a_seiche": 0.0039508742,
+        "f_wind": 0.716578657,
+        "p_lw": 0.938119174,
+        "snow_temp": 1.84278681,
+        "p_absorb": 1.5,
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
+        "performance": {
+            "rmse": {
+                "overall": 1.1186988591801033,
+                "surface": 1.586487257854072,
+                "bottom": 0.7110856023078541
+            },
+            "temperature": {
+                "times": 51,
+                "depths": 11,
+                "total": 324
+            }
+        }
     },
     {
         "key": "mattsee",
@@ -5254,12 +5314,24 @@
             "model": false,
             "days": 5
         },
-        "a_seiche": 0.002,
-        "f_wind": 1.0,
-        "p_lw": 1.0,
-        "snow_temp": 2.0,
-        "p_absorb": 1.0,
-        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen"
+        "a_seiche": 0.0015682856,
+        "f_wind": 0.840810509,
+        "p_lw": 0.921734681,
+        "snow_temp": 1.98737897,
+        "p_absorb": 1.25162153,
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
+        "performance": {
+            "rmse": {
+                "overall": 1.0104620785957283,
+                "surface": 1.1553709170087176,
+                "bottom": 0.5630269738949754
+            },
+            "temperature": {
+                "times": 51,
+                "depths": 8,
+                "total": 250
+            }
+        }
     },
     {
         "key": "millstaetter",
@@ -5294,7 +5366,7 @@
         "p_lw": 1.0,
         "snow_temp": 2.0,
         "p_absorb": 1.0,
-        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen"
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen"
     },
     {
         "key": "obertrumer",
@@ -5324,12 +5396,24 @@
             "model": false,
             "days": 5
         },
-        "a_seiche": 0.002,
-        "f_wind": 1.0,
-        "p_lw": 1.0,
-        "snow_temp": 2.0,
-        "p_absorb": 1.0,
-        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen"
+        "a_seiche": 0.0031574579,
+        "f_wind": 0.641690814,
+        "p_lw": 0.89307787,
+        "snow_temp": 1.91676188,
+        "p_absorb": 1.5,
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
+        "performance": {
+            "rmse": {
+                "overall": 1.0988331119405692,
+                "surface": 1.4082927515257615,
+                "bottom": 0.5894692669399031
+            },
+            "temperature": {
+                "times": 57,
+                "depths": 8,
+                "total": 233
+            }
+        }
     },
     {
         "key": "ossiacher",
@@ -5359,12 +5443,24 @@
             "model": false,
             "days": 5
         },
-        "a_seiche": 0.002,
-        "f_wind": 1.0,
-        "p_lw": 1.0,
-        "snow_temp": 2.0,
-        "p_absorb": 1.0,
-        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen"
+        "a_seiche": 0.0042161649,
+        "f_wind": 0.740184584,
+        "p_lw": 0.885893176,
+        "snow_temp": 1.81311507,
+        "p_absorb": 1.5,
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
+        "performance": {
+            "rmse": {
+                "overall": 1.6240296019988807,
+                "surface": 1.3082295210990311,
+                "bottom": 0.8414720613306185
+            },
+            "temperature": {
+                "times": 101,
+                "depths": 21,
+                "total": 802
+            }
+        }
     },
     {
         "key": "wallersee",
@@ -5399,7 +5495,7 @@
         "p_lw": 1.0,
         "snow_temp": 2.0,
         "p_absorb": 1.0,
-        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen"
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen"
     },
     {
         "key": "worthersee",
@@ -5438,7 +5534,7 @@
         "p_lw": 1.0,
         "snow_temp": 2.0,
         "p_absorb": 1.0,
-        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen"
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen"
     },
     {
         "key": "zeller",
@@ -5473,7 +5569,7 @@
         "p_lw": 1.0,
         "snow_temp": 2.0,
         "p_absorb": 1.0,
-        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen"
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen"
     },
     {
         "key": "annecy",
