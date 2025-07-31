@@ -1,12 +1,7 @@
 {
-  "lakes": [
-    "fuschlsee", "millstaetter", "wallersee", "worthersee", "zeller"
-  ],
   "couple_aed2": true,
-  "debug": true,
+  "debug": false,
   "log": false,
   "max_workers": 5,
-  "agents": 10,
-  "download_observations": true,
-  "observations_url": "https://alplakes-eawag.s3.eu-central-1.amazonaws.com/insitu/observations.zip"
+  "agents": 10
 }
