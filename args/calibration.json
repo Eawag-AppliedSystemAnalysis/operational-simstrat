@@ -1,5 +1,5 @@
 {
-  "lakes": ["fuschlsee", "wallersee", "zeller"],
+  "lakes": ["fuschlsee", "grabensee", "mattsee", "obertrumer", "wallersee", "zeller"],
   "couple_aed2": true,
   "debug": false,
   "log": false,
