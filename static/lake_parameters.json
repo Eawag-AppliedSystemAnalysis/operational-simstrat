@@ -4916,7 +4916,7 @@
         "p_lw": 0.92967212,
         "snow_temp": 0.5,
         "p_absorb": 1.40872122,
-        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen",
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
         "performance": {
             "rmse": {
                 "overall": 0.8280300760547098,
@@ -4963,7 +4963,7 @@
         "p_lw": 0.8605558,
         "snow_temp": 2.5,
         "p_absorb": 1.5,
-        "calibration_source": "Gewässerzustandsüberwachung in Österreich gemäß Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und Ämter der Landesregierungen",
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
         "performance": {
             "rmse": {
                 "overall": 1.059802542158104,
@@ -4974,6 +4974,625 @@
                 "times": 32,
                 "depths": 20,
                 "total": 318
+            }
+        }
+    },
+    {
+        "key": "attersee",
+        "name": "Attersee",
+        "elevation": 469,
+        "surface_area": 46.2,
+        "type": "Natural",
+        "volume": 3.943,
+        "max_depth": 169.0,
+        "average_depth": 85.0,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.88,
+        "longitude": 13.55,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 205,
+        "forcing": [
+            {
+                "id": "4821",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.014938898,
+        "f_wind": 0.860323207,
+        "p_lw": 0.953993471,
+        "snow_temp": 10.0,
+        "p_absorb": 1.01492655,
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
+        "performance": {
+            "rmse": {
+                "overall": 1.030129729172496,
+                "surface": 0.7566691898636345,
+                "bottom": 0.13914780464837215
+            },
+            "temperature": {
+                "times": 56,
+                "depths": 15,
+                "total": 400
+            }
+        }
+    },
+    {
+        "key": "faaker",
+        "name": "Faaker See",
+        "elevation": 554,
+        "surface_area": 2.2,
+        "type": "Natural",
+        "volume": 0.03524,
+        "max_depth": 29.5,
+        "average_depth": 16.1,
+        "residence_time": 1.8,
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 46.58,
+        "longitude": 13.93,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 206,
+        "forcing": [
+            {
+                "id": "20123",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 1.935563e-05,
+        "f_wind": 0.461688255,
+        "p_lw": 0.890572023,
+        "snow_temp": 1.73544021,
+        "p_absorb": 1.32238009,
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
+        "performance": {
+            "rmse": {
+                "overall": 1.297918402613468,
+                "surface": 1.5291265429530796,
+                "bottom": 0.6213131738503539
+            },
+            "temperature": {
+                "times": 65,
+                "depths": 11,
+                "total": 445
+            }
+        }
+    },
+    {
+        "key": "fuschlsee",
+        "name": "Fuschlsee",
+        "elevation": 664,
+        "surface_area": 2.7,
+        "type": "Natural",
+        "volume": 0.098,
+        "max_depth": 66.0,
+        "average_depth": "NA",
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.8,
+        "longitude": 13.28,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 207,
+        "forcing": [
+            {
+                "id": "6512",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.0093873313,
+        "f_wind": 1.07023214,
+        "p_lw": 0.930850516,
+        "snow_temp": 0.5,
+        "p_absorb": 1.2474803,
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
+        "performance": {
+            "rmse": {
+                "overall": 0.7707112944590727,
+                "surface": 0.8946258473457661,
+                "bottom": 0.35802625359164597
+            },
+            "temperature": {
+                "times": 46,
+                "depths": 9,
+                "total": 354
+            }
+        }
+    },
+    {
+        "key": "wolfgangsee",
+        "name": "Wolfgangsee",
+        "elevation": 538,
+        "surface_area": 13.0,
+        "type": "Natural",
+        "volume": 0.139,
+        "max_depth": 114.0,
+        "average_depth": "NA",
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.75,
+        "longitude": 13.39,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 208,
+        "forcing": [
+            {
+                "id": "9618",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.025652583,
+        "f_wind": 1.07715219,
+        "p_lw": 0.918421244,
+        "snow_temp": 0.909131671,
+        "p_absorb": 1.5,
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
+        "performance": {
+            "rmse": {
+                "overall": 1.3510975234092883,
+                "surface": 1.5452044573737547,
+                "bottom": 0.6153216162962922
+            },
+            "temperature": {
+                "times": 61,
+                "depths": 8,
+                "total": 460
+            }
+        }
+    },
+    {
+        "key": "grabensee",
+        "name": "Grabensee",
+        "elevation": 503,
+        "surface_area": 1.3,
+        "type": "Natural",
+        "volume": 0.012,
+        "max_depth": 14.0,
+        "average_depth": 9.0,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.99,
+        "longitude": 13.09,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 209,
+        "forcing": [
+            {
+                "id": "6415",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.00014738697,
+        "f_wind": 0.279957907,
+        "p_lw": 0.858097672,
+        "snow_temp": 1.76996629,
+        "p_absorb": 1.5,
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
+        "performance": {
+            "rmse": {
+                "overall": 1.4240717346163898,
+                "surface": 1.2556964285473884,
+                "bottom": 1.5978300641807939
+            },
+            "temperature": {
+                "times": 45,
+                "depths": 6,
+                "total": 225
+            }
+        }
+    },
+    {
+        "key": "irrsee",
+        "name": "Irrsee",
+        "elevation": 553,
+        "surface_area": 3.5,
+        "type": "Natural",
+        "volume": 0.0531,
+        "max_depth": 32.0,
+        "average_depth": "NA",
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.91,
+        "longitude": 13.307,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 211,
+        "forcing": [
+            {
+                "id": "6512",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.0039508742,
+        "f_wind": 0.716578657,
+        "p_lw": 0.938119174,
+        "snow_temp": 1.84278681,
+        "p_absorb": 1.5,
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
+        "performance": {
+            "rmse": {
+                "overall": 1.1186988591801033,
+                "surface": 1.586487257854072,
+                "bottom": 0.7110856023078541
+            },
+            "temperature": {
+                "times": 51,
+                "depths": 11,
+                "total": 324
+            }
+        }
+    },
+    {
+        "key": "mattsee",
+        "name": "Mattsee",
+        "elevation": 503,
+        "surface_area": 3.6,
+        "type": "Natural",
+        "volume": 0.061,
+        "max_depth": 42.0,
+        "average_depth": "NA",
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.983,
+        "longitude": 13.122,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 212,
+        "forcing": [
+            {
+                "id": "6415",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.0033875148,
+        "f_wind": 0.736564121,
+        "p_lw": 0.928923504,
+        "snow_temp": 0.5,
+        "p_absorb": 1.19817909,
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
+        "performance": {
+            "rmse": {
+                "overall": 0.9427356757960338,
+                "surface": 1.1948347125793657,
+                "bottom": 0.5398936779232912
+            },
+            "temperature": {
+                "times": 52,
+                "depths": 8,
+                "total": 344
+            }
+        }
+    },
+    {
+        "key": "millstaetter",
+        "name": "Millst\u00e4tter See",
+        "elevation": 588,
+        "surface_area": 13.28,
+        "type": "Natural",
+        "volume": 1.205,
+        "max_depth": 142.0,
+        "average_depth": 89.0,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 46.794,
+        "longitude": 13.584,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 213,
+        "forcing": [
+            {
+                "id": "18225",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.010598076,
+        "f_wind": 1.05475641,
+        "p_lw": 0.985692974,
+        "snow_temp": 3.31021589,
+        "p_absorb": 1.12985894,
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
+        "performance": {
+            "rmse": {
+                "overall": 0.628626941503539,
+                "surface": 1.0271288600439261,
+                "bottom": 0.3339641253821337
+            },
+            "temperature": {
+                "times": 74,
+                "depths": 22,
+                "total": 1544
+            }
+        }
+    },
+    {
+        "key": "obertrumer",
+        "name": "Obertrumer",
+        "elevation": 503,
+        "surface_area": 4.88,
+        "type": "Natural",
+        "volume": 0.08463,
+        "max_depth": 36.0,
+        "average_depth": 17.0,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.964,
+        "longitude": 13.087,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 214,
+        "forcing": [
+            {
+                "id": "6415",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.0023383489,
+        "f_wind": 0.669037629,
+        "p_lw": 0.911293396,
+        "snow_temp": 1.70999969,
+        "p_absorb": 1.5,
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
+        "performance": {
+            "rmse": {
+                "overall": 0.9958218794485393,
+                "surface": 1.3758490737296583,
+                "bottom": 0.6114876011656413
+            },
+            "temperature": {
+                "times": 58,
+                "depths": 8,
+                "total": 380
+            }
+        }
+    },
+    {
+        "key": "ossiacher",
+        "name": "Ossiacher See",
+        "elevation": 501,
+        "surface_area": 10.38,
+        "type": "Natural",
+        "volume": 0.21,
+        "max_depth": 52.6,
+        "average_depth": 19.6,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 46.666,
+        "longitude": 13.956,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 215,
+        "forcing": [
+            {
+                "id": "20123",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.0042161649,
+        "f_wind": 0.740184584,
+        "p_lw": 0.885893176,
+        "snow_temp": 1.81311507,
+        "p_absorb": 1.5,
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
+        "performance": {
+            "rmse": {
+                "overall": 1.6240296019988807,
+                "surface": 1.3082295210990311,
+                "bottom": 0.8414720613306185
+            },
+            "temperature": {
+                "times": 101,
+                "depths": 21,
+                "total": 802
+            }
+        }
+    },
+    {
+        "key": "wallersee",
+        "name": "Wallersee",
+        "elevation": 505,
+        "surface_area": 6.1,
+        "type": "Natural",
+        "volume": 0.0763,
+        "max_depth": 23.3,
+        "average_depth": 13.3,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.912,
+        "longitude": 13.169,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 217,
+        "forcing": [
+            {
+                "id": "6415",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.0053694954,
+        "f_wind": 0.605156485,
+        "p_lw": 0.894696258,
+        "snow_temp": 2.07359148,
+        "p_absorb": 1.5,
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
+        "performance": {
+            "rmse": {
+                "overall": 1.214188245917559,
+                "surface": 1.6304920074752947,
+                "bottom": 0.9076339759427885
+            },
+            "temperature": {
+                "times": 49,
+                "depths": 8,
+                "total": 312
+            }
+        }
+    },
+    {
+        "key": "worthersee",
+        "name": "W\u00f6rthersee",
+        "elevation": 439,
+        "surface_area": 19.39,
+        "type": "Natural",
+        "volume": 0.8164,
+        "max_depth": 85.2,
+        "average_depth": 42.1,
+        "residence_time": 10.5,
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 46.627,
+        "longitude": 14.11,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 218,
+        "forcing": [
+            {
+                "id": "20220",
+                "type": "geosphere_meteostation"
+            },
+            {
+                "id": "20212",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.0029572806,
+        "f_wind": 0.874630838,
+        "p_lw": 0.966077523,
+        "snow_temp": 1.82645545,
+        "p_absorb": 0.753663673,
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
+        "performance": {
+            "rmse": {
+                "overall": 0.9876685685729001,
+                "surface": 1.213513668178955,
+                "bottom": 0.6655852356453611
+            },
+            "temperature": {
+                "times": 50,
+                "depths": 22,
+                "total": 839
+            }
+        }
+    },
+    {
+        "key": "zeller",
+        "name": "Zeller",
+        "elevation": 750,
+        "surface_area": 4.55,
+        "type": "Natural",
+        "volume": 0.1782,
+        "max_depth": 69.8,
+        "average_depth": 39.0,
+        "residence_time": "NA",
+        "mixing_regime": "NA",
+        "geothermal_flux": 0.12,
+        "latitude": 47.322,
+        "longitude": 12.807,
+        "trophic_state": "NA",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 219,
+        "forcing": [
+            {
+                "id": "12311",
+                "type": "geosphere_meteostation"
+            },
+            {
+                "id": "9406",
+                "type": "geosphere_meteostation"
+            }
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.0045794907,
+        "f_wind": 0.507507689,
+        "p_lw": 0.847652346,
+        "snow_temp": 0.5,
+        "p_absorb": 1.20516033,
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
+        "performance": {
+            "rmse": {
+                "overall": 0.8489952870672285,
+                "surface": 0.9524067879179207,
+                "bottom": 0.3062488506502353
+            },
+            "temperature": {
+                "times": 61,
+                "depths": 9,
+                "total": 465
             }
         }
     },
