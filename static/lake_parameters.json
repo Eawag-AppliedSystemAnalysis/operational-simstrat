@@ -5099,12 +5099,24 @@
             "model": false,
             "days": 5
         },
-        "a_seiche": 0.002,
-        "f_wind": 1.0,
-        "p_lw": 1.0,
-        "snow_temp": 2.0,
-        "p_absorb": 1.0,
-        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen"
+        "a_seiche": 0.0093873313,
+        "f_wind": 1.07023214,
+        "p_lw": 0.930850516,
+        "snow_temp": 0.5,
+        "p_absorb": 1.2474803,
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
+        "performance": {
+            "rmse": {
+                "overall": 0.7707112944590727,
+                "surface": 0.8946258473457661,
+                "bottom": 0.35802625359164597
+            },
+            "temperature": {
+                "times": 46,
+                "depths": 9,
+                "total": 354
+            }
+        }
     },
     {
         "key": "wolfgangsee",
@@ -5181,22 +5193,22 @@
             "model": false,
             "days": 5
         },
-        "a_seiche": 0.00021862949,
-        "f_wind": 0.278045079,
-        "p_lw": 0.858833936,
-        "snow_temp": 1.76986783,
+        "a_seiche": 0.00014738697,
+        "f_wind": 0.279957907,
+        "p_lw": 0.858097672,
+        "snow_temp": 1.76996629,
         "p_absorb": 1.5,
         "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
         "performance": {
             "rmse": {
-                "overall": 1.1978578332943064,
-                "surface": 1.305965592100343,
-                "bottom": 0.9684417982318297
+                "overall": 1.4240717346163898,
+                "surface": 1.2556964285473884,
+                "bottom": 1.5978300641807939
             },
             "temperature": {
                 "times": 45,
                 "depths": 6,
-                "total": 181
+                "total": 225
             }
         }
     },
@@ -5275,22 +5287,22 @@
             "model": false,
             "days": 5
         },
-        "a_seiche": 0.0015682856,
-        "f_wind": 0.840810509,
-        "p_lw": 0.921734681,
-        "snow_temp": 1.98737897,
-        "p_absorb": 1.25162153,
+        "a_seiche": 0.0033875148,
+        "f_wind": 0.736564121,
+        "p_lw": 0.928923504,
+        "snow_temp": 0.5,
+        "p_absorb": 1.19817909,
         "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
         "performance": {
             "rmse": {
-                "overall": 1.0104620785957283,
-                "surface": 1.1553709170087176,
-                "bottom": 0.5630269738949754
+                "overall": 0.9427356757960338,
+                "surface": 1.1948347125793657,
+                "bottom": 0.5398936779232912
             },
             "temperature": {
-                "times": 51,
+                "times": 52,
                 "depths": 8,
-                "total": 250
+                "total": 344
             }
         }
     },
@@ -5369,22 +5381,22 @@
             "model": false,
             "days": 5
         },
-        "a_seiche": 0.0031574579,
-        "f_wind": 0.641690814,
-        "p_lw": 0.89307787,
-        "snow_temp": 1.91676188,
+        "a_seiche": 0.0023383489,
+        "f_wind": 0.669037629,
+        "p_lw": 0.911293396,
+        "snow_temp": 1.70999969,
         "p_absorb": 1.5,
         "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
         "performance": {
             "rmse": {
-                "overall": 1.0988331119405692,
-                "surface": 1.4082927515257615,
-                "bottom": 0.5894692669399031
+                "overall": 0.9958218794485393,
+                "surface": 1.3758490737296583,
+                "bottom": 0.6114876011656413
             },
             "temperature": {
-                "times": 57,
+                "times": 58,
                 "depths": 8,
-                "total": 233
+                "total": 380
             }
         }
     },
@@ -5463,12 +5475,24 @@
             "model": false,
             "days": 5
         },
-        "a_seiche": 0.002,
-        "f_wind": 1.0,
-        "p_lw": 1.0,
-        "snow_temp": 2.0,
-        "p_absorb": 1.0,
-        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen"
+        "a_seiche": 0.0053694954,
+        "f_wind": 0.605156485,
+        "p_lw": 0.894696258,
+        "snow_temp": 2.07359148,
+        "p_absorb": 1.5,
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
+        "performance": {
+            "rmse": {
+                "overall": 1.214188245917559,
+                "surface": 1.6304920074752947,
+                "bottom": 0.9076339759427885
+            },
+            "temperature": {
+                "times": 49,
+                "depths": 8,
+                "total": 312
+            }
+        }
     },
     {
         "key": "worthersee",
@@ -5553,12 +5577,24 @@
             "model": false,
             "days": 5
         },
-        "a_seiche": 0.002,
-        "f_wind": 1.0,
-        "p_lw": 1.0,
-        "snow_temp": 2.0,
-        "p_absorb": 1.0,
-        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen"
+        "a_seiche": 0.0045794907,
+        "f_wind": 0.507507689,
+        "p_lw": 0.847652346,
+        "snow_temp": 0.5,
+        "p_absorb": 1.20516033,
+        "calibration_source": "Gew\u00e4sserzustands\u00fcberwachung in \u00d6sterreich gem\u00e4\u00df Wasserrechtsgesetz, BGBl. I Nr. 123/06 idgFBMLUK, Abteilung I/2, Nationale und internationale Wasserwirtschaft und \u00c4mter der Landesregierungen",
+        "performance": {
+            "rmse": {
+                "overall": 0.8489952870672285,
+                "surface": 0.9524067879179207,
+                "bottom": 0.3062488506502353
+            },
+            "temperature": {
+                "times": 61,
+                "depths": 9,
+                "total": 465
+            }
+        }
     },
     {
         "key": "annecy",
