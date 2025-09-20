@@ -6753,4 +6753,51 @@
             }
         }
     }
+    {
+        "key": "arendsee",
+        "name": "Arendsee",
+        "elevation": 23,
+        "surface_area": 5.11,
+        "type": "Natural",
+        "volume": "NA",
+        "max_depth": 48,
+        "average_depth": 28,
+        "residence_time": 22000,
+        "mixing_regime": "Monomictic",
+        "geothermal_flux": 0.1,
+        "latitude": 52.889,
+        "longitude": 11.474,
+        "trophic_state": "Eutrophic",
+        "datalakes_bathymetry": true,
+        "datalakes_id": 242,
+        "forcing": [
+            {
+                "id": "4642",
+                "type": "dwd_meteostation"
+            },
+        ],
+        "forcing_forecast": {
+            "source": "VisualCrossing",
+            "model": false,
+            "days": 5
+        },
+        "a_seiche": 0.0155741,
+        "f_wind": 0.916449851,
+        "p_lw": 0.938456088,
+        "snow_temp": 1.08921621,
+        "p_absorb": 0.795098257,
+        "calibration_source": "IGB Berlin",
+        "performance": {
+            "rmse": {
+                "overall": 1.015659483390684,
+                "surface": 1.2658905560908496,
+                "bottom": 0.7046065364797576
+            },
+            "temperature": {
+                "times": 148,
+                "depths": 28,
+                "total": 1956
+            }
+        }
+    }
 ]
