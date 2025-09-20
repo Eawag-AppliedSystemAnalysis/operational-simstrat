@@ -1145,10 +1145,11 @@
                 "type": "bafu_hydrostation",
                 "Q": {
                     "id": 2447,
-                    "parameter": "AbflussAFFRA"
+                    "parameter": "AbflussAFFRA",
+                    "reverse": true
                 },
                 "T": {
-                    "id": 2034,
+                    "id": 2447,
                     "parameter": "Wassertemperatur"
                 }
             },
@@ -1218,7 +1219,7 @@
                     "parameter": "AbflussAFFRA"
                 },
                 "T": {
-                    "id": 2034,
+                    "id": 2447,
                     "parameter": "Wassertemperatur"
                 }
             },
@@ -1226,7 +1227,8 @@
                 "type": "bafu_hydrostation",
                 "Q": {
                     "id": 2446,
-                    "parameter": "AbflussAFFRA"
+                    "parameter": "AbflussAFFRA",
+                    "reverse": true
                 },
                 "T": {
                     "id": 2034,
