@@ -149,6 +149,7 @@ def download_bafu_hydrodata(inflow, start_date, end_date, time, salinity, api):
                 df = pd.merge(df_t, df, on='time', how='left')
                 values = np.array(df["values"].values)
                 if "reverse" in inflow and inflow["reverse"] == True:
+                    print("Reversing flow direction")
                     values = values * -1
             except Exception as e:
                 print("WARNING: Failed to access url")
