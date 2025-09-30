@@ -1150,7 +1150,7 @@
                 },
                 "T": {
                     "id": 2447,
-                    "parameter": "Wassertemperatur"
+                    "parameter": "Wassertemperatur1"
                 }
             },
             {
@@ -1220,7 +1220,7 @@
                 },
                 "T": {
                     "id": 2447,
-                    "parameter": "Wassertemperatur"
+                    "parameter": "Wassertemperatur1"
                 }
             },
             {
@@ -1232,7 +1232,7 @@
                 },
                 "T": {
                     "id": 2447,
-                    "parameter": "Wassertemperatur"
+                    "parameter": "Wassertemperatur1"
                 }
             },
             {
