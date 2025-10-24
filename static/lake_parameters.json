@@ -6752,7 +6752,7 @@
                 "total": 1956
             }
         }
-    }
+    },
     {
         "key": "arendsee",
         "name": "Arendsee",
@@ -6769,35 +6769,22 @@
         "longitude": 11.474,
         "trophic_state": "Eutrophic",
         "datalakes_bathymetry": true,
-        "datalakes_id": 242,
+        "datalakes_id": 245,
         "forcing": [
             {
                 "id": "4642",
                 "type": "dwd_meteostation"
             },
+            {
+                "id": "591",
+                "type": "dwd_meteostation"
+            }
         ],
         "forcing_forecast": {
             "source": "VisualCrossing",
             "model": false,
             "days": 5
         },
-        "a_seiche": 0.0155741,
-        "f_wind": 0.916449851,
-        "p_lw": 0.938456088,
-        "snow_temp": 1.08921621,
-        "p_absorb": 0.795098257,
-        "calibration_source": "IGB Berlin",
-        "performance": {
-            "rmse": {
-                "overall": 1.015659483390684,
-                "surface": 1.2658905560908496,
-                "bottom": 0.7046065364797576
-            },
-            "temperature": {
-                "times": 148,
-                "depths": 28,
-                "total": 1956
-            }
-        }
+        "calibration_source": "IGB Berlin"
     }
 ]
