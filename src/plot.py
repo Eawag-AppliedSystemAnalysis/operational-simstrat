@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 def plot_absorption(lake):
     file_path = os.path.join("..", "runs", lake, "Absorption.dat")
-    df = pd.read_csv(file_path, skiprows=3, delim_whitespace=True, header=None)
+    df = pd.read_csv(file_path, skiprows=3, sep='\s+', header=None)
     df.columns = ["time", "data"]
     df['time'] = pd.to_datetime(df['time'], origin='19810101', unit='D')
     plt.plot(df['time'], df['data'])
@@ -22,7 +22,7 @@ def plot_forcing(lake):
     file_path = os.path.join("..", "runs", lake, "Forcing.dat")
     with open(file_path, 'r') as file:
         columns = [l.strip() + "]" for l in file.readline().strip().split("]")][:-1]
-    df = pd.read_csv(file_path, skiprows=1, delim_whitespace=True, header=None)
+    df = pd.read_csv(file_path, skiprows=1, sep='\s+', header=None)
     df.columns = columns
     df['time'] = pd.to_datetime(df['Time [d]'], origin='19810101', unit='D')
     variable_columns = df.columns[1:-1]
@@ -54,7 +54,7 @@ def plot_inflows(lake):
                     plt.show()
                     return
                 deep_inflows, surface_inflows = [int(d.strip()) for d in lines[1].strip().split(" ") if d != ""]
-            df = pd.read_csv(file_path, skiprows=2, delim_whitespace=True, header=None)
+            df = pd.read_csv(file_path, skiprows=2, sep='\s+', header=None)
             df.columns = ["time"] + [str(c) for c in list(range(len(df.columns) - 1))]
             depths = df.iloc[0]
             df = df.iloc[1:]

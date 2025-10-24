@@ -1145,11 +1145,12 @@
                 "type": "bafu_hydrostation",
                 "Q": {
                     "id": 2447,
-                    "parameter": "AbflussAFFRA"
+                    "parameter": "AbflussAFFRA",
+                    "reverse": true
                 },
                 "T": {
-                    "id": 2034,
-                    "parameter": "Wassertemperatur"
+                    "id": 2447,
+                    "parameter": "Wassertemperatur1"
                 }
             },
             {
@@ -1166,19 +1167,20 @@
         ],
         "performance": {
             "rmse": {
-                "overall": 0.8277842051519582,
-                "surface": 0.910162766064188,
-                "bottom": 0.4375181455284645
+                "overall": 0.7975842836829168,
+                "surface": 0.9052150215934069,
+                "bottom": 0.40439389499310235
             },
             "temperature": {
-                "times": 251,
+                "times": 267,
                 "depths": 15,
-                "total": 2976
+                "total": 3744
+
             }
         },
-        "a_seiche": 0.0065766571,
-        "f_wind": 0.891050956,
-        "p_lw": 0.942459913,
+        "a_seiche": 0.0063651671,
+        "f_wind": 0.890779312,
+        "p_lw": 0.945975013,
         "snow_temp": 2.0
     },
     {
@@ -1218,19 +1220,20 @@
                     "parameter": "AbflussAFFRA"
                 },
                 "T": {
-                    "id": 2034,
-                    "parameter": "Wassertemperatur"
+                    "id": 2447,
+                    "parameter": "Wassertemperatur1"
                 }
             },
             {
                 "type": "bafu_hydrostation",
                 "Q": {
                     "id": 2446,
-                    "parameter": "AbflussAFFRA"
+                    "parameter": "AbflussAFFRA",
+                    "reverse": true
                 },
                 "T": {
-                    "id": 2034,
-                    "parameter": "Wassertemperatur"
+                    "id": 2447,
+                    "parameter": "Wassertemperatur1"
                 }
             },
             {
@@ -1280,19 +1283,19 @@
         ],
         "performance": {
             "rmse": {
-                "overall": 0.7606242015373991,
-                "surface": 0.954124043914873,
-                "bottom": 0.8510233559119822
+                "overall": 0.6823728127799826,
+                "surface": 0.9211831406314875,
+                "bottom": 0.4757868611760518
             },
             "temperature": {
-                "times": 449,
+                "times": 466,
                 "depths": 34,
-                "total": 6250
+                "total": 9730
             }
         },
-        "a_seiche": 0.012514157,
-        "f_wind": 1.1200894,
-        "p_lw": 0.926590399,
+        "a_seiche": 0.013380363,
+        "f_wind": 1.10335425,
+        "p_lw": 0.926595227,
         "snow_temp": 2.0
     },
     {
@@ -6785,6 +6788,23 @@
             "model": false,
             "days": 5
         },
-        "calibration_source": "IGB Berlin"
+        "a_seiche": 0.0020153481,
+        "f_wind": 0.884092675,
+        "p_lw": 0.962025986,
+        "snow_temp": 1.10381519,
+        "p_absorb": 1.5,
+        "calibration_source": "IGB Berlin",
+        "performance": {
+            "rmse": {
+                "overall": 0.679609203593878,
+                "surface": 1.1488650901358253,
+                "bottom": 0.3959397981836239
+            },
+            "temperature": {
+                "times": 11208,
+                "depths": 9,
+                "total": 100872
+            }
+        }
     }
 ]

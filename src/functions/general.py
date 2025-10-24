@@ -205,12 +205,14 @@ def clear_sky_solar_radiation(time, air_pressure, vapour_pressure, lat, lon):
         np.pi / 12 * (hour_of_day - solar_noon))  # Cosine of the solar zenith angle (Wikipedia)
     cos_zenith[cos_zenith < 0] = 0
     m = 35 * cos_zenith * (1244 * cos_zenith ** 2 + 1) ** -0.5  # Air mass thickness coefficient
-    fG = interpolate.interp2d([-10, 81, 173, 264, 355], [5, 15, 25, 35, 45, 55, 65, 75, 85],
-                              [[3.37, 2.85, 2.8, 2.64, 3.37], [2.99, 3.02, 2.7, 2.93, 2.99], [3.6, 3, 2.98, 2.93, 3.6],
-                               [3.04, 3.11, 2.92, 2.94, 3.04], [2.7, 2.95, 2.77, 2.71, 2.7],
-                               [2.52, 3.07, 2.67, 2.93, 2.52], [1.76, 2.69, 2.61, 2.61, 1.76],
-                               [1.6, 1.67, 2.24, 2.63, 1.6], [1.11, 1.44, 1.94, 2.02, 1.11]])
-    G = np.array([fG(lat, d)[0] for d in doy])  # Empirical constant
+    x = [-10, 81, 173, 264, 355]
+    y = [5, 15, 25, 35, 45, 55, 65, 75, 85]
+    z = [[3.37, 2.85, 2.8, 2.64, 3.37], [2.99, 3.02, 2.7, 2.93, 2.99], [3.6, 3, 2.98, 2.93, 3.6],
+         [3.04, 3.11, 2.92, 2.94, 3.04], [2.7, 2.95, 2.77, 2.71, 2.7],
+         [2.52, 3.07, 2.67, 2.93, 2.52], [1.76, 2.69, 2.61, 2.61, 1.76],
+         [1.6, 1.67, 2.24, 2.63, 1.6], [1.11, 1.44, 1.94, 2.02, 1.11]]
+    fG = interpolate.RegularGridInterpolator((y, x), z, bounds_error=False, fill_value=None)
+    G = fG(np.column_stack([np.full_like(doy, lat), doy])) # Empirical constant
     Td = (243.5 * np.log(vapour_pressure / 6.112)) / (
                 17.67 - np.log(vapour_pressure / 6.112))  # Dew point temperature [°C]
     pw = np.exp(0.1133 - np.log(G + 1) + 0.0393 * (1.8 * Td + 32))  # Precipitable water
