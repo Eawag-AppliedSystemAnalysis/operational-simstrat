@@ -6785,6 +6785,23 @@
             "model": false,
             "days": 5
         },
-        "calibration_source": "IGB Berlin"
+        "a_seiche": 0.0020153481,
+        "f_wind": 0.884092675,
+        "p_lw": 0.962025986,
+        "snow_temp": 1.10381519,
+        "p_absorb": 1.5,
+        "calibration_source": "IGB Berlin",
+        "performance": {
+            "rmse": {
+                "overall": 0.679609203593878,
+                "surface": 1.1488650901358253,
+                "bottom": 0.3959397981836239
+            },
+            "temperature": {
+                "times": 11208,
+                "depths": 9,
+                "total": 100872
+            }
+        }
     }
 ]
