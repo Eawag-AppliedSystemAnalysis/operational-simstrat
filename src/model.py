@@ -16,7 +16,7 @@ from functions.aed2 import create_aed_configuration_file, compute_oxygen_inflows
 from functions.inflow import collect_inflow_data, interpolate_inflow_data, quality_assurance_inflow_data, \
     fill_inflow_data, merge_surface_inflows
 from functions.forcing import metadata_from_forcing, download_forcing_data, interpolate_forcing_data, fill_forcing_data, \
-    quality_assurance_forcing_data
+    quality_assurance_forcing_data, cloud_from_solar
 from functions.par import update_par_file, overwrite_par_file_dates
 from functions.observations import (initial_conditions_from_observations, default_initial_conditions,
                                     absorption_from_observations, default_absorption)
@@ -77,7 +77,7 @@ class Simstrat(object):
                   "fill": "mean", "min": -20, "max": 20},
             "Tair": {"unit": "°C", "description": "Air temperature adjusted to lake altitude", "max_interpolate_gap": 2,
                      "fill": "doy", "min": -42, "max": 42},
-            "sol": {"unit": "W/m2", "description": "Solar irradiance", "max_interpolate_gap": 0.125, "fill": "doy",
+            "sol": {"unit": "W/m2", "description": "Solar irradiance", "max_interpolate_gap": 0.125, "fill": "sol",
                     "negative_to_zero": True, "max": 1200},
             "vap": {"unit": "mbar", "description": "Vapor pressure", "max_interpolate_gap": 2, "fill": "doy", "min": 1,
                     "max": 70},
@@ -389,12 +389,21 @@ class Simstrat(object):
                                              self.args["data_api"],
                                              self.args["visualcrossing_key"],
                                              self.log)
+        self.log.info("Running quality assurance on forcing data", indent=1)
         forcing_data = quality_assurance_forcing_data(forcing_data, self.log)
         self.log.info("Interpolating small data gaps", indent=1)
         forcing_data = interpolate_forcing_data(forcing_data)
         self.log.info("Filling large data gaps", indent=1)
         forcing_data = fill_forcing_data(forcing_data, self.simulation_dir, self.snapshot,
                                          self.parameters["reference_date"], self.log)
+        if "data" not in forcing_data["cloud"]:
+            self.log.info("Calculating cloud cover from solar radiation", indent=1)
+            forcing_data["cloud"]["data"] = cloud_from_solar(forcing_data["Time"]["data"], forcing_data["vap"]["data"],
+                                                             forcing_data["sol"]["data"], self.parameters["elevation"],
+                                                             self.parameters["latitude"], self.parameters["longitude"],
+                                                             self.parameters["reference_date"])
+        self.log.info("Running quality assurance again after gap filling", indent=1)
+        forcing_data = quality_assurance_forcing_data(forcing_data, self.log)
         self.log.info("Writing forcing data.", indent=1)
         write_forcing_data(forcing_data, self.simulation_dir, self.args["merge_inputs"], self.log)
         self.log.end_stage()
