@@ -2754,7 +2754,7 @@
         "performance": {
             "rmse": {
                 "overall": 2.1670478075932724,
-                "surface": 14.269691657495617,
+                "surface": 1.2742699680752354,
                 "bottom": 0.3474
             },
             "temperature": {
