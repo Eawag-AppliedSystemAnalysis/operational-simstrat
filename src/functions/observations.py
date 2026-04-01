@@ -12,6 +12,18 @@ def initial_conditions_from_observations(key, start_date, salinity=0.15):
     return False
 
 
+def custom_initial_conditions(depth, temperature, max_depth, salinity=0.15):
+    depth = np.array(depth, dtype=float)
+    temperature = np.array(temperature, dtype=float)
+    mask = depth <= max_depth
+    d, t = depth[mask], temperature[mask]
+    if len(d) == 0 or d[-1] < max_depth:
+        t_bottom = np.interp(max_depth, depth, temperature)
+        d = np.append(d, max_depth)
+        t = np.append(t, t_bottom)
+    return {"depth": d, "temperature": t, "salinity": np.full(len(d), salinity)}
+
+
 def default_initial_conditions(doy, elevation, max_depth, salinity=0.15):
     depths = np.array([0, 10, 20, 30, 40, 50, 100, 150, 200, 300])
     depth_arr = np.append(depths[depths < max_depth], max_depth)

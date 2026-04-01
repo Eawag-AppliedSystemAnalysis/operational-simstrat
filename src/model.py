@@ -19,7 +19,7 @@ from functions.forcing import metadata_from_forcing, download_forcing_data, inte
     quality_assurance_forcing_data
 from functions.par import update_par_file, overwrite_par_file_dates
 from functions.observations import (initial_conditions_from_observations, default_initial_conditions,
-                                    absorption_from_observations, default_absorption)
+                                    custom_initial_conditions, absorption_from_observations, default_absorption)
 from functions.general import run_subprocess, upload_files, serializer
 
 
@@ -359,19 +359,37 @@ class Simstrat(object):
 
     def create_initial_conditions_file(self):
         self.log.begin_stage("create_initial_conditions_file")
-        self.log.info("Attempting to generate initial conditions from observation data", indent=1)
-        profile = initial_conditions_from_observations(self.key, self.start_date, salinity=self.parameters["salinity"])
-        if not profile:
-            self.log.info("Failed to generate initial conditions from observation data, generating default profile",
-                          indent=1)
-            doy = self.start_date.timetuple().tm_yday
-            profile = default_initial_conditions(doy, self.parameters["elevation"], self.parameters["max_depth"],
-                                                 salinity=self.parameters["salinity"])
+        custom = {}
+        init_dir = self.args.get("initial_conditions_dir")
+        if init_dir:
+            path = os.path.join(init_dir, "{}.json".format(self.key))
+            if os.path.exists(path):
+                with open(path) as f:
+                    custom = json.load(f)
+                self.log.info("Loaded custom initial conditions from {}".format(path), indent=1)
+        if "temperature" in custom:
+            self.log.info("Using custom temperature profile", indent=1)
+            profile = custom_initial_conditions(custom["temperature"]["depth"], custom["temperature"]["temperature"],
+                                                self.parameters["max_depth"], salinity=self.parameters["salinity"])
+        else:
+            self.log.info("Attempting to generate initial conditions from observation data", indent=1)
+            profile = initial_conditions_from_observations(self.key, self.start_date, salinity=self.parameters["salinity"])
+            if not profile:
+                self.log.info("Failed to generate initial conditions from observation data, generating default profile",
+                              indent=1)
+                doy = self.start_date.timetuple().tm_yday
+                profile = default_initial_conditions(doy, self.parameters["elevation"], self.parameters["max_depth"],
+                                                     salinity=self.parameters["salinity"])
         write_initial_conditions(profile["depth"], profile["temperature"], profile["salinity"], self.simulation_dir)
         if self.args["couple_aed2"]:
-            depths, oxygen = compute_initial_oxygen(profile["temperature"][0], self.parameters["max_depth"],
-                                                    self.parameters["elevation"])
-            write_initial_oxygen(depths, oxygen, self.simulation_dir)
+            if "oxygen" in custom:
+                self.log.info("Using custom oxygen profile", indent=1)
+                oxygen_mmol = np.array(custom["oxygen"]["oxygen"]) / 32 * 1000
+                write_initial_oxygen(custom["oxygen"]["depth"], oxygen_mmol, self.simulation_dir)
+            else:
+                depths, oxygen = compute_initial_oxygen(profile["temperature"][0], self.parameters["max_depth"],
+                                                        self.parameters["elevation"])
+                write_initial_oxygen(depths, oxygen, self.simulation_dir)
         self.log.end_stage()
 
     def create_forcing_file(self):
@@ -447,7 +465,7 @@ class Simstrat(object):
     def create_aed2_file(self):
         self.log.begin_stage("create_aed2_file")
         self.log.info("Create AED2 configuration file.", indent=1)
-        create_aed_configuration_file(self.simulation_dir, self.parameters["sediment_oxygen_uptake_rate"])
+        create_aed_configuration_file(self.simulation_dir, self.parameters["sediment_oxygen_uptake_rate"], self.args["repo_dir"])
         self.log.end_stage()
 
     def create_par_file(self):
@@ -508,7 +526,7 @@ class Simstrat(object):
         json_data = json.dumps(inputs, default=serializer, indent=2)
         with open(input_file, 'w') as file:
             file.write(json_data)
-        script = os.path.abspath(os.path.join(self.args["simulation_dir"], "..", "src", "functions", "postprocess.py"))
+        script = os.path.abspath(os.path.join(self.args["repo_dir"], "src", "functions", "postprocess.py"))
         command = "python {} {}".format(script, self.simulation_dir)
         self.log.info("Running: {}".format(command), indent=1)
         run_subprocess(command)

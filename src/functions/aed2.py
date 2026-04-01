@@ -3,8 +3,10 @@ import numpy as np
 from .general import oxygen_saturation
 
 
-def create_aed_configuration_file(simulation_dir, sediment_oxygen_uptake_rate):
-    static_file = os.path.join(simulation_dir, "../..", "static", "aed2.nml")
+def create_aed_configuration_file(simulation_dir, sediment_oxygen_uptake_rate, repo_dir=None):
+    if repo_dir is None:
+        repo_dir = os.path.abspath(os.path.join(simulation_dir, "../.."))
+    static_file = os.path.join(repo_dir, "static", "aed2.nml")
     output_file = os.path.join(simulation_dir, "aed2.nml")
     with open(static_file, 'r') as file:
         lines = file.readlines()
