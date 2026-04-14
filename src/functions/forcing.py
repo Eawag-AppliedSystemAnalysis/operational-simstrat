@@ -115,7 +115,7 @@ def meteodata_from_meteostations(start, end, forcing, elevation, latitude, longi
                                 df = df[["time", "values"]]
                                 df = df.dropna()
                                 df = df.sort_values(by='time')
-                                df.reset_index(inplace=True)
+                                df = df.reset_index()
                             except Exception as e:
                                 print("ERROR", e)
                     gaps = detect_gaps(df["time"], start, end)
@@ -160,7 +160,7 @@ def meteodata_from_meteostations(start, end, forcing, elevation, latitude, longi
 def meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, longitude, reference_date, output, api, log):
     parameters = ["Time", "u", "v", "Tair", "sol", "vap", "cloud", "rain"]
     df_c = pd.DataFrame({key: output[key]["data"] for key in output.keys()})
-    df_c.set_index('Time', inplace=True)
+    df_c = df_c.set_index('Time')
     if forcing_forecast["model"].lower() == "cosmo":
         log.info("Extending forcing files using MeteoSwiss COSMO forecast.", indent=1)
         endpoint = api + "/meteoswiss/cosmo/point/forecast/VNXZ32/{}/{}/{}?variables=T_2M_MEAN&variables=U_MEAN&variables=V_MEAN&variables=GLOB_MEAN&variables=RELHUM_2M_MEAN&variables=CLCT_MEAN&variables=TOT_PREC_MEAN"
@@ -221,9 +221,9 @@ def meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, lo
         df = df[parameters]
     else:
         raise ValueError("MeteoSwiss forecast not implemented for model: {}".format(forcing_forecast["model"]))
-    df.set_index('Time', inplace=True)
+    df = df.set_index('Time')
     df_o = df_c.fillna(df)
-    df_o.reset_index(inplace=True)
+    df_o = df_o.reset_index()
     for key in df_o.columns:
         output[key]["data"] = df_o[key].values
     return output
@@ -232,7 +232,7 @@ def meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, lo
 def meteodata_forecast_from_visualcrossing(forcing_forecast, elevation, latitude, longitude, reference_date, output, key, log):
     parameters = ["Time", "u", "v", "Tair", "sol", "vap", "cloud", "rain"]
     df_c = pd.DataFrame({key: output[key]["data"] for key in output.keys()})
-    df_c.set_index('Time', inplace=True)
+    df_c = df_c.set_index('Time')
     start = (datetime.now() - timedelta(days=5)).strftime("%Y-%m-%d")
     end = (datetime.now() + timedelta(days=forcing_forecast["days"])).strftime("%Y-%m-%d")
     log.info("Extending forcing files using Visual Crossing forecast.", indent=1)
@@ -254,9 +254,9 @@ def meteodata_forecast_from_visualcrossing(forcing_forecast, elevation, latitude
     df["u"] = -df["windspeed"] * np.sin(df["winddir"] * np.pi / 180)
     df["v"] = -df["windspeed"] * np.cos(df["winddir"] * np.pi / 180)
     df = df[parameters]
-    df.set_index('Time', inplace=True)
+    df = df.set_index('Time')
     df_o = df_c.fillna(df)
-    df_o.reset_index(inplace=True)
+    df_o = df_o.reset_index()
     for key in df_o.columns:
         output[key]["data"] = df_o[key].values
     return output
@@ -304,7 +304,7 @@ def fill_forcing_data(forcing_data, simulation_dir, snapshot, reference_date, lo
                                  "Please remove the snapshot and run the full simulation.")
             columns = ["Time", "u", "v", "Tair", "sol", "vap", "cloud", "rain"]
             time_min = forcing_data["Time"]["data"][0]
-            df = pd.read_csv(file_path, skiprows=1, delim_whitespace=True, header=None)
+            df = pd.read_csv(file_path, skiprows=1, sep=r'\s+', header=None)
             df.columns = columns
             df = df[df['Time'] < time_min]
             for key in forcing_data.keys():

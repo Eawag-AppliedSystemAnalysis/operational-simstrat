@@ -81,7 +81,7 @@ def fill_inflow_data(inflow_data, inflow_parameters, simulation_dir, snapshot, r
                     raise ValueError("Unable to locate {}in.dat from previous run, unable to fill nan values. "
                                      "Please remove the snapshot and run the full simulation.".format(key))
                 time_min = inflow_data["Time"][0]
-                df = pd.read_csv(file_path, skiprows=3, delim_whitespace=True, header=None)
+                df = pd.read_csv(file_path, skiprows=3, sep=r'\s+', header=None)
                 df.columns = ["Time"] + [str(c) for c in list(range(len(df.columns) - 1))]
                 df = df[df['Time'] < time_min]
                 inflow_data[key + "_Time_extended"] = np.concatenate((df["Time"].values, inflow_data["Time"]))
@@ -185,9 +185,9 @@ def parse_lake_outflow(inflow, time, simulation_dir, reference_date):
             return []
         deep_inflows, surface_inflows = [int(d.strip()) for d in lines[1].strip().split(" ") if d != ""]
         depths = [float(d.strip()) for d in lines[2].strip().split(" ") if d != ""]
-    df = pd.read_csv(file_path, skiprows=3, delim_whitespace=True, header=None)
+    df = pd.read_csv(file_path, skiprows=3, sep=r'\s+', header=None)
     df.columns = ["time"] + [str(c) for c in list(range(len(df.columns) - 1))]
-    df['time'] = pd.to_datetime(df['time'], origin=reference_date.strftime("%Y%m%d"), unit='D', utc=True).dt.round('H')
+    df['time'] = pd.to_datetime(df['time'], origin=pd.Timestamp(reference_date), unit='D', utc=True).dt.round('H')
     df["values"] = df.iloc[:, 1:deep_inflows + 1].sum(axis=1)
     if surface_inflows > 0:
         df["values"] = df["values"] + df.iloc[:, deep_inflows + 2] * abs(depths[deep_inflows + 2])
@@ -204,7 +204,7 @@ def parse_lake_outflow(inflow, time, simulation_dir, reference_date):
     for key in ["T", "S"]:
         file_path = os.path.join(os.path.join(simulation_dir, "..", inflow["id"], "Results", "{}_out.dat".format(key)))
         df = pd.read_csv(file_path)
-        df["time"] = pd.to_datetime(df['Datetime'], origin='19810101', unit='D', utc=True).dt.round('H')
+        df["time"] = pd.to_datetime(df['Datetime'], origin=pd.Timestamp('1981-01-01'), unit='D', utc=True).dt.round('H')
         df = df.drop_duplicates(subset=['time'])
         df = pd.merge(df_t, df, on='time', how='left')
         values = np.array(df.iloc[:, -1].values)

@@ -10,7 +10,7 @@ def plot_absorption(lake):
     file_path = os.path.join("..", "runs", lake, "Absorption.dat")
     df = pd.read_csv(file_path, skiprows=3, sep='\s+', header=None)
     df.columns = ["time", "data"]
-    df['time'] = pd.to_datetime(df['time'], origin='19810101', unit='D')
+    df['time'] = pd.to_datetime(df['time'], origin=pd.Timestamp('1981-01-01'), unit='D')
     plt.plot(df['time'], df['data'])
     plt.title("Absorption: {}".format(lake))
     plt.ylabel("m")
@@ -24,7 +24,7 @@ def plot_forcing(lake):
         columns = [l.strip() + "]" for l in file.readline().strip().split("]")][:-1]
     df = pd.read_csv(file_path, skiprows=1, sep='\s+', header=None)
     df.columns = columns
-    df['time'] = pd.to_datetime(df['Time [d]'], origin='19810101', unit='D')
+    df['time'] = pd.to_datetime(df['Time [d]'], origin=pd.Timestamp('1981-01-01'), unit='D')
     variable_columns = df.columns[1:-1]
     num_subplots = len(variable_columns)
     num_rows = num_subplots // 2 + num_subplots % 2
@@ -58,7 +58,7 @@ def plot_inflows(lake):
             df.columns = ["time"] + [str(c) for c in list(range(len(df.columns) - 1))]
             depths = df.iloc[0]
             df = df.iloc[1:]
-            df['time'] = pd.to_datetime(df['time'], origin='19810101', unit='D')
+            df['time'] = pd.to_datetime(df['time'], origin=pd.Timestamp('1981-01-01'), unit='D')
             if keys[i] == "Qin":
                 df_q = df
             for d in range(deep_inflows):
@@ -81,8 +81,8 @@ def plot_output(lake, parameter):
     if not os.path.exists(file_path):
         print("Results file {}_out.dat is not available to plot".format(parameter))
     df = pd.read_csv(file_path)
-    df["Datetime"] = pd.to_datetime(df['Datetime'], origin='19810101', unit='D')
-    df.set_index('Datetime', inplace=True)
+    df["Datetime"] = pd.to_datetime(df['Datetime'], origin=pd.Timestamp('1981-01-01'), unit='D')
+    df = df.set_index('Datetime')
     if len(df.columns) > 2:
         fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(15, 5 * 2))
         fig.suptitle('Results for {} {}'.format(parameter, lake), fontsize=16)

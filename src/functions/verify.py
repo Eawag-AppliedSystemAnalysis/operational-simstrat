@@ -52,7 +52,7 @@ def verify_float(value):
 def verify_date(value):
     try:
         return datetime.strptime(value, '%Y%m%d')
-    except:
+    except Exception:
         raise ValueError("A valid key: {} format YYYYMMDD must be provided.".format(value))
 
 

@@ -46,7 +46,7 @@ class Config(object):
             try:
                 with open(arg_file) as f:
                     args = json.load(f)
-            except:
+            except Exception:
                 raise ValueError("Failed to parse {}. Verify it is a valid json file.")
             for key in args.keys():
                 if key in self.default_args:

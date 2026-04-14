@@ -62,7 +62,7 @@ def write_absorption(absorption, file_path, merge_inputs, log):
 
     if os.path.exists(file_path) and merge_inputs:
         time_min = absorption["Time"][0]
-        df = pd.read_csv(file_path, skiprows=3, delim_whitespace=True, header=None)
+        df = pd.read_csv(file_path, skiprows=3, sep=r'\s+', header=None)
         df.columns = ["Time", "Value"]
         df = df[df['Time'] < time_min]
         if len(df) > 0:
@@ -103,7 +103,7 @@ def write_inflows(inflow_mode, simulation_dir, merge_inputs, log, inflow_data=No
         elif inflow_mode == 2:
             if os.path.exists(file_path) and merge_inputs:
                 time_min = inflow_data["Time"][0]
-                df = pd.read_csv(file_path, skiprows=3, delim_whitespace=True, header=None)
+                df = pd.read_csv(file_path, skiprows=3, sep=r'\s+', header=None)
                 df.columns = ["Time"] + [str(c) for c in list(range(len(df.columns) - 1))]
                 df = df[df['Time'] < time_min]
                 if len(df) > 0:
@@ -147,7 +147,7 @@ def write_oxygen_inflows(simulation_dir, merge_inputs, inflow_data=None):
     else:
         if os.path.exists(file_path) and merge_inputs:
             time_min = inflow_data["Time"][0]
-            df = pd.read_csv(file_path, skiprows=3, delim_whitespace=True, header=None)
+            df = pd.read_csv(file_path, skiprows=3, sep=r'\s+', header=None)
             df.columns = ["Time"] + [str(c) for c in list(range(len(df.columns) - 1))]
             df = df[df['Time'] < time_min]
             if len(df) > 0:
@@ -196,7 +196,7 @@ def write_forcing_data(forcing_data, simulation_dir, merge_inputs, log):
 
     if os.path.exists(file_path) and merge_inputs:
         time_min = forcing_data["Time"]["data"][0]
-        df = pd.read_csv(file_path, skiprows=1, delim_whitespace=True, header=None)
+        df = pd.read_csv(file_path, skiprows=1, sep=r'\s+', header=None)
         df.columns = columns
         df = df[df['Time'] < time_min]
         if len(df) > 0:

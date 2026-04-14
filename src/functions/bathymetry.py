@@ -5,7 +5,7 @@ from urllib.request import urlopen
 
 
 def bathymetry_from_file(file_path):
-    df = pd.read_csv(file_path, delim_whitespace=True)
+    df = pd.read_csv(file_path, sep=r'\s+')
     area = np.array(df[df.columns[1]])
     depth = np.array(df[df.columns[0]]) * -1
     return {"area": area, "depth": depth}

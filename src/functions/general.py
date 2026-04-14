@@ -244,8 +244,8 @@ def detect_gaps(arr, start, end, max_allowable_gap=86400):
     large_gap_indices = np.where(gaps > max_allowable_gap)[0]
     result = []
     for index in large_gap_indices:
-        start_date = datetime.utcfromtimestamp(sorted_timestamps[index]).replace(tzinfo=timezone.utc)
-        end_date = datetime.utcfromtimestamp(sorted_timestamps[index + 1]).replace(tzinfo=timezone.utc)
+        start_date = datetime.fromtimestamp(sorted_timestamps[index], tz=timezone.utc)
+        end_date = datetime.fromtimestamp(sorted_timestamps[index + 1], tz=timezone.utc)
         result.append((start_date, end_date))
     return result
 
