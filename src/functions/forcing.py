@@ -225,7 +225,7 @@ def meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, lo
     df_o = df_c.fillna(df)
     df_o = df_o.reset_index()
     for key in df_o.columns:
-        output[key]["data"] = df_o[key].values
+        output[key]["data"] = df_o[key].to_numpy(copy=True)
     return output
 
 
@@ -258,7 +258,7 @@ def meteodata_forecast_from_visualcrossing(forcing_forecast, elevation, latitude
     df_o = df_c.fillna(df)
     df_o = df_o.reset_index()
     for key in df_o.columns:
-        output[key]["data"] = df_o[key].values
+        output[key]["data"] = df_o[key].to_numpy(copy=True)
     return output
 
 
