@@ -187,7 +187,7 @@ def parse_lake_outflow(inflow, time, simulation_dir, reference_date):
         depths = [float(d.strip()) for d in lines[2].strip().split(" ") if d != ""]
     df = pd.read_csv(file_path, skiprows=3, sep=r'\s+', header=None)
     df.columns = ["time"] + [str(c) for c in list(range(len(df.columns) - 1))]
-    df['time'] = pd.to_datetime(df['time'], origin=pd.Timestamp(reference_date), unit='D', utc=True).dt.round('H')
+    df['time'] = pd.to_datetime(df['time'], origin=pd.Timestamp(reference_date), unit='D', utc=True).dt.round('h')
     df["values"] = df.iloc[:, 1:deep_inflows + 1].sum(axis=1)
     if surface_inflows > 0:
         df["values"] = df["values"] + df.iloc[:, deep_inflows + 2] * abs(depths[deep_inflows + 2])
@@ -204,7 +204,7 @@ def parse_lake_outflow(inflow, time, simulation_dir, reference_date):
     for key in ["T", "S"]:
         file_path = os.path.join(os.path.join(simulation_dir, "..", inflow["id"], "Results", "{}_out.dat".format(key)))
         df = pd.read_csv(file_path)
-        df["time"] = pd.to_datetime(df['Datetime'], origin=pd.Timestamp('1981-01-01'), unit='D', utc=True).dt.round('H')
+        df["time"] = pd.to_datetime(df['Datetime'], origin=pd.Timestamp('1981-01-01'), unit='D', utc=True).dt.round('h')
         df = df.drop_duplicates(subset=['time'])
         df = pd.merge(df_t, df, on='time', how='left')
         values = np.array(df.iloc[:, -1].values)
