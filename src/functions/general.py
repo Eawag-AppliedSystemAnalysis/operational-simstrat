@@ -277,6 +277,129 @@ def fill_day_of_year(time, data, time_full, data_full, reference_date):
     return data
 
 
+def fill_solar_radiation(time, data, time_full, data_full, reference_date):
+    df_full = pd.DataFrame({"simstrat_time": time_full, "data": data_full})
+    df_full['time'] = reference_date + pd.to_timedelta(df_full['simstrat_time'], unit='D')
+    df_full["date"] = df_full["time"].dt.normalize()  # Keep as datetime64
+    df_full["doy"] = df_full["time"].dt.dayofyear
+    df_full["hour_decimal"] = (
+            df_full["time"].dt.hour +
+            df_full["time"].dt.minute / 60 +
+            df_full["time"].dt.second / 3600
+    )
+
+    # Calculate daily statistics
+    daily_stats = df_full.groupby("date", group_keys=False).apply(
+        daily_summary
+    ).reset_index(drop=True)
+
+    # Remove days with no valid data
+    daily_stats = daily_stats.dropna(subset=["x_sunrise", "x_sunset", "x_peak", "y_peak"], how='all')
+
+    # Aggregate by day of year
+    doy_stats = (
+        daily_stats.groupby("doy", as_index=False)
+        [["x_sunrise", "x_sunset", "x_peak", "y_peak"]]
+        .mean()
+    )
+
+    # Create lookup dictionary for each day of year
+    lookup = {}
+    for index, row in doy_stats.iterrows():
+        lookup[int(row["doy"])] = SolarRadiationCurve(
+            x_sunrise=row["x_sunrise"],
+            x_peak=row["x_peak"],
+            y_peak=row["y_peak"],
+            x_sunset=row["x_sunset"]
+        )
+
+    df = pd.DataFrame({"simstrat_time": time, "data": data})
+    df['time'] = reference_date + pd.to_timedelta(df['simstrat_time'], unit='D')
+    df["doy"] = df["time"].dt.dayofyear
+    df["hour_decimal"] = (
+            df["time"].dt.hour +
+            df["time"].dt.minute / 60 +
+            df["time"].dt.second / 3600
+    )
+    data = df['data'].copy()
+    missing_mask = data.isna()
+
+    # Group missing values by DOY and fill using curves
+    for doy, curve in lookup.items():
+        doy_mask = missing_mask & (df['doy'] == doy)
+        if doy_mask.any():
+            hours = df.loc[doy_mask, 'hour_decimal'].values
+            data.loc[doy_mask] = curve.sample(hours)
+        else:
+            data.loc[doy_mask] = 0.0
+
+    return data.values
+
+
+class SolarRadiationCurve:
+    """Models solar radiation as a sine-squared curve from sunrise to sunset."""
+
+    def __init__(self, x_sunrise, x_peak, y_peak, x_sunset):
+        self.x_sunrise = x_sunrise
+        self.x_peak = x_peak
+        self.y_peak = y_peak
+        self.x_sunset = x_sunset
+        self.morning_span = x_peak - x_sunrise
+        self.afternoon_span = x_sunset - x_peak
+
+    def sample(self, x):
+        """Sample the curve at given time points (vectorized)."""
+        x = np.atleast_1d(x)
+        y = np.zeros_like(x, dtype=float)
+
+        # Vectorized conditions
+        morning = (x >= self.x_sunrise) & (x <= self.x_peak)
+        afternoon = (x > self.x_peak) & (x <= self.x_sunset)
+
+        # Morning: sunrise to peak
+        if morning.any():
+            theta_morning = (x[morning] - self.x_sunrise) / self.morning_span * (np.pi / 2)
+            y[morning] = self.y_peak * np.sin(theta_morning) ** 2
+
+        # Afternoon: peak to sunset
+        if afternoon.any():
+            theta_afternoon = np.pi / 2 + (x[afternoon] - self.x_peak) / self.afternoon_span * (np.pi / 2)
+            y[afternoon] = self.y_peak * np.sin(theta_afternoon) ** 2
+
+        return y if len(y) > 1 else y[0]
+
+
+def daily_summary(g, threshold=5):
+    """
+    Calculate daily statistics for data > threshold.
+
+    Parameters:
+    -----------
+    g : pd.DataFrame
+        Group of data for a single day
+    threshold : float
+        Minimum radiation threshold (default: 5 W/m²)
+    """
+    above = g[g["data"] > threshold]
+    if above.empty:
+        return pd.Series({
+            "doy": g["doy"].iloc[0],
+            "x_sunrise": np.nan,
+            "x_sunset": np.nan,
+            "x_peak": np.nan,
+            "y_peak": np.nan
+        })
+
+    idx_max = g["data"].idxmax()
+    return pd.Series({
+        "doy": g["doy"].iloc[0],
+        "x_sunrise": above["hour_decimal"].min(),
+        "x_sunset": above["hour_decimal"].max(),
+        "x_peak": g.loc[idx_max, "hour_decimal"],
+        "y_peak": g.loc[idx_max, "data"]
+    })
+
+
 def calculate_mean_wind_direction(wind_direction):
     mean_wind_direction = np.arctan2(np.nanmean(np.sin(np.radians(wind_direction))),
                                      np.nanmean(np.cos(np.radians(wind_direction))))
