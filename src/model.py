@@ -360,7 +360,12 @@ class Simstrat(object):
     def create_initial_conditions_file(self):
         self.log.begin_stage("create_initial_conditions_file")
         self.log.info("Attempting to generate initial conditions from observation data", indent=1)
-        profile = initial_conditions_from_observations(self.key, self.start_date, salinity=self.parameters["salinity"])
+        profile = initial_conditions_from_observations(self.args["observations_dir"],
+                                                       self.key,
+                                                       self.start_date,
+                                                       self.parameters["max_depth"],
+                                                       self.log,
+                                                       salinity=self.parameters["salinity"])
         if not profile:
             self.log.info("Failed to generate initial conditions from observation data, generating default profile",
                           indent=1)

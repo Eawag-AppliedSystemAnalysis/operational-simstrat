@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -7,9 +8,63 @@ from dateutil.relativedelta import relativedelta
 from .general import call_url, datetime_to_simstrat_time
 
 
-def initial_conditions_from_observations(key, start_date, salinity=0.15):
-    print("WARNING NOT YET IMPLEMENTED")
-    return False
+def _closest_profile(csv_path, start_date, log, max_days=32):
+    df = pd.read_csv(csv_path)
+    df.columns = [c.strip().lower() for c in df.columns]
+    if not {"time", "depth", "value"}.issubset(df.columns):
+        return None
+    df["time"] = pd.to_datetime(df["time"], utc=True)
+    df = df.dropna(subset=["time", "depth", "value"])
+    if df.empty:
+        return None
+    start = pd.Timestamp(start_date)
+    if start.tzinfo is None:
+        start = start.tz_localize("UTC")
+    times = df["time"].drop_duplicates().reset_index(drop=True)
+    diffs = (times - start).abs()
+    idx = diffs.idxmin()
+    diff_days = diffs.iloc[idx].total_seconds() / 86400.0
+    name = os.path.basename(csv_path)
+    if diff_days > max_days:
+        log.warning("No profile in {} within {} days of start_date (closest is {:.1f} days away).".format(name, max_days, diff_days))
+        return None
+    log.info("Using {} profile {:.1f} days from start_date.".format(name, diff_days), indent=2)
+    closest = times.iloc[idx]
+    return df[df["time"] == closest].sort_values("depth").reset_index(drop=True)
+
+
+def initial_conditions_from_observations(observations_dir, key, start_date, max_depth, log, salinity=0.15):
+    try:
+        lake_dir = os.path.join(observations_dir, key)
+        temp_path = os.path.join(lake_dir, "temperature.csv")
+        if not os.path.isfile(temp_path):
+            return False
+        t_profile = _closest_profile(temp_path, start_date, log)
+        if t_profile is None or t_profile.empty:
+            return False
+        t_profile["depth"] = t_profile["depth"].abs()
+        t_profile = t_profile.sort_values("depth").reset_index(drop=True)
+        t_profile = t_profile[t_profile["depth"] <= max_depth].reset_index(drop=True)
+        if t_profile.empty:
+            return False
+        if t_profile["depth"].iloc[0] > 0:
+            log.warning("Shallowest temperature observation depth {:.3f} m > 0; snapping to 0.".format(t_profile["depth"].iloc[0]))
+            t_profile.loc[0, "depth"] = 0.0
+        depth_arr = t_profile["depth"].to_numpy()
+        temperature_arr = t_profile["value"].to_numpy()
+
+        salinity_arr = np.full(len(depth_arr), salinity)
+        sal_path = os.path.join(lake_dir, "salinity.csv")
+        if os.path.isfile(sal_path):
+            s_profile = _closest_profile(sal_path, start_date, log)
+            if s_profile is not None and not s_profile.empty:
+                s_profile["depth"] = s_profile["depth"].abs()
+                s_profile = s_profile.sort_values("depth")
+                salinity_arr = np.interp(depth_arr, s_profile["depth"].to_numpy(), s_profile["value"].to_numpy())
+
+        return {"depth": depth_arr, "temperature": temperature_arr, "salinity": salinity_arr}
+    except Exception:
+        return False
 
 
 def default_initial_conditions(doy, elevation, max_depth, salinity=0.15):

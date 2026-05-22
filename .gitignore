@@ -9,3 +9,5 @@ calibration/*
 !calibration/.gitkeep
 notebooks/.ipynb_checkpoints
 notebooks/example.dat
+observations/*
+!observations/.gitkeep
