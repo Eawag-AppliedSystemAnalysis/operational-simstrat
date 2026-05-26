@@ -18,7 +18,9 @@ from functions.inflow import collect_inflow_data, interpolate_inflow_data, quali
 from functions.forcing import metadata_from_forcing, download_forcing_data, interpolate_forcing_data, fill_forcing_data, \
     quality_assurance_forcing_data
 from functions.par import update_par_file, overwrite_par_file_dates
-from functions.observations import (initial_conditions_from_observations, default_initial_conditions,
+from functions.observations import (initial_conditions_from_observations,
+                                    climatology_initial_conditions_from_observations,
+                                    default_initial_conditions,
                                     absorption_from_observations, default_absorption)
 from functions.general import run_subprocess, upload_files, serializer
 
@@ -366,6 +368,25 @@ class Simstrat(object):
                                                        self.parameters["max_depth"],
                                                        self.log,
                                                        salinity=self.parameters["salinity"])
+        if profile and "start_date" in profile and profile["start_date"] != self.start_date:
+            shifted = profile["start_date"]
+            if shifted >= self.end_date or shifted >= self.forcing_end:
+                self.log.warning("Observation profile at {} is at or after end of simulation/forcing window; "
+                                 "ignoring profile and using default initial conditions".format(shifted))
+                profile = False
+            elif not self.snapshot:
+                self.log.info("Shifting model start_date from {} to {} to match observation profile".format(
+                    self.start_date, shifted), indent=1)
+                self.start_date = shifted
+        if not profile:
+            self.log.info("Attempting to generate climatology profile from observation data",
+                          indent=1)
+            profile = climatology_initial_conditions_from_observations(self.args["observations_dir"],
+                                                                       self.key,
+                                                                       self.start_date,
+                                                                       self.parameters["max_depth"],
+                                                                       self.log,
+                                                                       salinity=self.parameters["salinity"])
         if not profile:
             self.log.info("Failed to generate initial conditions from observation data, generating default profile",
                           indent=1)
