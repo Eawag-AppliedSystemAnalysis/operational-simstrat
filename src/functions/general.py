@@ -1,5 +1,6 @@
 import os
 import json
+import time
 import shutil
 import zipfile
 import requests
@@ -8,6 +9,24 @@ import numpy as np
 import pandas as pd
 from scipy import interpolate
 from datetime import datetime, timezone, timedelta
+from urllib.request import urlopen
+from urllib.error import HTTPError, URLError
+
+
+_RETRYABLE_HTTP_CODES = frozenset({408, 429, 500, 502, 503, 504})
+
+
+def urlopen_with_retry(url, *, retries=4, base_delay=1.0, timeout=30):
+    for attempt in range(retries + 1):
+        try:
+            return urlopen(url, timeout=timeout)
+        except HTTPError as e:
+            if e.code not in _RETRYABLE_HTTP_CODES or attempt == retries:
+                raise
+        except URLError:
+            if attempt == retries:
+                raise
+        time.sleep(base_delay * (2 ** attempt))
 
 
 def process_args(input_args):
@@ -117,13 +136,21 @@ def calculate_vapor_pressure_ss(temp_celsius, relative_humidity, air_pressure):
     return e_a
 
 
-def call_url(url):
-    response = requests.get(url)
-    if response.status_code == 200:
-        data = response.json()
-        return data
-    else:
-        raise ValueError(f"Unable to access url {url}. Status code: {response.status_code}. Message: {response.text}")
+def call_url(url, *, retries=4, base_delay=1.0, timeout=30):
+    for attempt in range(retries + 1):
+        try:
+            response = requests.get(url, timeout=timeout)
+        except requests.exceptions.RequestException:
+            if attempt == retries:
+                raise
+        else:
+            if response.status_code == 200:
+                return response.json()
+            if response.status_code not in _RETRYABLE_HTTP_CODES or attempt == retries:
+                raise ValueError(
+                    f"Unable to access url {url}. Status code: {response.status_code}. Message: {response.text}"
+                )
+        time.sleep(base_delay * (2 ** attempt))
 
 
 def upload_files(local_folder, remote_folder, host, username, password, log, port=22):

@@ -1,7 +1,8 @@
 import numpy as np
 import pandas as pd
 from ast import literal_eval
-from urllib.request import urlopen
+
+from functions.general import urlopen_with_retry
 
 
 def bathymetry_from_file(file_path):
@@ -12,6 +13,7 @@ def bathymetry_from_file(file_path):
 
 
 def bathymetry_from_datalakes(lake_id):
-    my_bytes = urlopen('https://api.datalakes-eawag.ch/externaldata/morphology/' + str(lake_id)).read()
+    with urlopen_with_retry('https://api.datalakes-eawag.ch/externaldata/morphology/' + str(lake_id)) as response:
+        my_bytes = response.read()
     data = literal_eval(my_bytes.decode('utf-8'))
     return {"area": list(map(float, data["Area"]["values"])), "depth": list(map(float, data["Depth"]["values"]))}
