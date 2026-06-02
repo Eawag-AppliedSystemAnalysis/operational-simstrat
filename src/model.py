@@ -375,6 +375,7 @@ class Simstrat(object):
                                  "ignoring profile and using default initial conditions".format(shifted))
                 profile = False
             elif not self.snapshot:
+                shifted = shifted.replace(minute=0, second=0, microsecond=0)
                 self.log.info("Shifting model start_date from {} to {} to match observation profile".format(
                     self.start_date, shifted), indent=1)
                 self.start_date = shifted
