@@ -110,8 +110,10 @@ def write_inflows(inflow_mode, simulation_dir, merge_inputs, log, inflow_data=No
                     time = np.concatenate((df["Time"].values, inflow_data["Time"]))
                     for i in range(len(inflow_data["deep_inflows"])):
                         inflow_data["deep_inflows"][i][key] = np.concatenate((df[str(i)].values, inflow_data["deep_inflows"][i][key]))
-                    for i in range(len(inflow_data["deep_inflows"]), len(inflow_data["deep_inflows"]) + len(inflow_data["surface_inflows"])):
-                        inflow_data["surface_inflows"][i][key] = np.concatenate((df[str(i)].values, inflow_data["surface_inflows"][i][key]))
+                    n_deep = len(inflow_data["deep_inflows"])
+                    for i in range(n_deep, n_deep + len(inflow_data["surface_inflows"])):
+                        j = i - n_deep
+                        inflow_data["surface_inflows"][j][key] = np.concatenate((df[str(i)].values, inflow_data["surface_inflows"][j][key]))
                     log.info("Merged {} with existing forcing data".format(key), indent=2)
                 else:
                     time = inflow_data["Time"]
@@ -155,10 +157,11 @@ def write_oxygen_inflows(simulation_dir, merge_inputs, inflow_data=None):
                 for i in range(len(inflow_data["deep_inflows"])):
                     inflow_data["deep_inflows"][i]["oxygen"] = np.concatenate(
                         (df[str(i)].values, inflow_data["deep_inflows"][i]["oxygen"]))
-                for i in range(len(inflow_data["deep_inflows"]),
-                               len(inflow_data["deep_inflows"]) + len(inflow_data["surface_inflows"])):
-                    inflow_data["surface_inflows"][i]["oxygen"] = np.concatenate(
-                        (df[str(i)].values, inflow_data["surface_inflows"][i]["oxygen"]))
+                n_deep = len(inflow_data["deep_inflows"])
+                for i in range(n_deep, n_deep + len(inflow_data["surface_inflows"])):
+                    j = i - n_deep
+                    inflow_data["surface_inflows"][j]["oxygen"] = np.concatenate(
+                        (df[str(i)].values, inflow_data["surface_inflows"][j]["oxygen"]))
             else:
                 time = inflow_data["Time"]
         else:
