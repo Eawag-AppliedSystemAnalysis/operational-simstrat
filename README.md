@@ -86,6 +86,17 @@ lakes already there.
   }
 ```
 
+## Observations
+
+In-situ observations are used in two places:
+
+- **Runs** — to initialise the model. For best performance you need in-situ data; without it the model
+  falls back to a generic default profile and simulation quality suffers. Read from `observations_dir`
+  (default `observations/`) with the structure `{lake-key}/temperature.csv` (and optionally
+  `salinity.csv`).
+- **Calibration** — required to calibrate the lakes. Read from `lake-calibrator/observations` with the
+  structure `{lake-key}/{parameter}.csv`. See [Calibration](#observations-1) for the format.
+
 ## Run Simulation
 
 ### Docker
