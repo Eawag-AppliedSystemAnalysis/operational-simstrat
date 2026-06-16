@@ -5,7 +5,8 @@ from datetime import datetime, timezone, timedelta
 from .general import (call_url, adjust_temperature_for_altitude_difference, air_pressure_from_elevation, detect_gaps,
                       adjust_data_to_mean_and_std, clear_sky_solar_radiation, datetime_to_simstrat_time,
                       calculate_mean_wind_direction, interpolate_timeseries, fill_day_of_year, get_elevation_swisstopo,
-                      vapor_pressure_from_relative_humidity_and_temperature, get_elevation_eudem25, calculate_vapor_pressure)
+                      vapor_pressure_from_relative_humidity_and_temperature, get_elevation_eudem25,
+                      calculate_vapor_pressure, fill_solar_radiation, simstrat_time_to_datetime)
 
 import matplotlib.pyplot as plt
 
@@ -145,16 +146,18 @@ def meteodata_from_meteostations(start, end, forcing, elevation, latitude, longi
         output["rain"]["data"] = raw_data["precipitation"] * 0.001  # Convert mm to m
     else:
         output["rain"]["data"] = np.zeros(len(raw_data["air_temperature"]))
+    return output
 
-    log.info("Estimate cloudiness based on ratio between measured and theoretical solar radiation", indent=1)
-    cssr = clear_sky_solar_radiation(time, air_pressure, output["vap"]["data"], latitude, longitude)
-    df = pd.DataFrame({"cssr": cssr, "swr": output["sol"]["data"]})
+
+def cloud_from_solar(simstrat_times, vap, sol, elevation, latitude, longitude, reference_date):
+    time = np.array([simstrat_time_to_datetime(t, reference_date) for t in simstrat_times])
+    air_pressure = air_pressure_from_elevation(elevation)
+    cssr = clear_sky_solar_radiation(time, air_pressure, vap, latitude, longitude)
+    df = pd.DataFrame({"cssr": cssr, "swr": sol})
     cssr_rolling = df['cssr'].rolling(window=24, center=True, min_periods=1).mean()
     swr_rolling = df['swr'].rolling(window=24, center=True, min_periods=1).mean()
-    solar_index = np.interp(swr_rolling / cssr_rolling, [0, 1],
-                            [0, 1])  # Flerchinger et al. (2009), Crawford and Duchon (1999)
-    output["cloud"]["data"] = 1 - solar_index
-    return output
+    solar_index = np.interp(swr_rolling / cssr_rolling, [0, 1],[0, 1])  # Flerchinger et al. (2009), Crawford and Duchon (1999)
+    return 1 - solar_index
 
 
 def meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, longitude, reference_date, output, api, log):
@@ -263,8 +266,9 @@ def meteodata_forecast_from_visualcrossing(forcing_forecast, elevation, latitude
 
 
 def quality_assurance_forcing_data(forcing_data, log):
-    log.info("Running quality assurance on forcing data", indent=1)
     for key in forcing_data.keys():
+        if "data" not in forcing_data[key]:
+            continue
         if "negative_to_zero" in forcing_data[key] and forcing_data[key]["negative_to_zero"]:
             log.info("Setting negative {} values to 0".format(key), indent=2)
             forcing_data[key]["data"][forcing_data[key]["data"] < 0] = 0.0
@@ -281,6 +285,8 @@ def quality_assurance_forcing_data(forcing_data, log):
 
 def interpolate_forcing_data(forcing_data):
     for key in forcing_data.keys():
+        if "data" not in forcing_data[key]:
+            continue
         if "max_interpolate_gap" in forcing_data[key]:
             forcing_data[key]["data"] = interpolate_timeseries(forcing_data["Time"]["data"],
                                                                forcing_data[key]["data"],
@@ -291,6 +297,8 @@ def interpolate_forcing_data(forcing_data):
 def fill_forcing_data(forcing_data, simulation_dir, snapshot, reference_date, log):
     fill_required = False
     for key in forcing_data.keys():
+        if "data" not in forcing_data[key]:
+            continue
         nan_values = np.isnan(forcing_data[key]["data"])
         if np.sum(nan_values) > 0:
             fill_required = True
@@ -313,6 +321,8 @@ def fill_forcing_data(forcing_data, simulation_dir, snapshot, reference_date, lo
         return forcing_data
 
     for key in forcing_data.keys():
+        if "data" not in forcing_data[key]:
+            continue
         nan_values = np.isnan(forcing_data[key]["data"])
         if np.sum(nan_values) > 0:
             if "fill" in forcing_data[key]:
@@ -333,6 +343,20 @@ def fill_forcing_data(forcing_data, simulation_dir, snapshot, reference_date, lo
                                                                       reference_date)
                     else:
                         forcing_data[key]["data"] = fill_day_of_year(forcing_data["Time"]["data"],
+                                                                      forcing_data[key]["data"],
+                                                                      forcing_data["Time"]["data"],
+                                                                      forcing_data[key]["data"],
+                                                                      reference_date)
+                elif forcing_data[key]["fill"] == "sol":
+                    log.info("Computing day of year solar radiation values for {}".format(key), indent=2)
+                    if snapshot:
+                        forcing_data[key]["data"] = fill_solar_radiation(forcing_data["Time"]["data"],
+                                                                      forcing_data[key]["data"],
+                                                                      forcing_data["Time"]["data_extended"],
+                                                                      forcing_data[key]["data_extended"],
+                                                                      reference_date)
+                    else:
+                        forcing_data[key]["data"] = fill_solar_radiation(forcing_data["Time"]["data"],
                                                                       forcing_data[key]["data"],
                                                                       forcing_data["Time"]["data"],
                                                                       forcing_data[key]["data"],
