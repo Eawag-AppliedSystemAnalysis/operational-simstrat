@@ -195,7 +195,7 @@ def absorption_from_observations(key, start_date, end_date, api, reference_date,
 
         # Replace monthly values with real data where available
         if not df.empty:
-            df_ave = df_ave[df_ave['time'].apply(lambda x: any(abs((x - ref).days) > days_from_observation for ref in df['time']))]
+            df_ave = df_ave[df_ave['time'].apply(lambda x: all(abs((x - ref).days) > days_from_observation for ref in df['time']))]
         df_m = pd.concat([df, df_ave], ignore_index=True)
         df_m = df_m.sort_values(by='time')
 
