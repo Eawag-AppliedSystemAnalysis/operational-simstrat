@@ -2291,6 +2291,12 @@
         "trophic_state": "Eutrophic",
         "datalakes_bathymetry": true,
         "datalakes_id": 22,
+        "assimilation_observations": {
+            "source": "datalakes",
+            "id": 1334,
+            "axis": "z",
+            "decimation": { "time": "1D", "aggregation": "nearest" }
+        },
         "forcing": [
             {
                 "id": "LUG",

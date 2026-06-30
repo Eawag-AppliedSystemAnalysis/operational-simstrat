@@ -474,7 +474,7 @@ class Simstrat(object):
     def create_aed2_file(self):
         self.log.begin_stage("create_aed2_file")
         self.log.info("Create AED2 configuration file.", indent=1)
-        create_aed_configuration_file(self.simulation_dir, self.parameters["sediment_oxygen_uptake_rate"])
+        create_aed_configuration_file(self.simulation_dir, self.parameters["sediment_oxygen_uptake_rate"], self.args["repo_dir"])
         self.log.end_stage()
 
     def create_par_file(self):
