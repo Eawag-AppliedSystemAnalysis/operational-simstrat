@@ -27,13 +27,38 @@ def latest_snapshot_date(directory):
 
 
 def phase_args(args, simulation_dir, **overrides):
-    """A copy of args pointing Simstrat at `simulation_dir` (the base; Simstrat appends /<key>),
-    with the spin-up/forecast flags overridden. Keeps the assimilation pipeline independent of
-    the operational forecast (runs/)."""
+    """A copy of args pointing Simstrat at `simulation_dir` (the base; Simstrat appends the run
+    folder, which is `directory` when passed as an override, else the lake key), with the
+    spin-up/forecast flags overridden. Keeps the assimilation pipeline independent of the
+    operational forecast (runs/)."""
     phase = dict(args)
     phase["simulation_dir"] = simulation_dir
     phase.update(overrides)
     return phase
+
+
+def copy_master_inputs(src, dst):
+    """Copy the master time-series input files that exist in `src` into `dst`. Returns the list of
+    files copied."""
+    copied = []
+    for name in ["Forcing.dat", "Absorption.dat", "Qin.dat", "Tin.dat", "Sin.dat", "Qout.dat"]:
+        src_path = os.path.join(src, name)
+        if os.path.exists(src_path):
+            shutil.copy(src_path, os.path.join(dst, name))
+            copied.append(name)
+    return copied
+
+
+def refresh_ensemble_inputs(ensemble_base, model_inputs, n_members, log=None):
+    """Propagate the freshly extended master inputs from model_inputs/ into every ensemble0..N/.
+    Needed because the submodule's copy_model_inputs is skipped once the instances exist, so the
+    ensembles would otherwise keep stale (short) forcing."""
+    for i in range(n_members + 1):
+        dst = os.path.join(ensemble_base, "ensemble{}".format(i))
+        if os.path.isdir(dst):
+            copy_master_inputs(model_inputs, dst)
+    if log is not None:
+        log.info("Refreshed ensemble0..{} inputs from master".format(n_members), indent=1)
 
 
 def stage_perturbations(key, parameters, out_json, da_dir):

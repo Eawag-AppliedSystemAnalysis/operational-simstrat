@@ -365,10 +365,19 @@ def fetch_observations(key, parameters, args, out_csv):
         raise ValueError("Unknown observation source '{}' for lake '{}'. Available: {}"
                          .format(source, key, sorted(OBSERVATION_SOURCES)))
 
+    earliest = None
+    if args.get("first_obs_date"):
+        earliest = pd.Timestamp(datetime.strptime(args["first_obs_date"], "%Y%m%d")).tz_localize("UTC")
+
     existing = _read_existing_observations(out_csv)
     since = existing["time"].max().floor("D") if existing is not None else None
 
-    df = OBSERVATION_SOURCES[source](parameters, source_cfg, args, since=since)
+    # Lower bound handed to the source so old time-chunked files aren't downloaded.
+    fetch_since = since
+    if earliest is not None:
+        fetch_since = earliest if fetch_since is None else max(fetch_since, earliest)
+
+    df = OBSERVATION_SOURCES[source](parameters, source_cfg, args, since=fetch_since)
     df = df.dropna(subset=["time", "depth", "value"])
     if since is not None:
         df = df[df["time"] >= since]
@@ -378,6 +387,9 @@ def fetch_observations(key, parameters, args, out_csv):
         df = pd.concat([existing[existing["time"] < since], df], ignore_index=True)
         df = df.drop_duplicates(subset=["time", "depth"], keep="last")
         df = df.sort_values("time").reset_index(drop=True)
+
+    if earliest is not None:
+        df = df[df["time"] >= earliest].reset_index(drop=True)
 
     os.makedirs(os.path.dirname(out_csv), exist_ok=True)
     df.to_csv(out_csv, index=False)
