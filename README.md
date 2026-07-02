@@ -144,46 +144,56 @@ There should be one file per lake and per parameter and the values should all ha
 Simstrat operational uses the [data-assimilation](data-assimilation) submodule (native Ensemble Kalman Filter / Particle Filter over a Simstrat ensemble) to blend live in-situ measurements into the model. It is called as follows:
 
 ```bash
-python src/assimilator.py assimilation
+python src/data_assimilation.py assimilation
 ```
 
-Where `assimilation` is the argument file in `args/`. The arguments follow the same structure as for running Simstrat operational, with additional data-assimilation parameters (`engine`, `algorithm`, `n_members`, `sigma_obs`, `inflation`, `sigma_scale`, `rng_seed`, `spinup_years`, `first_da_date`).
+Where `assimilation` is the argument file in `args/`. The arguments follow the same structure as for running Simstrat operational, with additional data-assimilation arguments (`first_da_date`, `first_obs_date`, `spinup_years`, `max_assimilation_workers`). The per-filter parameters (`engine`, `algorithm`, `n_members`, `sigma_obs`, `inflation`, `sigma_scale`, `rng_seed`) are configured **per lake** in `static/lake_parameters.json` (see below), not in the argument file.
 
-Unlike the forecast workflow (`src/main.py`), assimilation is **independent and rolling** — each lake keeps its own state under `run/<lake>_assimilate/` (the persistent ensemble plus `model_inputs/` analysis inputs + snapshots and `forecast/` forecast extension) and advances forward each run instead of re-running the whole period. Each run has up to three phases:
+Each lake can define one or more named assimilation runs under an `assimilation` block in `static/lake_parameters.json` (e.g. `python_enkf`). Every run gets its own state directory `runs/<lake>_<run>/` (e.g. `runs/upperlugano_python_enkf/`), containing the persistent ensemble under `assimilation/`, the `model_inputs/` analysis inputs + snapshots, the `forecast/` extension, and the fetched `observations/`.
+
+Unlike the forecast workflow (`src/main.py`), assimilation is **independent and rolling** — each run advances its own state forward instead of re-running the whole period. Each run has up to three phases:
 
 1. **Spin-up** (cold start only) — free Simstrat run from the origin to the first assimilation date.
 2. **Assimilation** — EnKF/PF from the previous-last to the new-last observation date, seeded from the persisted ensemble.
 3. **Forecast** (every run) — free Simstrat run from the last assimilation date to the forecast horizon, warm-started from the ensemble-mean analysis (overwritten each run).
 
+The combined assimilation + forecast temperature is written to `runs/<lake>_<run>/netcdf/`. When the run is invoked with `upload=true`, these NetCDF files are uploaded to `<results_folder_api>/<lake>_<run>` on the results server (keyed by the run name, so they do not overwrite the standard `src/main.py` forecast at `<results_folder_api>/<lake>`).
+
 ### Observations
 
-Observations are fetched live each run through a **pluggable source layer** (`src/functions/assimilation_observations.py`) and written to `run/{lake-key}_assimilate/observations/temperature.csv` with columns `time,depth,value`. Add a new source by registering a `(parameters, source_cfg, args) -> DataFrame[time, depth, value]` function in `OBSERVATION_SOURCES`.
+Observations are fetched live each run through a **pluggable source layer** (`src/functions/observations.py`) and written to `runs/{lake-key}_{run}/observations/temperature.csv` with columns `time,depth,value`. Add a new source by registering a `(source_cfg, args, since=None) -> DataFrame[time, depth, value]` function in `OBSERVATION_SOURCES`.
 
-Everything about a lake's observations is configured **per lake** with an `assimilation_observations` block in `static/lake_parameters.json` — the source, the dataset, and the **decimation** (temporal resampling applied after fetching). For the `datalakes` source, `id` is the [Datalakes](https://www.datalakes-eawag.ch) *dataset* id (e.g. `1334` = Upper Lake Lugano buoy) and `axis` is the data axis to assimilate — the depth-resolved 2D grid, usually `z`:
+A lake's observations are configured **per run**, in an `observations` block inside that run's entry under the `assimilation` block in `static/lake_parameters.json` — the source, the dataset, and the **decimation** (temporal resampling applied after fetching). For the `datalakes` source, `id` is the [Datalakes](https://www.datalakes-eawag.ch) *dataset* id (e.g. `1334` = Upper Lake Lugano buoy) and `axis` is the data axis to assimilate — the depth-resolved 2D grid, usually `z`:
 
 ```json
-"assimilation_observations": {
-    "source": "datalakes",
-    "id": 1334,
-    "axis": "z",
-    "decimation": { "time": "1h", "aggregation": "mean" }
+"assimilation": {
+    "python_enkf": {
+        "observations": {
+            "source": "datalakes",
+            "id": 1334,
+            "axis": "z",
+            "decimation": { "time": "1D", "aggregation": "nearest" }
+        }
+    }
 }
 ```
 
 A dataset's axis→variable map is at `https://api.datalakes-eawag.ch/datasetparameters?datasets_id=<id>` (for 1334: `x`=time, `y`=depth, `z`=temp [degC], `y1`=surface_temp, …), so set `axis` to the depth-resolved variable you want to assimilate.
 
-`decimation.time` is a pandas offset (`"1h"`, `"6h"`, `"1D"`, …) and `aggregation` is `mean`/`median`/`min`/`max`/`first`/`last`/`nearest`. Built-in sources: `datalakes` and `alplakes` (the `{data_api}/insitu/{parameter}/{key}` API, which uses `parameter` instead of `axis`).
+`decimation.time` is a pandas offset (`"1h"`, `"6h"`, `"1D"`, …) and `aggregation` is `mean`/`median`/`min`/`max`/`first`/`last`/`nearest`. The only built-in source is `datalakes`.
 
 ### Perturbations
 
-The ensemble is generated by AR(1) perturbations of the forcing. These are sourced **first** from an optional `perturbations` block in `static/lake_parameters.json`, and **fall back** to `data-assimilation/perturbations/{lake-key}.json` (fitted offline with the submodule's `notebooks/perturbations_from_icon.py`). If neither exists the run errors clearly. The block follows the submodule's AR(1) format:
+The ensemble is generated by AR(1) perturbations of the forcing. These are sourced **first** from an optional `perturbations` block inside the run's entry under `assimilation` in `static/lake_parameters.json`, and **fall back** to `data-assimilation/perturbations/{lake-key}.json` (fitted offline with the submodule's `notebooks/perturbations_from_icon.py`). If neither exists the run errors clearly. The in-lake block is a flat `{variable: {phi, sigma}}` map (a full `{ "variables": { … } }` object is also accepted):
 
 ```json
-"perturbations": {
-    "variables": {
-        "U":    { "phi": 0.656, "sigma": 0.676 },
-        "V":    { "phi": 0.691, "sigma": 0.902 },
-        "GLOB": { "phi": 0.486, "sigma": 45.531 }
+"assimilation": {
+    "python_enkf": {
+        "perturbations": {
+            "U":    { "phi": 0.656, "sigma": 0.676 },
+            "V":    { "phi": 0.691, "sigma": 0.902 },
+            "GLOB": { "phi": 0.486, "sigma": 45.531 }
+        }
     }
 }
 ```

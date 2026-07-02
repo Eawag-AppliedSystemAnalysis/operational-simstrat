@@ -6,7 +6,7 @@ import argparse
 from dateutil.relativedelta import relativedelta
 from functions.verify import verify_arg_file
 from functions.parallel import run_parallel_tasks
-from functions.general import process_args
+from functions.general import process_args, upload_files
 from functions.observations import fetch_observations
 from functions.log import Logger
 from configuration import AssimilatorConfig
@@ -173,6 +173,18 @@ def assimilate_run(key, run_key, run_cfg, parameters, args):
     except Exception as e:
         log.warning("Failed to combine temperature outputs: {}".format(e), indent=1)
     log.end_stage()
+
+    if args["upload"]:
+        log.begin_stage("upload")
+        local_folder = os.path.join(lake_dir, "netcdf")
+        if os.path.isdir(local_folder):
+            remote_folder = os.path.join(args["results_folder_api"], run_name)
+            log.info("Uploading {} results to {}".format(run_name, remote_folder), indent=1)
+            upload_files(local_folder, remote_folder, args["server_host"], args["server_user"],
+                         args["server_password"], log)
+        else:
+            log.warning("No NetCDF output at {}; nothing to upload.".format(local_folder), indent=1)
+        log.end_stage()
 
 
 def main(arg_file=False, overwrite_args=False):

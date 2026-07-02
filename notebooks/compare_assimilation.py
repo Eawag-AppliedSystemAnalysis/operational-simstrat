@@ -22,8 +22,8 @@ REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
 # Defaults: all the data in the NetCDF output of each run.
 DEFAULT_NORMAL = os.path.join(REPO, "runs", "upperlugano", "Results", "netcdf")
-DEFAULT_DA = os.path.join(REPO, "runs", "upperlugano_assimilate", "netcdf")
-DEFAULT_OBS = os.path.join(REPO, "runs", "upperlugano_assimilate", "observations", "temperature.csv")
+DEFAULT_DA = os.path.join(REPO, "runs", "upperlugano_python_enkf", "netcdf")
+DEFAULT_OBS = os.path.join(REPO, "runs", "upperlugano_python_enkf", "observations", "temperature.csv")
 
 
 def load_run(netcdf_dir, depth):
