@@ -1,0 +1,9 @@
+{
+    "lakes": ["upperlugano"],
+    "couple_aed2": false,
+    "max_workers": 1,
+    "max_assimilation_workers": 10,
+    "log": true,
+    "debug": true,
+    "data_api":  "http://eaw-alplakes2.eawag.wroot.emp-eaw.ch:8000"
+}

@@ -256,9 +256,9 @@ def _datalakes_to_long(data, axis):
     return df.stack().rename("value").reset_index()[["time", "depth", "value"]]
 
 
-def fetch_datalakes(parameters, source_cfg, args, since=None):
-    """Fetch in-situ profiles from Datalakes (https://www.datalakes-eawag.ch). The lake's
-    `assimilation_observations.id` is the Datalakes *dataset* id and `axis` selects which data
+def fetch_datalakes(source_cfg, args, since=None):
+    """Fetch in-situ profiles from Datalakes (https://www.datalakes-eawag.ch). The run's
+    `observations.id` is the Datalakes *dataset* id and `axis` selects which data
     axis to assimilate — the depth-resolved 2D grid, usually 'z'. (A dataset's axis->variable map
     is at `https://api.datalakes-eawag.ch/datasetparameters?datasets_id=<id>`: e.g. for 1334
     x=time, y=depth, z=temp [degC], y1=surface_temp, …) Processed `json` files are served at
@@ -271,7 +271,7 @@ def fetch_datalakes(parameters, source_cfg, args, since=None):
     dataset_id = source_cfg.get("id")
     if dataset_id is None:
         raise ValueError("datalakes source for lake '{}' needs an 'id' (Datalakes dataset id) in its "
-                         "assimilation_observations block".format(source_cfg.get("key")))
+                         "assimilation observations block".format(source_cfg.get("key")))
     axis = source_cfg.get("axis", "z")
     base = source_cfg.get("api", DATALAKES_API)
 
@@ -342,21 +342,22 @@ def _read_existing_observations(out_csv):
     return df if not df.empty else None
 
 
-def fetch_observations(key, parameters, args, out_csv):
-    """Resolve the lake's observation source, fetch -> decimate -> write the time,depth,value CSV.
-    Returns (first_obs, last_obs) datetimes, or (None, None) if there are no observations.
+def fetch_observations(key, observations_cfg, args, out_csv):
+    """Resolve the assimilation run's observation source, fetch -> decimate -> write the
+    time,depth,value CSV. Returns (first_obs, last_obs) datetimes, or (None, None) if there are no
+    observations.
 
     On a cold start (no existing CSV) the full time series is fetched. On a warm start the
     existing CSV already holds the history, so only observations newer than its last day are
     fetched from the source and appended — the last stored day is re-fetched so its partial
     values get refreshed.
 
-    Source config is the lake's `assimilation_observations` block in lake_parameters.json
+    Source config is the run's `observations` block in lake_parameters.json
     ({source, id, parameter, decimation:{time, aggregation}})."""
-    source_cfg = dict(parameters.get("assimilation_observations") or {})
+    source_cfg = dict(observations_cfg or {})
     if not source_cfg:
-        raise ValueError("Lake '{}' has no 'assimilation_observations' block in lake_parameters.json"
-                         .format(key))
+        raise ValueError("Assimilation run for lake '{}' has no 'observations' block in "
+                         "lake_parameters.json".format(key))
     source_cfg["key"] = key
     source_cfg.setdefault("parameter", "temperature")
 
@@ -377,7 +378,7 @@ def fetch_observations(key, parameters, args, out_csv):
     if earliest is not None:
         fetch_since = earliest if fetch_since is None else max(fetch_since, earliest)
 
-    df = OBSERVATION_SOURCES[source](parameters, source_cfg, args, since=fetch_since)
+    df = OBSERVATION_SOURCES[source](source_cfg, args, since=fetch_since)
     df = df.dropna(subset=["time", "depth", "value"])
     if since is not None:
         df = df[df["time"] >= since]

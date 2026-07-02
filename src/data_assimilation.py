@@ -3,7 +3,6 @@ import os
 import sys
 import shutil
 import argparse
-from datetime import datetime, timezone
 from dateutil.relativedelta import relativedelta
 from functions.verify import verify_arg_file
 from functions.parallel import run_parallel_tasks
@@ -14,18 +13,38 @@ from configuration import AssimilatorConfig
 from model import Simstrat
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data-assimilation", "src")))
-from functions.assimilate import (_date, floor_to_day, latest_snapshot_date, phase_args, stage_perturbations,
-                                   write_analysis_snapshot, copy_master_inputs, refresh_ensemble_inputs)
+from functions.assimilate import (_date, parse_day, run_arg, floor_to_day, latest_snapshot_date, phase_args,
+                                   stage_perturbations, write_analysis_snapshot, copy_master_inputs,
+                                   refresh_ensemble_inputs)
 from functions.postprocess import post_process_temperature
 from assimilate import run as run_assimilation
 
 
 def task(parameters, args):
     key = parameters["key"]
-    lake_dir = os.path.join(args["repo_dir"], "runs", "{}_assimilate".format(key))
+    runs = parameters.get("assimilation")
+    if not isinstance(runs, dict) or not runs:
+        raise ValueError('Lake "{}" has no "assimilation" block in lake_parameters.json; add one '
+                         'keyed by run name (e.g. "python_enkf").'.format(key))
+    failures = []
+    for run_key, run_cfg in runs.items():
+        try:
+            assimilate_run(key, run_key, run_cfg, parameters, args)
+        except Exception:
+            if args["debug"]:
+                raise
+            failures.append(run_key)
+    if failures:
+        raise RuntimeError('Assimilation run(s) {} failed for lake "{}"; see their task logs.'
+                           .format(", ".join(failures), key))
+
+
+def assimilate_run(key, run_key, run_cfg, parameters, args):
+    run_name = "{}_{}".format(key, run_key)
+    lake_dir = os.path.join(args["repo_dir"], "runs", run_name)
     os.makedirs(lake_dir, exist_ok=True)
     log = Logger(path=lake_dir) if args["log"] else Logger()
-    log.initialise("Simstrat Operational Assimilation - {}".format(key))
+    log.initialise("Simstrat Operational Assimilation - {}".format(run_name))
 
     model_inputs = os.path.join(lake_dir, "model_inputs")
     forecast_dir = os.path.join(lake_dir, "forecast")
@@ -33,13 +52,11 @@ def task(parameters, args):
     assimilation_dir = os.path.join(lake_dir, "assimilation")
     perturb_json = os.path.join(assimilation_dir, "perturbations.json")
 
-    def parse_day(day_str):
-        return datetime.strptime(day_str, "%Y%m%d").replace(tzinfo=timezone.utc)
-
     log.begin_stage("fetch_observations")
     log.info("Fetching live in-situ observations for {}".format(key), indent=1)
-    first_obs, last_obs = fetch_observations(key, parameters, args, obs_csv)
+    first_obs, last_obs = fetch_observations(key, run_cfg.get("observations"), args, obs_csv)
     prev_snapshot = latest_snapshot_date(model_inputs)
+    continuing_run = prev_snapshot is not None
     log.end_stage()
 
     if last_obs is None:
@@ -101,28 +118,31 @@ def task(parameters, args):
         log.begin_stage("assimilate")
         log.info("Assimilating {} from {} to {}".format(key, _date(snapshot_start), _date(last_da)), indent=1)
         da_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data-assimilation"))
+        engine = run_arg(run_cfg, run_key, key, "engine")
+        algorithm = run_arg(run_cfg, run_key, key, "algorithm")
+        n_members = run_arg(run_cfg, run_key, key, "n_members")
         da_cfg = {
-            "engine": args["engine"],
+            "engine": engine,
             "model": "simstrat",
-            "algorithm": args["algorithm"],
-            "results_dir": "Results_{}".format(args["algorithm"]),
-            "par_file": "Settings_{}.par".format(args["algorithm"]),
-            "inflation": args["inflation"],
-            "n_members": args["n_members"],
-            "sigma_obs": args["sigma_obs"],
-            "sigma_scale": args["sigma_scale"],
-            "rng_seed": args["rng_seed"],
+            "algorithm": algorithm,
+            "results_dir": "Results_{}".format(algorithm),
+            "par_file": "Settings_{}.par".format(algorithm),
+            "inflation": run_arg(run_cfg, run_key, key, "inflation"),
+            "n_members": n_members,
+            "sigma_obs": run_arg(run_cfg, run_key, key, "sigma_obs"),
+            "sigma_scale": run_arg(run_cfg, run_key, key, "sigma_scale"),
+            "rng_seed": run_arg(run_cfg, run_key, key, "rng_seed"),
             "start_date": snapshot_start.strftime("%Y-%m-%d"),
             "end_date": last_da.strftime("%Y-%m-%d"),
             "lake": key,
             "ensemble_base": assimilation_dir,
             "model_inputs_path": model_inputs,
             "obs_file": obs_csv,
-            "perturbations_file": stage_perturbations(key, parameters, perturb_json, da_dir),
+            "perturbations_file": stage_perturbations(key, run_cfg.get("perturbations"), perturb_json, da_dir),
             "progress": False,
             "max_workers": args["max_assimilation_workers"],
         }
-        refresh_ensemble_inputs(assimilation_dir, model_inputs, args["n_members"], log)
+        refresh_ensemble_inputs(assimilation_dir, model_inputs, n_members, log)
         run_assimilation(da_cfg, model="simstrat")
         write_analysis_snapshot(da_cfg, last_da, os.path.join(model_inputs, "simulation-snapshot_{}.dat".format(_date(last_da))))
         log.end_stage()
@@ -147,7 +167,9 @@ def task(parameters, args):
     log.begin_stage("combine_temperature")
     log.info("Combining assimilation and forecast temperature into NetCDF for {}".format(key), indent=1)
     try:
-        post_process_temperature(lake_dir, args["simstrat_version"], parameters)
+        post_process_temperature(lake_dir, args["simstrat_version"], parameters,
+                                  changed_since=snapshot_start if continuing_run else None,
+                                  clear_netcdf=continuing_run)
     except Exception as e:
         log.warning("Failed to combine temperature outputs: {}".format(e), indent=1)
     log.end_stage()

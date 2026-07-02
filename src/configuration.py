@@ -93,19 +93,8 @@ class CalibratorConfig(Config):
 class AssimilatorConfig(Config):
     def __init__(self, *args, **kwargs):
         super(AssimilatorConfig, self).__init__(*args, **kwargs)
-        self.default_args["engine"] = {"default": "python", "verify": verify.verify_string,
-                                       "desc": "Data-assimilation engine: 'python' (native EnKF/PF) or 'openda'"}
-        self.default_args["algorithm"] = {"default": "EnKF", "verify": verify.verify_string,
-                                          "desc": "Assimilation algorithm: 'EnKF' or 'PF' (also names the per-member working dirs: Results_<algorithm> / Settings_<algorithm>.par)"}
-        self.default_args["n_members"] = {"default": 20, "verify": verify.verify_integer, "desc": "Ensemble size"}
-        self.default_args["sigma_obs"] = {"default": 0.5, "verify": verify.verify_float,
-                                          "desc": "Observation error standard deviation (degC)"}
-        self.default_args["inflation"] = {"default": 1.0, "verify": verify.verify_float,
-                                          "desc": "Variance inflation factor (native EnKF only; 1.0 = off)"}
-        self.default_args["sigma_scale"] = {"default": 1.0, "verify": verify.verify_float,
-                                            "desc": "Scales the forcing-perturbation strength (1.0 = none)"}
-        self.default_args["rng_seed"] = {"default": 42, "verify": verify.verify_integer,
-                                         "desc": "Random seed for reproducible ensembles"}
+        # engine, algorithm, n_members, sigma_obs, inflation, sigma_scale and rng_seed are
+        # configured per-lake in lake_parameters.json (no global default).
         self.default_args["first_da_date"] = {"default": False, "verify": verify.verify_date,
                                               "desc": "Cold-start: earliest date to assimilate YYYYMMDD (defaults to earliest observation)"}
         self.default_args["first_obs_date"] = {"default": False, "verify": verify.verify_date,

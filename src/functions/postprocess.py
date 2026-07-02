@@ -1,5 +1,6 @@
 import os
 import sys
+import glob
 import json
 import pylake
 import netCDF4
@@ -240,9 +241,13 @@ def _write_combined_dat(path, times, depths, values):
     df.to_csv(path, index=False, float_format="%.4f")
 
 
-def post_process_temperature(run_dir, version, parameters, sources=None):
+def post_process_temperature(run_dir, version, parameters, sources=None, changed_since=None, clear_netcdf=False):
     """Combine assimilation + forecast temperature, write <run_dir>/T_out_combined.dat and monthly
-    NetCDF files in <run_dir>/netcdf/ (temperature only), matching post_process."""
+    NetCDF files in <run_dir>/netcdf/ (temperature only), matching post_process.
+
+    On a continuing run only the data from the assimilation start onward is recomputed; pass that
+    date as ``changed_since`` and ``clear_netcdf=True`` to empty <run_dir>/netcdf/ and only rewrite
+    monthly files from the first of ``changed_since``'s month onward (the changed data)."""
     reference_date = parameters.get("reference_date", "19810101")
     if isinstance(reference_date, str):
         try:
@@ -286,9 +291,21 @@ def post_process_temperature(run_dir, version, parameters, sources=None):
     out_dir = os.path.join(run_dir, "netcdf")
     os.makedirs(out_dir, exist_ok=True)
 
+    if clear_netcdf:
+        for f in glob.glob(os.path.join(out_dir, "*.nc")):
+            os.remove(f)
+
+    changed_start = None
+    if changed_since is not None:
+        if changed_since.tzinfo is None:
+            changed_since = changed_since.replace(tzinfo=timezone.utc)
+        changed_start = datetime(changed_since.year, changed_since.month, 1).replace(tzinfo=timezone.utc)
+
     print("Writing temperature NetCDF files")
     for i in range(delta.years * 12 + delta.months):
         file_start = start + relativedelta(months=i)
+        if changed_start is not None and file_start < changed_start:
+            continue
         file_end = file_start + relativedelta(months=1)
         time_mask = (time >= file_start) & (time < file_end)
         if not time_mask.any():

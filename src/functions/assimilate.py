@@ -3,6 +3,7 @@ import os
 import json
 import glob
 import shutil
+from datetime import datetime, timezone
 
 import numpy as np
 
@@ -11,6 +12,20 @@ from assimilator.models.simstrat import read_snapshot_T, write_snapshot_T_at, _m
 
 def _date(dt):
     return dt.strftime("%Y%m%d")
+
+
+def parse_day(day_str):
+    """Parse a YYYYMMDD day string to a UTC-midnight datetime (the inverse of _date)."""
+    return datetime.strptime(day_str, "%Y%m%d").replace(tzinfo=timezone.utc)
+
+
+def run_arg(run_cfg, run_key, key, name):
+    """Read a required per-run assimilation setting from the run's config block in
+    lake_parameters.json; there is no global default."""
+    if name not in run_cfg:
+        raise ValueError('Missing assimilation parameter "{}" for run "{}" of lake "{}"; add it '
+                         'to its entry in lake_parameters.json.'.format(name, run_key, key))
+    return run_cfg[name]
 
 
 def floor_to_day(dt):
@@ -61,15 +76,18 @@ def refresh_ensemble_inputs(ensemble_base, model_inputs, n_members, log=None):
         log.info("Refreshed ensemble0..{} inputs from master".format(n_members), indent=1)
 
 
-def stage_perturbations(key, parameters, out_json, da_dir):
-    """First choice: a `perturbations` block in lake_parameters.json (written to out_json and
-    used). Fallback: the committed <da_dir>/perturbations/<key>.json. Returns the
-    perturbations_file path to set on the run config; the submodule's load_perturbations raises a
-    clear error at run time if neither source exists."""
-    block = parameters.get("perturbations")
-    if isinstance(block, dict) and isinstance(block.get("variables"), dict):
+def stage_perturbations(key, perturbations, out_json, da_dir):
+    """First choice: the assimilation run's `perturbations` block from lake_parameters.json — a
+    {variable: {phi, sigma}} map (or a full {variables: {...}} object), written to out_json under a
+    'variables' key and used. Fallback: the committed <da_dir>/perturbations/<key>.json. Returns
+    the perturbations_file path to set on the run config; the submodule's load_perturbations raises
+    a clear error at run time if neither source exists."""
+    if isinstance(perturbations, dict) and perturbations:
         os.makedirs(os.path.dirname(out_json), exist_ok=True)
-        payload = dict(block)
+        if isinstance(perturbations.get("variables"), dict):
+            payload = dict(perturbations)
+        else:
+            payload = {"variables": dict(perturbations)}
         payload.setdefault("lake", key)
         with open(out_json, "w") as f:
             json.dump(payload, f, indent=4)
