@@ -494,7 +494,8 @@ class Simstrat(object):
     def run_simulation(self):
         self.log.begin_stage("run_simulation")
         if self.args["docker_dir"]:
-            simulation_dir = os.path.join(self.args["docker_dir"], "runs", self.directory)
+            simulation_dir = os.path.join(self.args["docker_dir"],
+                                          os.path.relpath(self.simulation_dir, self.args["repo_dir"]))
         else:
             simulation_dir = self.simulation_dir
         command = "docker run --rm --user $(id -u):$(id -g) -v {}:/simstrat/run eawag/simstrat:{} Settings.par".format(
