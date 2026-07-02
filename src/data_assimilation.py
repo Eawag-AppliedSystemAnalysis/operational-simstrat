@@ -137,6 +137,8 @@ def assimilate_run(key, run_key, run_cfg, parameters, args):
             "lake": key,
             "ensemble_base": assimilation_dir,
             "model_inputs_path": model_inputs,
+            "docker_dir": args["docker_dir"],
+            "repo_dir": args["repo_dir"],
             "obs_file": obs_csv,
             "perturbations_file": stage_perturbations(key, run_cfg.get("perturbations"), perturb_json, da_dir),
             "progress": False,
