@@ -12,6 +12,7 @@ class Config(object):
         self.default_args = {
             "lakes": {"default": [k['key'] for k in self.lake_parameters], "verify": verify.verify_list, "desc": "List of lake keys to be processed"},
             "simulation_dir": {"default": os.path.join(self.repo_dir, "runs"), "verify": verify.verify_path, "desc": "Path to the simulation directory"},
+            "directory": {"default": False, "verify": verify.verify_string, "desc": "Name of the run folder inside simulation_dir; defaults to the lake key when not set"},
             "observations_dir": {"default": os.path.join(self.repo_dir, "observations"), "verify": verify.verify_string, "desc": "Folder containing {key}.csv initial-condition profiles per lake"},
             "simstrat_version": {"default": "3.0.4", "verify": verify.verify_string, "desc": "Version of Simstrat"},
             "couple_aed2": {"default": True, "verify": verify.verify_bool, "desc": "Couple water quality model AED2"},
@@ -85,5 +86,22 @@ class CalibratorConfig(Config):
         self.default_args["agents"] = {"default": 3, "verify": verify.verify_integer, "desc": "Number of PEST agents"}
         self.default_args["download_observations"] = {"default": False, "verify": verify.verify_bool, "desc": "Download observations"}
         self.default_args["observations_url"] = {"default": False, "verify": verify.verify_string, "desc": "Link to download observations"}
+        self.args = {k: v["default"] for k, v in self.default_args.items()}
+        self.args["lake_parameters_dir"] = self.lake_parameters_dir
+
+
+class AssimilatorConfig(Config):
+    def __init__(self, *args, **kwargs):
+        super(AssimilatorConfig, self).__init__(*args, **kwargs)
+        # engine, algorithm, n_members, sigma_obs, inflation, sigma_scale and rng_seed are
+        # configured per-lake in lake_parameters.json (no global default).
+        self.default_args["first_da_date"] = {"default": False, "verify": verify.verify_date,
+                                              "desc": "Cold-start: earliest date to assimilate YYYYMMDD (defaults to earliest observation)"}
+        self.default_args["first_obs_date"] = {"default": False, "verify": verify.verify_date,
+                                               "desc": "Earliest date to collect observations YYYYMMDD; observations before this are discarded (defaults to all available)"}
+        self.default_args["spinup_years"] = {"default": False, "verify": verify.verify_integer,
+                                             "desc": "Cold-start: if set, spin up this many years before the first assimilation date instead of from the start of the meteo data"}
+        self.default_args["max_assimilation_workers"] = {"default": False, "verify": verify.verify_integer,
+                                                         "desc": "Ensemble members run concurrently within a lake's assimilation (default: all at once). Separate from max_workers, which parallelises lakes."}
         self.args = {k: v["default"] for k, v in self.default_args.items()}
         self.args["lake_parameters_dir"] = self.lake_parameters_dir

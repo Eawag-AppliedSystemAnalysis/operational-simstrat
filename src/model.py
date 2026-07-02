@@ -29,7 +29,8 @@ class Simstrat(object):
     def __init__(self, key, parameters, args):
         self.key = key
         self.args = args
-        self.simulation_dir = os.path.join(args["simulation_dir"], key)
+        self.directory = args.get("directory") or key
+        self.simulation_dir = os.path.join(args["simulation_dir"], self.directory)
         self.required_parameters = {
             "forcing": {"verify": verify.verify_forcing, "desc": "List of dicts describing the input forcing data"},
             "name": {"verify": verify.verify_string, "desc": "Name of the lake"},
@@ -474,7 +475,7 @@ class Simstrat(object):
     def create_aed2_file(self):
         self.log.begin_stage("create_aed2_file")
         self.log.info("Create AED2 configuration file.", indent=1)
-        create_aed_configuration_file(self.simulation_dir, self.parameters["sediment_oxygen_uptake_rate"])
+        create_aed_configuration_file(self.simulation_dir, self.parameters["sediment_oxygen_uptake_rate"], self.args["repo_dir"])
         self.log.end_stage()
 
     def create_par_file(self):
@@ -493,7 +494,7 @@ class Simstrat(object):
     def run_simulation(self):
         self.log.begin_stage("run_simulation")
         if self.args["docker_dir"]:
-            simulation_dir = os.path.join(self.args["docker_dir"], "runs", self.key)
+            simulation_dir = os.path.join(self.args["docker_dir"], "runs", self.directory)
         else:
             simulation_dir = self.simulation_dir
         command = "docker run --rm --user $(id -u):$(id -g) -v {}:/simstrat/run eawag/simstrat:{} Settings.par".format(

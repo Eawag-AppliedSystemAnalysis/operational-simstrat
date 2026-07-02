@@ -1,3 +1,6 @@
 [submodule "lake-calibrator"]
 	path = lake-calibrator
 	url = https://github.com/eawag-surface-waters-research/lake-calibrator.git
+[submodule "data-assimilation"]
+	path = data-assimilation
+	url = https://github.com/eawag-surface-waters-research/alplakes-data-assimilation.git

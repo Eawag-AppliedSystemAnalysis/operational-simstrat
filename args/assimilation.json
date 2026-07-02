@@ -1,0 +1,9 @@
+{
+    "lakes": ["upperlugano"],
+    "couple_aed2": false,
+    "max_workers": 1,
+    "max_assimilation_workers": 20,
+    "log": true,
+    "debug": false,
+    "upload": true
+}

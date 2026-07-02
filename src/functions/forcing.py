@@ -61,6 +61,7 @@ def meteodata_from_meteostations(start, end, forcing, elevation, latitude, longi
     output["Time"]["data"] = np.array([datetime_to_simstrat_time(t, reference_date) for t in time])
 
     parameter_ids = ["wind_speed", "wind_direction", "precipitation", "air_temperature", "global_radiation", "vapour_pressure", "relative_humidity"]
+    configured_parameters = {p_id for f in forcing for p_id in f["parameters"].keys()}
     raw_data = {}
     for p_id in parameter_ids:
         gaps = False
@@ -122,6 +123,9 @@ def meteodata_from_meteostations(start, end, forcing, elevation, latitude, longi
         if isinstance(df, pd.core.frame.DataFrame):
             df_m = pd.merge(df_t, df, on='time', how='left')
             raw_data[p_id] = np.array(df_m["values"])
+        elif p_id in configured_parameters:
+            log.info("{}: No measured data in requested period, deferring to forecast".format(p_id), indent=1)
+            raw_data[p_id] = np.full(len(time), np.nan)
 
     log.info("Processing wind from magnitude and direction to components", indent=1)
     wind_direction = raw_data["wind_direction"]

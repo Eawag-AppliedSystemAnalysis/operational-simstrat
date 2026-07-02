@@ -7,6 +7,8 @@ from dateutil.relativedelta import relativedelta
 
 from .general import call_url, datetime_to_simstrat_time
 
+DATALAKES_API = "https://api.datalakes-eawag.ch"
+
 
 def _closest_profile(csv_path, start_date, log, max_days=32, direction="closest"):
     df = pd.read_csv(csv_path)
@@ -228,3 +230,171 @@ def default_absorption(trophic_state, elevation, start_date, end_date, absorptio
     start = datetime_to_simstrat_time(start_date, reference_date)
     end = datetime_to_simstrat_time(end_date, reference_date)
     return {"Time": [start, end], "Value": [absorption, absorption]}
+
+
+
+def _datalakes_to_long(data, axis):
+    """Reshape one Datalakes processed-file payload into long format (time, depth, value).
+    `axis` is the data axis to read — the depth-resolved 2D grid (usually 'z'); time comes from
+    'x' (epoch seconds) and depth from 'y', and the grid is laid out as [depth][time]."""
+    if axis not in data:
+        raise ValueError("Datalakes axis '{}' not in payload (available: {})"
+                         .format(axis, sorted(data.keys())))
+    times = pd.to_datetime(np.asarray(data["x"], dtype="int64"), unit="s", utc=True)
+    depths = np.asarray(data["y"], dtype=float)
+    values = np.asarray(data[axis], dtype=float)       # nulls -> NaN
+    if values.ndim != 2:
+        raise ValueError("Datalakes axis '{}' is a 1D series, not a depth-resolved 2D grid; "
+                         "provide the 2D axis (usually 'z').".format(axis))
+    if values.shape != (len(depths), len(times)):
+        if values.shape == (len(times), len(depths)):  # tolerate time-major orientation
+            values = values.T
+        else:
+            raise ValueError("Datalakes axis '{}' shape {} matches neither (depths {}, times {})"
+                             .format(axis, values.shape, len(depths), len(times)))
+    df = pd.DataFrame(values, index=pd.Index(depths, name="depth"), columns=pd.Index(times, name="time"))
+    return df.stack().rename("value").reset_index()[["time", "depth", "value"]]
+
+
+def fetch_datalakes(source_cfg, args, since=None):
+    """Fetch in-situ profiles from Datalakes (https://www.datalakes-eawag.ch). The run's
+    `observations.id` is the Datalakes *dataset* id and `axis` selects which data
+    axis to assimilate — the depth-resolved 2D grid, usually 'z'. (A dataset's axis->variable map
+    is at `https://api.datalakes-eawag.ch/datasetparameters?datasets_id=<id>`: e.g. for 1334
+    x=time, y=depth, z=temp [degC], y1=surface_temp, …) Processed `json` files are served at
+    /download/<file id>.
+
+    The processed json files are time-chunked (typically monthly) and carry per-file
+    `maxdatetime`. When `since` is given (a warm, incremental run), only files that can hold
+    data on or after `since` are downloaded; files entirely older than `since` are skipped.
+    Files without a `maxdatetime` are always downloaded (their range is unknown)."""
+    dataset_id = source_cfg.get("id")
+    if dataset_id is None:
+        raise ValueError("datalakes source for lake '{}' needs an 'id' (Datalakes dataset id) in its "
+                         "assimilation observations block".format(source_cfg.get("key")))
+    axis = source_cfg.get("axis", "z")
+    base = source_cfg.get("api", DATALAKES_API)
+
+    files = call_url("{}/files?datasets_id={}".format(base, dataset_id))
+    json_files = [f for f in files if f.get("filetype") == "json"]
+    if not json_files:
+        raise ValueError("No processed (json) files for Datalakes dataset {}".format(dataset_id))
+    json_files.sort(key=lambda f: f.get("maxdatetime") or "")
+
+    if since is not None:
+        cutoff = pd.Timestamp(since)
+        cutoff = cutoff.tz_localize("UTC") if cutoff.tzinfo is None else cutoff.tz_convert("UTC")
+        json_files = [f for f in json_files
+                      if f.get("maxdatetime") is None
+                      or pd.to_datetime(f["maxdatetime"], utc=True) >= cutoff]
+
+    if not json_files:
+        return pd.DataFrame(columns=["time", "depth", "value"])
+
+    frames = [_datalakes_to_long(call_url("{}/download/{}".format(base, f["id"])), axis)
+              for f in json_files]
+    df = pd.concat(frames, ignore_index=True)
+    return df.drop_duplicates(subset=["time", "depth"]).dropna(subset=["value"])
+
+
+OBSERVATION_SOURCES = {
+    "datalakes": fetch_datalakes,
+}
+
+def decimate_observations(df, decimation):
+    """Temporally resample each depth series to `decimation['time']` (a pandas offset, e.g. '1H',
+    '1D') using `decimation['aggregation']` (mean/median/min/max/first/last, or 'nearest'). No-op
+    when decimation is unset. Structured so depth/QA decimation can be added later."""
+    if df.empty or not decimation or not decimation.get("time"):
+        return df.sort_values("time").reset_index(drop=True)
+    freq = decimation["time"]
+    agg = (decimation.get("aggregation") or "mean").lower()
+
+    parts = []
+    for depth, group in df.groupby("depth"):
+        s = group.set_index("time")["value"].sort_index()
+        s = s[~s.index.duplicated()]
+        if agg == "nearest":
+            idx = pd.date_range(s.index.min().floor(freq), s.index.max().floor(freq), freq=freq)
+            s = s.reindex(idx, method="nearest", tolerance=pd.Timedelta(freq))
+        else:
+            s = getattr(s.resample(freq), agg)()
+        s = s.dropna()
+        s.index.name = "time"
+        part = s.rename("value").reset_index()
+        part["depth"] = depth
+        parts.append(part)
+    if not parts:
+        return df.iloc[0:0][["time", "depth", "value"]]
+    return pd.concat(parts, ignore_index=True).sort_values("time").reset_index(drop=True)[["time", "depth", "value"]]
+
+
+def _read_existing_observations(out_csv):
+    """Load a previously written observation CSV as a clean (time, depth, value) frame, or None."""
+    if not os.path.isfile(out_csv):
+        return None
+    df = pd.read_csv(out_csv)
+    df.columns = [c.strip().lower() for c in df.columns]
+    if not {"time", "depth", "value"}.issubset(df.columns):
+        return None
+    df["time"] = pd.to_datetime(df["time"], utc=True)
+    df = df.dropna(subset=["time", "depth", "value"])[["time", "depth", "value"]]
+    return df if not df.empty else None
+
+
+def fetch_observations(key, observations_cfg, args, out_csv):
+    """Resolve the assimilation run's observation source, fetch -> decimate -> write the
+    time,depth,value CSV. Returns (first_obs, last_obs) datetimes, or (None, None) if there are no
+    observations.
+
+    On a cold start (no existing CSV) the full time series is fetched. On a warm start the
+    existing CSV already holds the history, so only observations newer than its last day are
+    fetched from the source and appended — the last stored day is re-fetched so its partial
+    values get refreshed.
+
+    Source config is the run's `observations` block in lake_parameters.json
+    ({source, id, parameter, decimation:{time, aggregation}})."""
+    source_cfg = dict(observations_cfg or {})
+    if not source_cfg:
+        raise ValueError("Assimilation run for lake '{}' has no 'observations' block in "
+                         "lake_parameters.json".format(key))
+    source_cfg["key"] = key
+    source_cfg.setdefault("parameter", "temperature")
+
+    source = source_cfg.get("source")
+    if source not in OBSERVATION_SOURCES:
+        raise ValueError("Unknown observation source '{}' for lake '{}'. Available: {}"
+                         .format(source, key, sorted(OBSERVATION_SOURCES)))
+
+    earliest = None
+    if args.get("first_obs_date"):
+        earliest = pd.Timestamp(datetime.strptime(args["first_obs_date"], "%Y%m%d")).tz_localize("UTC")
+
+    existing = _read_existing_observations(out_csv)
+    since = existing["time"].max().floor("D") if existing is not None else None
+
+    # Lower bound handed to the source so old time-chunked files aren't downloaded.
+    fetch_since = since
+    if earliest is not None:
+        fetch_since = earliest if fetch_since is None else max(fetch_since, earliest)
+
+    df = OBSERVATION_SOURCES[source](source_cfg, args, since=fetch_since)
+    df = df.dropna(subset=["time", "depth", "value"])
+    if since is not None:
+        df = df[df["time"] >= since]
+    df = decimate_observations(df, source_cfg.get("decimation"))
+
+    if existing is not None:
+        df = pd.concat([existing[existing["time"] < since], df], ignore_index=True)
+        df = df.drop_duplicates(subset=["time", "depth"], keep="last")
+        df = df.sort_values("time").reset_index(drop=True)
+
+    if earliest is not None:
+        df = df[df["time"] >= earliest].reset_index(drop=True)
+
+    os.makedirs(os.path.dirname(out_csv), exist_ok=True)
+    df.to_csv(out_csv, index=False)
+    if df.empty:
+        return None, None
+    return df["time"].iloc[0].to_pydatetime(), df["time"].iloc[-1].to_pydatetime()
+    
