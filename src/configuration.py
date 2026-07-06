@@ -103,5 +103,7 @@ class AssimilatorConfig(Config):
                                              "desc": "Cold-start: if set, spin up this many years before the first assimilation date instead of from the start of the meteo data"}
         self.default_args["max_assimilation_workers"] = {"default": False, "verify": verify.verify_integer,
                                                          "desc": "Ensemble members run concurrently within a lake's assimilation (default: all at once). Separate from max_workers, which parallelises lakes."}
+        self.default_args["openda_bin"] = {"default": False, "verify": verify.verify_string,
+                                           "desc": "Path to the OpenDA bin/ directory (e.g. .../openda_3.4.0/bin), used by runs with engine \"openda\"; if unset, oda_run.sh must already be on PATH"}
         self.args = {k: v["default"] for k, v in self.default_args.items()}
         self.args["lake_parameters_dir"] = self.lake_parameters_dir

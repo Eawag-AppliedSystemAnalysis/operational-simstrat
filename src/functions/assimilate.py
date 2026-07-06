@@ -7,7 +7,8 @@ from datetime import datetime, timezone
 
 import numpy as np
 
-from assimilator.models.simstrat import read_snapshot_T, write_snapshot_T_at, _member_snapshot_paths
+from assimilator.models.simstrat import (read_snapshot_T_at, write_snapshot_T_at,
+                                          _member_snapshot_paths, mean_traj_path)
 
 
 def _date(dt):
@@ -95,14 +96,47 @@ def stage_perturbations(key, perturbations, out_json, da_dir):
     return os.path.join(da_dir, "perturbations", "{}.json".format(key))
 
 
+def _analysis_member_paths(member_id, da_cfg):
+    """Member analysis snapshot + par file, resolving the engine's layout: native members live at
+    ensemble{i}/<results_dir>/, OpenDA members at <openda_dir>/Results/work{i}/."""
+    if da_cfg.get("engine") == "openda":
+        work = os.path.join(da_cfg["openda_dir"], "Results", "work{}".format(member_id))
+        return (os.path.join(work, "Results", "simulation-snapshot.dat"),
+                os.path.join(work, "Settings.par"))
+    return _member_snapshot_paths(member_id, da_cfg)
+
+
 def write_analysis_snapshot(da_cfg, last_da_date, out_snapshot):
     """Build the deterministic warm-start for the forecast: the ensemble-mean analysis. Average
     the temperature column over members 1..N (the assimilated members) and inject it into a copy
     of member 1's analysis snapshot, written to out_snapshot as simulation-snapshot_<lastDA>.dat."""
     n_members = da_cfg["n_members"]
-    cols = [read_snapshot_T(i, da_cfg)[0] for i in range(1, n_members + 1)]
+    cols = []
+    for i in range(1, n_members + 1):
+        snap, par = _analysis_member_paths(i, da_cfg)
+        cols.append(read_snapshot_T_at(snap, par)[0])
     mean_T = np.mean(np.vstack(cols), axis=0)
 
-    member_snap, member_par = _member_snapshot_paths(1, da_cfg)
+    member_snap, member_par = _analysis_member_paths(1, da_cfg)
     shutil.copy(member_snap, out_snapshot)
     write_snapshot_T_at(out_snapshot, member_par, mean_T)
+
+
+def merge_openda_mean(da_cfg, assimilation_dir):
+    """Merge the OpenDA run's ensemble-mean trajectory (this window only, written to openda_dir)
+    into the rolling mean file in assimilation_dir that post-processing reads, matching how the
+    native engines accumulate the full trajectory across runs."""
+    import pandas as pd
+    src = mean_traj_path(da_cfg["openda_dir"], da_cfg["algorithm"])
+    if not os.path.exists(src):
+        raise FileNotFoundError("No ensemble-mean trajectory at {}".format(src))
+    dst = mean_traj_path(assimilation_dir, da_cfg["algorithm"])
+    new = pd.read_csv(src)
+    new.columns = [c.strip().strip('"') for c in new.columns]
+    if os.path.exists(dst):
+        prev = pd.read_csv(dst)
+        prev.columns = [c.strip().strip('"') for c in prev.columns]
+        if list(prev.columns) == list(new.columns):
+            time_col = new.columns[0]
+            new = pd.concat([prev[~prev[time_col].isin(new[time_col])], new]).sort_values(time_col)
+    new.to_csv(dst, index=False)

@@ -209,12 +209,14 @@ def combine_temperature(run_dir, sources=None, parameters=None):
     seam. Robust to daily appends that can leave boundary-duplicate timestamps."""
     DEFAULT_SOURCES = (
         "T_out_spinup.dat",                                       # pre-assimilation spin-up (run root)
-        os.path.join("assimilation", "T_out_enkf_mean.dat"),     # assimilation period (assimilation/)
+        os.path.join("assimilation", "T_out_*_mean.dat"),        # assimilation period (assimilation/)
         os.path.join("forecast", "Results", "T_out.dat"),        # forecast period
     )
     if sources is None:
-        sources = [os.path.join(run_dir, s) for s in DEFAULT_SOURCES]
-    sources = [s for s in sources if os.path.exists(s)]
+        sources = [p for s in DEFAULT_SOURCES
+                   for p in sorted(glob.glob(os.path.join(run_dir, s)), key=os.path.getmtime, reverse=True)]
+    else:
+        sources = [s for s in sources if os.path.exists(s)]
     if not sources:
         raise FileNotFoundError("No temperature output files found under {}".format(run_dir))
 

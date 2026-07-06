@@ -15,7 +15,7 @@ from model import Simstrat
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data-assimilation", "src")))
 from functions.assimilate import (_date, parse_day, run_arg, floor_to_day, latest_snapshot_date, phase_args,
                                    stage_perturbations, write_analysis_snapshot, copy_master_inputs,
-                                   refresh_ensemble_inputs)
+                                   refresh_ensemble_inputs, merge_openda_mean)
 from functions.postprocess import post_process_temperature
 from assimilate import run as run_assimilation
 
@@ -127,7 +127,7 @@ def assimilate_run(key, run_key, run_cfg, parameters, args):
             "algorithm": algorithm,
             "results_dir": "Results_{}".format(algorithm),
             "par_file": "Settings_{}.par".format(algorithm),
-            "inflation": run_arg(run_cfg, run_key, key, "inflation"),
+            "inflation": run_cfg.get("inflation", 1.0),
             "n_members": n_members,
             "sigma_obs": run_arg(run_cfg, run_key, key, "sigma_obs"),
             "sigma_scale": run_arg(run_cfg, run_key, key, "sigma_scale"),
@@ -144,8 +144,13 @@ def assimilate_run(key, run_key, run_cfg, parameters, args):
             "progress": False,
             "max_workers": args["max_assimilation_workers"],
         }
+        if engine == "openda":
+            da_cfg["openda_bin"] = args["openda_bin"]
+            da_cfg["openda_dir"] = os.path.join(lake_dir, "openda_{}".format(run_name))
         refresh_ensemble_inputs(assimilation_dir, model_inputs, n_members, log)
         run_assimilation(da_cfg, model="simstrat")
+        if engine == "openda":
+            merge_openda_mean(da_cfg, assimilation_dir)
         write_analysis_snapshot(da_cfg, last_da, os.path.join(model_inputs, "simulation-snapshot_{}.dat".format(_date(last_da))))
         log.end_stage()
 
