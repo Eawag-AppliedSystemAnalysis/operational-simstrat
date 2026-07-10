@@ -21,7 +21,7 @@ class Config(object):
             "snapshot": {"default": True, "verify": verify.verify_bool, "desc": "Restart run from snapshot if available"},
             "snapshot_date": {"default": False, "verify": verify.verify_date, "desc": "Snapshot date YYYYMMDD defaults to most recent"},
             "monthly_snapshot": {"default": False, "verify": verify.verify_bool, "desc": "Split runs to make snapshot end of previous month"},
-            "data_api": {"default": "http://eaw-alplakes2:8000", "verify": verify.verify_string, "desc": "Base URL for the Alplakes API"},
+            "data_api": {"default": "http://eaw-alplakes2.eawag.wroot.emp-eaw.ch:8000", "verify": verify.verify_string, "desc": "Base URL for the Alplakes API"},
             "log": {"default": True, "verify": verify.verify_bool, "desc": "Output log to file"},
             "run": {"default": True, "verify": verify.verify_bool, "desc": "Run simulations"},
             "post_process": {"default": True, "verify": verify.verify_bool, "desc": "Post process simulation"},
