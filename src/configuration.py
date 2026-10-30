@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import json
 from functions import verify
@@ -92,6 +93,15 @@ class CalibratorConfig(Config):
 
 def assimilation_config_path(repo_dir, key):
     return os.path.join(repo_dir, "static", "assimilation", "{}.json".format(key))
+
+
+def save_assimilation_config(repo_dir, key, cfg):
+    """Write a lake's data-assimilation setup, with lists of numbers kept on one line."""
+    text = json.dumps(cfg, indent=4)
+    text = re.sub(r"\[\s*([-+\d.eE,\s]+?)\s*\]",
+                  lambda m: "[" + ", ".join(x.strip() for x in m.group(1).split(",")) + "]", text)
+    with open(assimilation_config_path(repo_dir, key), "w") as f:
+        f.write(text + "\n")
 
 
 def load_assimilation_config(repo_dir, key):

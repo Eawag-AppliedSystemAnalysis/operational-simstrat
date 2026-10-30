@@ -29,9 +29,9 @@ def main():
     result = derive_filter(raw, identity["length_km"], mean_depth, thermo_depth_min=cli.thermo_depth_min)
     common.show(result)
     if cli.write:
-        block = {"w_seiche_h": result["w_seiche_h"], "thermo_depth_min": result["thermo_depth_min"],
-                 "derived_on": result["derived_on"], "derived_by": "src/assimilation_tools/calibrate_filter.py",
-                 "two_layer": result["two_layer"], "diagnostics": result["diagnostics"]}
+        block = {"w_seiche_h": result["w_seiche_h"]}
+        if cli.thermo_depth_min is not None:
+            block["thermo_depth_min"] = cli.thermo_depth_min
         common.write_section(cli.lake, ["observations", "filter"], block)
 
 

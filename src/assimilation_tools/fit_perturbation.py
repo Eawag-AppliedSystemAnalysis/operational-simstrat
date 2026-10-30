@@ -116,6 +116,20 @@ def _flatten(d):
 
 # ------------------------------------------------------------------------------------- main --
 
+def stored_form(base):
+    """What the lake file keeps: the run's `variables`, plus the amplitude and both bounds needed
+    to refit the upper bound or switch bound offline. Provenance is only printed."""
+    pers = base["persistence"]
+    out = {"variables": base["variables"],
+           "amplitude": {"stationary_std": base["amplitude"]["stationary_std"]},
+           "persistence": {"bound": pers["bound"], "chosen": pers["chosen"],
+                           **{b: {"tau_h": pers[b]["tau_h"], "phi": pers[b]["phi"]}
+                              for b in ("lower", "upper") if b in pers}}}
+    if base.get("fit_window"):
+        out = {"fit_window": base["fit_window"], **out}
+    return out
+
+
 def control_forcing(key, start, end, sim_dir=None):
     sim_dir = sim_dir or os.path.join(common.REPO, "runs", key)
     if not os.path.isfile(os.path.join(sim_dir, "Forcing.dat")):
@@ -171,7 +185,7 @@ def main():
     result = P.ordered(P.select(base, cli.bound))
     common.show(result)
     if cli.write:
-        common.write_section(cli.lake, ["perturbations"], result)
+        common.write_section(cli.lake, ["perturbations"], stored_form(result))
 
 
 if __name__ == "__main__":

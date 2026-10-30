@@ -1,64 +1,32 @@
 {
-    "_note": "Data assimilation setup for this lake: observation processing, observation error, forcing perturbation and the runs. Fitted values are written by src/assimilation_tools/*.py --write; see the Data Assimilation section of README.md.",
-    "runs": {},
+    "runs": {
+        "python_enkf": {
+            "engine": "python",
+            "algorithm": "EnKF",
+            "n_members": 20
+        }
+    },
     "observations": {
-        "_todo": "Add the observation source (e.g. \"source\": \"datalakes\", \"id\": <dataset id>, \"axis\": \"z\") and a run under \"runs\" to assimilate this lake operationally.",
+        "source": "datalakes",
+        "id": 448,
+        "axis": "z",
         "filter": {
-            "w_seiche_h": 97.4,
-            "thermo_depth_min": 4.0,
-            "derived_by": "calibrate_filter (feat/da-combi)"
+            "w_seiche_h": 97.2
         },
         "schedule": {
-            "hour": 2,
-            "max_offset_h": 1.5
+            "hour": 2
         },
-        "depths": [
-            0.25,
-            1.0,
-            2.0,
-            4.0,
-            6.0,
-            8.0,
-            10.0,
-            12.0,
-            14.0,
-            16.0,
-            18.0,
-            21.0,
-            24.0,
-            27.0,
-            30.0,
-            35.0,
-            40.0,
-            45.0,
-            50.0,
-            55.0,
-            60.0,
-            65.0,
-            70.0,
-            75.0,
-            80.0,
-            85.0,
-            90.0
-        ],
-        "depth_tolerance_m": 0.5
+        "depths": [0.25, 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 21, 24, 27, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90]
     },
     "sigma_obs": {
-        "mixed": 0.278,
-        "stratified": 0.589
-    },
-    "sigma_obs_fit": {
-        "fitted_on_series": "temperature_filtered_h02_1d.csv",
-        "fitted_by": "generate_sigma (data-assimilation), against inputs/<lake>/ref/T_out.dat"
+        "mixed": 0.386,
+        "stratified": 0.636
     },
     "perturbations": {
-        "reanalysis_lake": "geneva",
         "fit_window": {
             "start": "2025-01-01",
             "end": "2025-12-31"
         },
-        "n_timesteps": 8736,
-        "fitted_on": "2026-07-08",
         "variables": {
             "U": {
                 "phi": 0.910584,
@@ -74,7 +42,6 @@
             }
         },
         "amplitude": {
-            "source": "ICON KENDA-CH1 - control Forcing.dat",
             "stationary_std": {
                 "U": 1.468828,
                 "V": 1.925727,
@@ -89,7 +56,6 @@
                 "GLOB": "upper"
             },
             "lower": {
-                "source": "ACF of the ICON residual; a floor",
                 "tau_h": {
                     "U": 5.513,
                     "V": 8.585,
@@ -102,7 +68,6 @@
                 }
             },
             "upper": {
-                "source": "ACF of the station signal (clearness); a ceiling",
                 "tau_h": {
                     "U": 10.676,
                     "V": 5.966,
@@ -112,20 +77,12 @@
                     "U": 0.910584,
                     "V": 0.845671,
                     "GLOB": 0.832335
-                },
-                "fitted_on": "2026-07-29"
-            },
-            "_note": "phi is bracketed, not measured. lower is a floor (the ICON residual carries white spatial mismatch, which shortens any measured tau); upper is a ceiling (the station signal measures weather persistence, not error persistence); envelope takes the longer tau per channel. The honest number needs the ACF of (forecast - station obs), which requires archived ICON forecasts."
+                }
+            }
         }
     },
     "identity": {
         "length_km": 72.3,
-        "mean_depth": 152.7,
-        "lake_bbox": [
-            46.2,
-            6.14,
-            46.52,
-            6.93
-        ]
+        "mean_depth": 152.7
     }
 }

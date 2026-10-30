@@ -9,7 +9,6 @@ import sys
 import json
 import logging
 import argparse
-from datetime import datetime, timezone
 
 SRC = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # src/, for configuration/functions
 REPO = os.path.dirname(SRC)
@@ -17,7 +16,7 @@ sys.path.insert(0, SRC)
 sys.path.append(os.path.join(REPO, "data-assimilation", "src"))
 
 import pandas as pd                                                       # noqa: E402
-from configuration import assimilation_config_path                       # noqa: E402
+from configuration import assimilation_config_path, save_assimilation_config  # noqa: E402
 from functions.observations import (update_raw_observations, processing_config,  # noqa: E402
                                     assimilator_observations)
 
@@ -55,25 +54,20 @@ def lake_parameters(key):
 
 
 def write_section(key, path, value):
-    """Set cfg[path[0]][path[1]]... = value in static/assimilation/<key>.json, keeping key order."""
+    """Set cfg[path[0]][path[1]]... = value in static/assimilation/<key>.json, keeping key order.
+    Only working values are stored; the tools print their diagnostics instead."""
     cfg = lake_config(key)
     node = cfg
     for k in path[:-1]:
         node = node.setdefault(k, {})
     node[path[-1]] = value
-    dest = assimilation_config_path(REPO, key)
-    with open(dest, "w") as f:
-        json.dump(cfg, f, indent=4)
-        f.write("\n")
-    logger.info("wrote %s -> %s", ".".join(path), os.path.relpath(dest, REPO))
+    save_assimilation_config(REPO, key, cfg)
+    logger.info("wrote %s -> %s", ".".join(path),
+                os.path.relpath(assimilation_config_path(REPO, key), REPO))
 
 
 def show(result):
     print(json.dumps(result, indent=2))
-
-
-def today():
-    return datetime.now(timezone.utc).date().isoformat()
 
 
 def raw_observations(key, cfg, raw_path=None, refresh=False):

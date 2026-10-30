@@ -156,24 +156,24 @@ Where `assimilation` is the argument file in `args/`. The arguments follow the s
     "runs": {"python_enkf": {"engine": "python", "algorithm": "EnKF", "n_members": 20}},
     "observations": {
         "source": "datalakes", "id": 1334, "axis": "z",
-        "filter":   {"w_seiche_h": 27.3, "thermo_depth_min": 4.0},
-        "schedule": {"hour": 6, "max_offset_h": 1.5}
+        "filter":   {"w_seiche_h": 27.3},
+        "schedule": {"hour": 6}
     },
     "sigma_obs": {"mixed": 0.299, "stratified": 0.586},
     "perturbations": {"variables": {"U": {"phi": 0.754, "sigma": 0.588}, "V": {...}, "GLOB": {...}}},
-    "identity": {"length_km": 25.0, "mean_depth": 171.0}
+    "identity": {"length_km": 25.0}
 }
 ```
 
 | Key | Meaning |
 |---|---|
 | `runs` | One entry per assimilation run. Any key of the submodule's run config can go here (`engine`, `algorithm`, `n_members`, `inflation`, `sigma_scale`, `rng_seed`, `obs_operator`, …, see `data-assimilation/docs/configuration.md`); a key set here overrides the lake-level one (e.g. a run-specific `sigma_obs`). `engine` is `python` (`algorithm` `EnKF`/`PF`) or `openda` (`EnKF`/`DEnKF`/`EnSR`/`PF`, needs OpenDA 3.4.0 via the `openda_bin` argument). |
-| `observations` | Where the raw record comes from (`source` and its keys) and how it becomes the assimilated series (`filter`, `schedule`, optional `depths` + `depth_tolerance_m`), see *Observations* below. |
-| `sigma_obs` | Observation error, °C: a number or `{"mixed", "stratified"}` (stratified = May–Oct). **Valid only for the series it was fitted on**: refit after changing `filter`, `schedule` or `depths`. `sigma_obs_fit` records what it was fitted on. Without it the run uses `sigma_default` (0.5 °C). |
-| `perturbations` | The AR(1) forcing perturbation that generates the ensemble. Only `variables` is used by the run; `amplitude` and `persistence` are what the fit tool needs to refit or switch bound. |
-| `identity` | Inputs of the fits: basin length `length_km`, `mean_depth` (else `average_depth` from `lake_parameters.json`), and the ICON request box `lake_bbox` (else the bounds of the lake's outline in `static/lake_geometry.json`). |
+| `observations` | Where the raw record comes from (`source` and its keys) and how it becomes the assimilated series (`filter`, `schedule`, optional `depths`), see *Observations* below. Defaults, set only to change them: `filter.thermo_depth_min` 4 m, `schedule.max_offset_h` 1.5 h, `depth_tolerance_m` 0.5 m. |
+| `sigma_obs` | Observation error, °C: a number or `{"mixed", "stratified"}` (stratified = May–Oct). **Valid only for the series it was fitted on**: refit after changing `filter`, `schedule` or `depths`. Without it the run uses `sigma_default` (0.5 °C). |
+| `perturbations` | The AR(1) forcing perturbation that generates the ensemble. Only `variables` is used by the run; `fit_window`, `amplitude` and `persistence` are what the fit tool needs to refit the upper bound or switch bound without ICON. |
+| `identity` | Inputs of the fits: basin length `length_km`, and `mean_depth` where it should differ from `average_depth` in `lake_parameters.json`. Optional `lake_bbox` sets the ICON request box (default: the bounds of the lake's outline in `static/lake_geometry.json`). |
 
-A lake is assimilated when its file has at least one run and an observation `source`. Keys starting with `_` are comments. The seven study lakes were migrated from the data-assimilation research setup (branch `feat/da-combi`); only upperlugano has a run and a source so far, the others keep their fitted values until their observation datasets are added.
+A lake is assimilated when it is listed in `args/assimilation.json` and its file has a run and an observation `source`. Keys starting with `_` are comments. The seven study lakes were migrated from the data-assimilation research setup (branch `feat/da-combi`), each with a `python_enkf` run and its Datalakes dataset: upperlugano 1334, maggiore 1333, geneva 448 (LéXPLORE chain), aegeri 1077 (Idronaut depth-time grid), hallwil 1046, murten 956, greifensee 515 (profiler; its vertical axis is labelled pressure but holds the 1–16.9 m depth grid). Only upperlugano is in `args/assimilation.json` so far.
 
 Every run gets its own state directory `runs/<lake>_<run>/` (e.g. `runs/upperlugano_python_enkf/`), containing the persistent ensemble under `assimilation/`, the `model_inputs/` analysis inputs + snapshots, the `forecast/` extension, and the `observations/` (the raw record `raw.csv`, the assimilated series `temperature.csv` and the settings it was made with, `processing.json`).
 
@@ -191,7 +191,7 @@ The combined assimilation + forecast temperature is written to `runs/<lake>_<run
 Each run appends the new raw (sub-daily) observations to `raw.csv` and turns the record into the series it assimilates with the submodule's `assimilator.observations.preprocess`. Rows are only ever selected or averaged, never invented, and the series **is** the analysis schedule: one analysis per distinct observation time.
 
 1. **Filter** (`filter`) — below `thermo_depth_min` (4 m) most hour-to-hour variance is the thermocline displaced by basin-scale seiches, which a 1D model cannot reproduce. Each depth there is replaced by a causal trailing mean over one fundamental seiche period `w_seiche_h`, from Merian's two-layer formula `T = 2L / sqrt(g'·h_eff)` at peak stratification (11 h on Ägeri, 27 h on Upper Lugano, 97 h on Geneva). A value is dropped when its window is less than a quarter full or holds only samples from before a gap. The top 4 m pass through untouched. Removing `filter` switches it off.
-2. **Depth grid** (`depths`, optional) — keep the depth nearest each target within `depth_tolerance_m` (0.5 m), for dense sensor chains.
+2. **Depth grid** (`depths`, optional) — keep the depth nearest each target within `depth_tolerance_m` (0.5 m), for dense sensor chains and interpolated profiles.
 3. **Thin** (`schedule`) — one instant per day, all its depths: the one nearest `hour` UTC, skipping the day if it is more than `max_offset_h` away; or, with `"hour_window": [lo, hi]`, the first instant in that window (for lakes whose sampling phase drifts). The hour matters because assimilating at a fixed hour aliases that hour's model error into a bias; it is chosen where the model's diurnal bias is small relative to its day-to-day error, among early-morning hours so the analysis lands before the day it forecasts.
 
 Each run reprocesses only the last stored day onwards (with the look-back the causal filter needs), so the daily series matches a full reprocess; changing the settings reprocesses the whole stored record. The port reproduces the research (`feat/da-combi`) series row for row.
@@ -212,7 +212,7 @@ python src/assimilation_tools/fit_sigma.py       <lake> --write           # -> s
 
 and add a run under `runs` and the lake to `args/assimilation.json`. `make_free_run.py` builds the hourly free run the hour and sigma fits compare against (the operational run outputs only every 3 h). `select_hour.py` searches 00–06 UTC by default; pass `--window 23-6` to include 23 UTC (as chosen for Ägeri and Hallwil). Raw observations come from the lake's run, or are fetched from its source; `--raw file.csv` overrides.
 
-The stored values are the research choices and depend on the record and free run they were fitted on; refitting upperlugano on the record to October 2026 against `make_free_run.py` output gives a 26.1 h window (stored 27.3 h), hour 5 (stored 6) and `sigma_obs` 0.336 / 0.625 (stored 0.299 / 0.586). The stored perturbation amplitudes were fitted on the whole of Lake Lugano; a refit uses the upper basin outline from `static/lake_geometry.json`.
+The analysis hours, depth grids and perturbations are the research choices. The seiche windows were refitted on the Datalakes records to October 2026 (except Maggiore, kept at the research 77.5 h: the refit gives 68.5 h, and its window already costs a lot of lag), and `sigma_obs` was refitted on the resulting series against `make_free_run.py` free runs of the operational setup (Ägeri as one annual value, `fit_sigma.py --annual`, as in the research). The stored perturbation amplitudes were fitted on the whole of Lake Lugano; a refit uses the upper basin outline from `static/lake_geometry.json`.
 
 The data-assimilation submodule can also run on its own on any Simstrat folder (`python data-assimilation/src/assimilate.py run --sim-dir ...`); see its README.
 

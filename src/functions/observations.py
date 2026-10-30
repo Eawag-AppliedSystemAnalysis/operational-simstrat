@@ -254,8 +254,11 @@ def _datalakes_to_long(data, axis):
         else:
             raise ValueError("Datalakes axis '{}' shape {} matches neither (depths {}, times {})"
                              .format(axis, values.shape, len(depths), len(times)))
-    df = pd.DataFrame(values, index=pd.Index(depths, name="depth"), columns=pd.Index(times, name="time"))
-    return df.stack().rename("value").reset_index()[["time", "depth", "value"]]
+    # Built directly rather than via DataFrame.stack: some files repeat a timestamp, which stack
+    # rejects. Duplicate (time, depth) rows are dropped by the caller (first kept).
+    return pd.DataFrame({"time": np.tile(times, len(depths)),
+                         "depth": np.repeat(depths, len(times)),
+                         "value": values.ravel()}).dropna(subset=["value"]).reset_index(drop=True)
 
 
 def fetch_datalakes(source_cfg, args, since=None):

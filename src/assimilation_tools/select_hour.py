@@ -18,7 +18,8 @@ def main():
     ap.add_argument("--free-run", help="free-run T_out.dat (default: runs/<lake>/Results/T_out.dat)")
     ap.add_argument("--window", default="0-6", help="candidate hours LO-HI (inclusive, may wrap), or 'all'")
     ap.add_argument("--criterion", default="balanced", choices=CRITERIA)
-    ap.add_argument("--max-offset", type=float, default=1.5)
+    ap.add_argument("--max-offset", type=float, default=None,
+                    help="hours a day's instant may be from the hour (default 1.5)")
     cli = ap.parse_args()
     common.setup_logging()
 
@@ -28,10 +29,10 @@ def main():
                          common.free_run(cli.lake, cli.free_run), window=window, criterion=cli.criterion)
     common.show(result)
     if cli.write:
-        common.write_section(cli.lake, ["observations", "schedule"], {
-            "hour": result["hour"], "max_offset_h": cli.max_offset,
-            "selected_on": common.today(), "criterion": cli.criterion,
-            "window": result["window"], "unconstrained": result["unconstrained"]})
+        schedule = {"hour": result["hour"]}
+        if cli.max_offset is not None:
+            schedule["max_offset_h"] = cli.max_offset
+        common.write_section(cli.lake, ["observations", "schedule"], schedule)
 
 
 if __name__ == "__main__":

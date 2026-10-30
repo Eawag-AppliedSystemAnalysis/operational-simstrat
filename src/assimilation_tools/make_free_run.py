@@ -11,6 +11,8 @@ Simstrat (Docker) twice:
   2. --start to --end from that state, hourly output, on the setup's output depths plus the depths
      the lake is observed at
 
+AED2 is switched off in the copy, as in the assimilation runs, whatever the operational setup uses.
+
 The result, runs/assimilation_tools/<lake>/free_run/Results/T_out.dat, is what select_hour.py and
 fit_sigma.py read by default.
 """
@@ -113,6 +115,8 @@ def main():
     common.logger.info("output depths: %d (setup grid + observed depths)", n)
     par["Output"]["Times"] = "t_out.dat"
     par["Simulation"]["Continue from last snapshot"] = True
+    # Physics only, as the assimilation runs are (args/assimilation.json: couple_aed2 false).
+    par.setdefault("ModelConfig", {})["CoupleAED2"] = False
 
     # 1. spin-up to --start, daily output, ending in a snapshot
     _write_t_out(os.path.join(work, "t_out.dat"), 86400 // dt)
