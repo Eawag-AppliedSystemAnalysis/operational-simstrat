@@ -1227,24 +1227,10 @@
         "engine": "python",
         "algorithm": "EnKF",
         "n_members": 20,
-        "sigma_obs": 0.5,
+        "sigma_obs": { "mixed": 0.299, "stratified": 0.586 },
         "inflation": 1.0,
         "sigma_scale": 1.0,
-        "rng_seed": 42,
-        "perturbations": {
-          "U": {
-            "phi": 0.656318,
-            "sigma": 0.675797
-          },
-          "V": {
-            "phi": 0.691316,
-            "sigma": 0.902284
-          },
-          "GLOB": {
-            "phi": 0.486352,
-            "sigma": 45.530656
-          }
-        }
+        "rng_seed": 42
       }
     },
     "forcing": [

@@ -129,7 +129,6 @@ def assimilate_run(key, run_key, run_cfg, parameters, args):
             "par_file": "Settings_{}.par".format(algorithm),
             "inflation": run_cfg.get("inflation", 1.0),
             "n_members": n_members,
-            "sigma_obs": run_arg(run_cfg, run_key, key, "sigma_obs"),
             "sigma_scale": run_arg(run_cfg, run_key, key, "sigma_scale"),
             "rng_seed": run_arg(run_cfg, run_key, key, "rng_seed"),
             "start_date": snapshot_start.strftime("%Y-%m-%d"),
@@ -144,6 +143,9 @@ def assimilate_run(key, run_key, run_cfg, parameters, args):
             "progress": False,
             "max_workers": args["max_assimilation_workers"],
         }
+        for name in ("sigma_obs", "sigma_default", "obs_operator", "obs_target_hour"):
+            if name in run_cfg:
+                da_cfg[name] = run_cfg[name]
         if engine == "openda":
             da_cfg["openda_bin"] = args["openda_bin"]
             da_cfg["openda_dir"] = os.path.join(lake_dir, "openda_{}".format(run_name))

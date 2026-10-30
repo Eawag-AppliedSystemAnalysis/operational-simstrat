@@ -93,8 +93,10 @@ class CalibratorConfig(Config):
 class AssimilatorConfig(Config):
     def __init__(self, *args, **kwargs):
         super(AssimilatorConfig, self).__init__(*args, **kwargs)
-        # engine, algorithm, n_members, sigma_obs, inflation, sigma_scale and rng_seed are
-        # configured per-lake in lake_parameters.json (no global default).
+        # engine, algorithm, n_members, inflation, sigma_scale and rng_seed are configured per-lake
+        # in lake_parameters.json (no global default). Optional there: sigma_obs (a float or a
+        # {"mixed", "stratified"} pair; falls back to the submodule's sigma_default) and
+        # obs_operator (defaults to "linear").
         self.default_args["first_da_date"] = {"default": False, "verify": verify.verify_date,
                                               "desc": "Cold-start: earliest date to assimilate YYYYMMDD (defaults to earliest observation)"}
         self.default_args["first_obs_date"] = {"default": False, "verify": verify.verify_date,
