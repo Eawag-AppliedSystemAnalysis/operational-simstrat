@@ -9,27 +9,23 @@ from functions.parallel import run_parallel_tasks
 from functions.general import process_args, upload_files
 from functions.observations import fetch_observations
 from functions.log import Logger
-from configuration import AssimilatorConfig
+from functions.assimilate import (_date, parse_day, floor_to_day, latest_snapshot_date, phase_args,
+                                  copy_master_inputs, refresh_ensemble_inputs, assimilation_run_config)
+from functions.postprocess import post_process_temperature
+from configuration import AssimilatorConfig, load_assimilation_config
 from model import Simstrat
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data-assimilation", "src")))
-from functions.assimilate import (_date, parse_day, run_arg, floor_to_day, latest_snapshot_date, phase_args,
-                                   stage_perturbations, write_analysis_snapshot, copy_master_inputs,
-                                   refresh_ensemble_inputs, merge_openda_mean)
-from functions.postprocess import post_process_temperature
-from assimilate import run as run_assimilation
+import assimilator
 
 
 def task(parameters, args):
     key = parameters["key"]
-    runs = parameters.get("assimilation")
-    if not isinstance(runs, dict) or not runs:
-        raise ValueError('Lake "{}" has no "assimilation" block in lake_parameters.json; add one '
-                         'keyed by run name (e.g. "python_enkf").'.format(key))
+    lake_cfg = load_assimilation_config(args["repo_dir"], key)
     failures = []
-    for run_key, run_cfg in runs.items():
+    for run_key, run_cfg in lake_cfg["runs"].items():
         try:
-            assimilate_run(key, run_key, run_cfg, parameters, args)
+            assimilate_run(key, run_key, run_cfg, lake_cfg, parameters, args)
         except Exception:
             if args["debug"]:
                 raise
@@ -39,7 +35,7 @@ def task(parameters, args):
                            .format(", ".join(failures), key))
 
 
-def assimilate_run(key, run_key, run_cfg, parameters, args):
+def assimilate_run(key, run_key, run_cfg, lake_cfg, parameters, args):
     run_name = "{}_{}".format(key, run_key)
     lake_dir = os.path.join(args["repo_dir"], "runs", run_name)
     os.makedirs(lake_dir, exist_ok=True)
@@ -48,13 +44,12 @@ def assimilate_run(key, run_key, run_cfg, parameters, args):
 
     model_inputs = os.path.join(lake_dir, "model_inputs")
     forecast_dir = os.path.join(lake_dir, "forecast")
-    obs_csv = os.path.join(lake_dir, "observations", "temperature.csv")
+    obs_dir = os.path.join(lake_dir, "observations")
     assimilation_dir = os.path.join(lake_dir, "assimilation")
-    perturb_json = os.path.join(assimilation_dir, "perturbations.json")
 
     log.begin_stage("fetch_observations")
-    log.info("Fetching live in-situ observations for {}".format(key), indent=1)
-    first_obs, last_obs = fetch_observations(key, run_cfg.get("observations"), args, obs_csv)
+    log.info("Fetching and preprocessing in-situ observations for {}".format(key), indent=1)
+    obs_csv, first_obs, last_obs = fetch_observations(key, lake_cfg["observations"], args, obs_dir, log)
     prev_snapshot = latest_snapshot_date(model_inputs)
     continuing_run = prev_snapshot is not None
     log.end_stage()
@@ -117,43 +112,19 @@ def assimilate_run(key, run_key, run_cfg, parameters, args):
     if assimilate:
         log.begin_stage("assimilate")
         log.info("Assimilating {} from {} to {}".format(key, _date(snapshot_start), _date(last_da)), indent=1)
-        da_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data-assimilation"))
-        engine = run_arg(run_cfg, run_key, key, "engine")
-        algorithm = run_arg(run_cfg, run_key, key, "algorithm")
-        n_members = run_arg(run_cfg, run_key, key, "n_members")
-        da_cfg = {
-            "engine": engine,
-            "model": "simstrat",
-            "algorithm": algorithm,
-            "results_dir": "Results_{}".format(algorithm),
-            "par_file": "Settings_{}.par".format(algorithm),
-            "inflation": run_cfg.get("inflation", 1.0),
-            "n_members": n_members,
-            "sigma_scale": run_arg(run_cfg, run_key, key, "sigma_scale"),
-            "rng_seed": run_arg(run_cfg, run_key, key, "rng_seed"),
-            "start_date": snapshot_start.strftime("%Y-%m-%d"),
-            "end_date": last_da.strftime("%Y-%m-%d"),
-            "lake": key,
-            "ensemble_base": assimilation_dir,
-            "model_inputs_path": model_inputs,
-            "docker_dir": args["docker_dir"],
-            "repo_dir": args["repo_dir"],
-            "obs_file": obs_csv,
-            "perturbations_file": stage_perturbations(key, run_cfg.get("perturbations"), perturb_json, da_dir),
-            "progress": False,
-            "max_workers": args["max_assimilation_workers"],
-        }
-        for name in ("sigma_obs", "sigma_default", "obs_operator", "obs_target_hour"):
-            if name in run_cfg:
-                da_cfg[name] = run_cfg[name]
-        if engine == "openda":
-            da_cfg["openda_bin"] = args["openda_bin"]
-            da_cfg["openda_dir"] = os.path.join(lake_dir, "openda_{}".format(run_name))
-        refresh_ensemble_inputs(assimilation_dir, model_inputs, n_members, log)
-        run_assimilation(da_cfg, model="simstrat")
-        if engine == "openda":
-            merge_openda_mean(da_cfg, assimilation_dir)
-        write_analysis_snapshot(da_cfg, last_da, os.path.join(model_inputs, "simulation-snapshot_{}.dat".format(_date(last_da))))
+        cfg = assimilation_run_config(key, run_cfg, lake_cfg, args, snapshot_start, last_da, model_inputs,
+                                      assimilation_dir, obs_csv,
+                                      openda_dir=os.path.join(lake_dir, "openda_{}".format(run_name)))
+        refresh_ensemble_inputs(assimilation_dir, model_inputs, cfg["n_members"], log)
+        result = assimilator.run(cfg)
+        if result["output_grid"]:
+            # Keep the deterministic phases (spin-up extension, forecast) on the grid the
+            # assimilation outputs, which includes every observation depth.
+            shutil.copy(result["output_grid"], os.path.join(model_inputs, "z_out.dat"))
+        if cfg["engine"] == "openda":
+            assimilator.merge_mean_trajectory(cfg, assimilation_dir)
+        assimilator.analysis_mean_state(
+            cfg, os.path.join(model_inputs, "simulation-snapshot_{}.dat".format(_date(last_da))))
         log.end_stage()
 
     log.begin_stage("forecast")

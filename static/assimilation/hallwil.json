@@ -1,0 +1,101 @@
+{
+    "_note": "Data assimilation setup for this lake: observation processing, observation error, forcing perturbation and the runs. Fitted values are written by src/assimilation_tools/*.py --write; see the Data Assimilation section of README.md.",
+    "runs": {},
+    "observations": {
+        "_todo": "Add the observation source (e.g. \"source\": \"datalakes\", \"id\": <dataset id>, \"axis\": \"z\") and a run under \"runs\" to assimilate this lake operationally.",
+        "filter": {
+            "w_seiche_h": 12.4,
+            "thermo_depth_min": 4.0,
+            "derived_by": "calibrate_filter (feat/da-combi)"
+        },
+        "schedule": {
+            "hour": 23,
+            "max_offset_h": 1.5
+        }
+    },
+    "sigma_obs": {
+        "mixed": 0.412,
+        "stratified": 0.391
+    },
+    "sigma_obs_fit": {
+        "fitted_on_series": "temperature_filtered_h23_1d.csv",
+        "fitted_by": "generate_sigma (data-assimilation), against inputs/<lake>/ref/T_out.dat"
+    },
+    "perturbations": {
+        "reanalysis_lake": "hallwil",
+        "fit_window": {
+            "start": "2025-01-01",
+            "end": "2025-12-31"
+        },
+        "n_timesteps": 8736,
+        "fitted_on": "2026-09-08",
+        "variables": {
+            "U": {
+                "phi": 0.736605,
+                "sigma": 1.090674
+            },
+            "V": {
+                "phi": 0.770616,
+                "sigma": 0.862616
+            },
+            "GLOB": {
+                "phi": 0.901013,
+                "sigma": 30.971801
+            }
+        },
+        "amplitude": {
+            "source": "ICON KENDA-CH1 lake mean - control Forcing.dat",
+            "stationary_std": {
+                "U": 1.612652,
+                "V": 1.353549,
+                "GLOB": 71.3978
+            }
+        },
+        "persistence": {
+            "bound": "envelope",
+            "chosen": {
+                "U": "lower",
+                "V": "upper",
+                "GLOB": "upper"
+            },
+            "lower": {
+                "source": "ACF of the ICON residual; a floor",
+                "tau_h": {
+                    "U": 3.271,
+                    "V": 2.112,
+                    "GLOB": 1.755
+                },
+                "phi": {
+                    "U": 0.736605,
+                    "V": 0.622856,
+                    "GLOB": 0.565647
+                }
+            },
+            "upper": {
+                "source": "ACF of the station signal (clearness); a ceiling",
+                "fitted_on": "2026-09-08",
+                "tau_h": {
+                    "U": 2.927,
+                    "V": 3.838,
+                    "GLOB": 9.594
+                },
+                "phi": {
+                    "U": 0.710615,
+                    "V": 0.770616,
+                    "GLOB": 0.901013
+                }
+            },
+            "_note": "phi is bracketed, not measured. lower is a floor (the ICON residual carries white spatial mismatch, which shortens any measured tau); upper is a ceiling (the station signal measures weather persistence, not error persistence); envelope takes the longer tau per channel. The honest number needs the ACF of (forecast - station obs), which requires archived ICON forecasts."
+        }
+    },
+    "identity": {
+        "length_km": 8.4,
+        "mean_depth": 28.6,
+        "lake_bbox": [
+            47.24,
+            8.19,
+            47.31,
+            8.23
+        ]
+    }
+}

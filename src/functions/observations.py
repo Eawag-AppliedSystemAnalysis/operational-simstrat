@@ -1,4 +1,6 @@
 import os
+import sys
+import json
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -301,34 +303,6 @@ OBSERVATION_SOURCES = {
     "datalakes": fetch_datalakes,
 }
 
-def decimate_observations(df, decimation):
-    """Temporally resample each depth series to `decimation['time']` (a pandas offset, e.g. '1H',
-    '1D') using `decimation['aggregation']` (mean/median/min/max/first/last, or 'nearest'). No-op
-    when decimation is unset. Structured so depth/QA decimation can be added later."""
-    if df.empty or not decimation or not decimation.get("time"):
-        return df.sort_values("time").reset_index(drop=True)
-    freq = decimation["time"]
-    agg = (decimation.get("aggregation") or "mean").lower()
-
-    parts = []
-    for depth, group in df.groupby("depth"):
-        s = group.set_index("time")["value"].sort_index()
-        s = s[~s.index.duplicated()]
-        if agg == "nearest":
-            idx = pd.date_range(s.index.min().floor(freq), s.index.max().floor(freq), freq=freq)
-            s = s.reindex(idx, method="nearest", tolerance=pd.Timedelta(freq))
-        else:
-            s = getattr(s.resample(freq), agg)()
-        s = s.dropna()
-        s.index.name = "time"
-        part = s.rename("value").reset_index()
-        part["depth"] = depth
-        parts.append(part)
-    if not parts:
-        return df.iloc[0:0][["time", "depth", "value"]]
-    return pd.concat(parts, ignore_index=True).sort_values("time").reset_index(drop=True)[["time", "depth", "value"]]
-
-
 def _read_existing_observations(out_csv):
     """Load a previously written observation CSV as a clean (time, depth, value) frame, or None."""
     if not os.path.isfile(out_csv):
@@ -337,30 +311,37 @@ def _read_existing_observations(out_csv):
     df.columns = [c.strip().lower() for c in df.columns]
     if not {"time", "depth", "value"}.issubset(df.columns):
         return None
-    df["time"] = pd.to_datetime(df["time"], utc=True)
+    df["time"] = pd.to_datetime(df["time"], utc=True, format="ISO8601")
     df = df.dropna(subset=["time", "depth", "value"])[["time", "depth", "value"]]
     return df if not df.empty else None
 
 
-def fetch_observations(key, observations_cfg, args, out_csv):
-    """Resolve the assimilation run's observation source, fetch -> decimate -> write the
-    time,depth,value CSV. Returns (first_obs, last_obs) datetimes, or (None, None) if there are no
-    observations.
+DA_SRC = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data-assimilation", "src"))
 
-    On a cold start (no existing CSV) the full time series is fetched. On a warm start the
-    existing CSV already holds the history, so only observations newer than its last day are
-    fetched from the source and appended — the last stored day is re-fetched so its partial
-    values get refreshed.
+# The observation-processing keys of a lake's "observations" block (the rest describe the source).
+PROCESSING_KEYS = ("filter", "schedule", "depths", "depth_tolerance_m")
 
-    Source config is the run's `observations` block in lake_parameters.json
-    ({source, id, parameter, decimation:{time, aggregation}})."""
+
+def assimilator_observations():
+    """The data-assimilation submodule's observation preprocessing (assimilator.observations)."""
+    if DA_SRC not in sys.path:
+        sys.path.append(DA_SRC)
+    from assimilator import observations
+    return observations
+
+
+def processing_config(observations_cfg):
+    """The part of a lake's "observations" block that decides the assimilated series."""
+    return {k: observations_cfg[k] for k in PROCESSING_KEYS if k in observations_cfg}
+
+
+def update_raw_observations(key, observations_cfg, args, raw_csv):
+    """Fetch new raw (sub-daily) observations from the lake's source and append them to `raw_csv`.
+    On a cold start the full record is fetched; afterwards only the last stored day onwards (it is
+    re-fetched so a partial day is completed). Returns (raw frame, first day changed or None)."""
     source_cfg = dict(observations_cfg or {})
-    if not source_cfg:
-        raise ValueError("Assimilation run for lake '{}' has no 'observations' block in "
-                         "lake_parameters.json".format(key))
     source_cfg["key"] = key
     source_cfg.setdefault("parameter", "temperature")
-
     source = source_cfg.get("source")
     if source not in OBSERVATION_SOURCES:
         raise ValueError("Unknown observation source '{}' for lake '{}'. Available: {}"
@@ -370,31 +351,83 @@ def fetch_observations(key, observations_cfg, args, out_csv):
     if args.get("first_obs_date"):
         earliest = pd.Timestamp(datetime.strptime(args["first_obs_date"], "%Y%m%d")).tz_localize("UTC")
 
-    existing = _read_existing_observations(out_csv)
+    existing = _read_existing_observations(raw_csv)
     since = existing["time"].max().floor("D") if existing is not None else None
-
-    # Lower bound handed to the source so old time-chunked files aren't downloaded.
     fetch_since = since
     if earliest is not None:
         fetch_since = earliest if fetch_since is None else max(fetch_since, earliest)
 
     df = OBSERVATION_SOURCES[source](source_cfg, args, since=fetch_since)
-    df = df.dropna(subset=["time", "depth", "value"])
+    df = df.dropna(subset=["time", "depth", "value"])[["time", "depth", "value"]]
     if since is not None:
         df = df[df["time"] >= since]
-    df = decimate_observations(df, source_cfg.get("decimation"))
-
-    if existing is not None:
         df = pd.concat([existing[existing["time"] < since], df], ignore_index=True)
-        df = df.drop_duplicates(subset=["time", "depth"], keep="last")
-        df = df.sort_values("time").reset_index(drop=True)
-
+    df = df.drop_duplicates(subset=["time", "depth"], keep="last")
+    df = df.sort_values(["time", "depth"]).reset_index(drop=True)
     if earliest is not None:
         df = df[df["time"] >= earliest].reset_index(drop=True)
 
-    os.makedirs(os.path.dirname(out_csv), exist_ok=True)
-    df.to_csv(out_csv, index=False)
-    if df.empty:
-        return None, None
-    return df["time"].iloc[0].to_pydatetime(), df["time"].iloc[-1].to_pydatetime()
-    
+    os.makedirs(os.path.dirname(raw_csv), exist_ok=True)
+    df.to_csv(raw_csv, index=False)
+    return df, since
+
+
+def fetch_observations(key, observations_cfg, args, out_dir, log=None):
+    """Fetch the lake's raw observations and produce the series the run assimilates.
+
+        <out_dir>/raw.csv           the raw sub-daily record (time, depth, value), appended daily
+        <out_dir>/temperature.csv   the assimilated series: raw -> seiche filter -> depth grid ->
+                                    one profile per day (the lake's "observations" block, applied by
+                                    the data-assimilation package's assimilator.observations)
+        <out_dir>/processing.json   the processing settings temperature.csv was made with
+
+    Daily, only the tail from the last stored day is reprocessed (with the look-back the causal
+    filter needs); a change of the processing settings reprocesses the whole stored record.
+    Returns (temperature.csv path, first_obs, last_obs), the times None if there is nothing."""
+    if not observations_cfg:
+        raise ValueError("Lake '{}' has no 'observations' block in its assimilation setup".format(key))
+    if "decimation" in observations_cfg:
+        raise ValueError("Lake '{}': 'decimation' is no longer supported; use 'filter', 'schedule' and "
+                         "'depths' (see the Data Assimilation section of README.md)".format(key))
+    obs_mod = assimilator_observations()
+    raw_csv = os.path.join(out_dir, "raw.csv")
+    obs_csv = os.path.join(out_dir, "temperature.csv")
+    meta_json = os.path.join(out_dir, "processing.json")
+
+    raw, since = update_raw_observations(key, observations_cfg, args, raw_csv)
+
+    processing = processing_config(observations_cfg)
+    if not processing.get("schedule") and log is not None:
+        log.warning("No 'schedule' for {}: every raw instant becomes an analysis.".format(key), indent=1)
+    previous = None
+    if os.path.isfile(meta_json):
+        with open(meta_json) as f:
+            previous = json.load(f)
+    existing = _read_existing_observations(obs_csv)
+
+    if since is None or existing is None or previous != processing:
+        reason = ("cold start" if since is None or existing is None
+                  else "processing settings changed")
+        if log is not None:
+            log.info("Preprocessing the full record ({}, {} raw rows)".format(reason, len(raw)), indent=1)
+        processed = obs_mod.preprocess(raw, processing) if not raw.empty else raw
+    else:
+        tail_raw = raw[raw["time"] >= since - obs_mod.lookback(processing)]
+        tail = obs_mod.preprocess(tail_raw, processing, since=since)
+        # Cut the stored series where preprocess cut the tail: by the day a row is thinned into.
+        kept_t = existing["time"]
+        if processing.get("schedule"):
+            kept_t = (kept_t + pd.Timedelta(minutes=30)).dt.floor("1h")
+        processed = pd.concat([existing[kept_t < since], tail], ignore_index=True)
+        if log is not None:
+            log.info("Preprocessed the record from {} ({} rows)".format(since.date(), len(tail)), indent=1)
+
+    processed = processed[["time", "depth", "value"]].copy()
+    processed["time"] = pd.to_datetime(processed["time"], utc=True, format="ISO8601")
+    processed = processed.sort_values(["time", "depth"]).reset_index(drop=True)
+    processed.to_csv(obs_csv, index=False)
+    with open(meta_json, "w") as f:
+        json.dump(processing, f, indent=2)
+    if processed.empty:
+        return obs_csv, None, None
+    return obs_csv, processed["time"].iloc[0].to_pydatetime(), processed["time"].iloc[-1].to_pydatetime()

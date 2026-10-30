@@ -90,13 +90,46 @@ class CalibratorConfig(Config):
         self.args["lake_parameters_dir"] = self.lake_parameters_dir
 
 
+def assimilation_config_path(repo_dir, key):
+    return os.path.join(repo_dir, "static", "assimilation", "{}.json".format(key))
+
+
+def load_assimilation_config(repo_dir, key):
+    """The lake's data-assimilation setup, static/assimilation/<key>.json: its runs, observation
+    source and processing, observation error, forcing perturbation and identity. Checks the
+    structure the operational pipeline relies on; the run settings themselves are validated by the
+    data-assimilation package (assimilator.config.build_config) when a run starts."""
+    path = assimilation_config_path(repo_dir, key)
+    if not os.path.isfile(path):
+        raise ValueError('Lake "{}" has no data-assimilation setup: add {} (see the Data Assimilation section of README.md).'
+                         .format(key, os.path.relpath(path, repo_dir)))
+    with open(path) as f:
+        cfg = json.load(f)
+    runs = cfg.get("runs")
+    if not isinstance(runs, dict) or not runs:
+        raise ValueError('{}: no runs under "runs" (e.g. "python_enkf": {{"engine": "python", '
+                         '"algorithm": "EnKF", "n_members": 20}}).'.format(path))
+    for run_key, run in runs.items():
+        missing = [k for k in ("engine", "algorithm", "n_members") if k not in run]
+        if missing:
+            raise ValueError('{}: run "{}" is missing {}.'.format(path, run_key, missing))
+    observations = cfg.get("observations") or {}
+    if not observations.get("source"):
+        raise ValueError('{}: "observations" has no "source" to fetch from.'.format(path))
+    if "decimation" in observations:
+        raise ValueError('{}: "decimation" is no longer supported; use "filter", "schedule" and '
+                         '"depths" (see the Data Assimilation section of README.md).'.format(path))
+    if "perturbations" not in cfg:
+        raise ValueError('{}: no "perturbations" (the AR(1) forcing calibration; fit it with '
+                         'src/assimilation_tools/fit_perturbation.py).'.format(path))
+    return cfg
+
+
 class AssimilatorConfig(Config):
     def __init__(self, *args, **kwargs):
         super(AssimilatorConfig, self).__init__(*args, **kwargs)
-        # engine, algorithm, n_members, inflation, sigma_scale and rng_seed are configured per-lake
-        # in lake_parameters.json (no global default). Optional there: sigma_obs (a float or a
-        # {"mixed", "stratified"} pair; falls back to the submodule's sigma_default) and
-        # obs_operator (defaults to "linear").
+        # Per-lake settings (runs, observations, sigma_obs, perturbations) live in
+        # static/assimilation/<lake>.json, see load_assimilation_config.
         self.default_args["first_da_date"] = {"default": False, "verify": verify.verify_date,
                                               "desc": "Cold-start: earliest date to assimilate YYYYMMDD (defaults to earliest observation)"}
         self.default_args["first_obs_date"] = {"default": False, "verify": verify.verify_date,

@@ -11,3 +11,6 @@ notebooks/.ipynb_checkpoints
 notebooks/example.dat
 observations/*
 !observations/.gitkeep
+__pycache__/
+.pytest_cache/
+tests/
