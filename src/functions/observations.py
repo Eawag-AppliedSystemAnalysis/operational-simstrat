@@ -397,7 +397,18 @@ def fetch_observations(key, observations_cfg, args, out_dir, log=None):
     obs_csv = os.path.join(out_dir, "temperature.csv")
     meta_json = os.path.join(out_dir, "processing.json")
 
-    raw, since = update_raw_observations(key, observations_cfg, args, raw_csv)
+    try:
+        raw, since = update_raw_observations(key, observations_cfg, args, raw_csv)
+    except Exception as e:
+        # The source is unreachable (or failing): carry on with the stored record, so the run still
+        # advances and forecasts. Nothing stored yet, or debugging: fail loudly.
+        stored = _read_existing_observations(raw_csv)
+        if stored is None or args.get("debug"):
+            raise
+        if log is not None:
+            log.warning("Fetching new observations for {} failed ({}); using the stored record up to {}."
+                        .format(key, e, stored["time"].max()), indent=1)
+        raw, since = stored, stored["time"].max().floor("D")
 
     processing = processing_config(observations_cfg)
     if not processing.get("schedule") and log is not None:

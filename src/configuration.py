@@ -142,6 +142,8 @@ class AssimilatorConfig(Config):
         # static/assimilation/<lake>.json, see load_assimilation_config.
         self.default_args["first_da_date"] = {"default": False, "verify": verify.verify_date,
                                               "desc": "Cold-start: earliest date to assimilate YYYYMMDD (defaults to earliest observation)"}
+        self.default_args["da_end_date"] = {"default": False, "verify": verify.verify_date,
+                                            "desc": "Run day YYYYMMDD: assimilate up to 00:00 UTC of this day and forecast from there (defaults to today). Observations from the run day itself are never assimilated"}
         self.default_args["first_obs_date"] = {"default": False, "verify": verify.verify_date,
                                                "desc": "Earliest date to collect observations YYYYMMDD; observations before this are discarded (defaults to all available)"}
         self.default_args["spinup_years"] = {"default": False, "verify": verify.verify_integer,

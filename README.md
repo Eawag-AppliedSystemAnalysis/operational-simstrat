@@ -179,10 +179,12 @@ Every run gets its own state directory `runs/<lake>_<run>/` (e.g. `runs/upperlug
 
 Unlike the forecast workflow (`src/main.py`), assimilation is **independent and rolling** — each run advances its own state forward instead of re-running the whole period. Each run has up to four phases:
 
-1. **Observations** — fetch the new raw observations and preprocess them into the assimilated series.
+1. **Observations** — fetch the new raw observations and preprocess them into the assimilated series. If the source cannot be reached, the run warns and continues with the stored record.
 2. **Spin-up** (cold start only) — free Simstrat run from the origin to the first assimilation date.
-3. **Assimilation** — `assimilator.run(cfg)` from the previous-last to the new-last observation day, seeded from the persisted ensemble.
-4. **Forecast** (every run) — free Simstrat run from the last assimilation date to the forecast horizon, warm-started from the ensemble-mean analysis (overwritten each run).
+3. **Assimilation** — `assimilator.run(cfg)` from the last snapshot to 00:00 UTC of the run day, seeded from the persisted ensemble.
+4. **Forecast** (every run) — free Simstrat run from the run day to the forecast horizon, warm-started from the ensemble-mean analysis (overwritten each run).
+
+**The run day is forecast, not hindcast**: its observations are never assimilated, and every observation from the days before it is. The assimilation always ends at 00:00 UTC of the run day (today, or `da_end_date=YYYYMMDD` to replay a given day), with or without new observations. A gap in the observations just advances the ensemble without updates, so the forecast always starts on the run day. A second run on the same day only forecasts.
 
 The combined assimilation + forecast temperature is written to `runs/<lake>_<run>/netcdf/`. When the run is invoked with `upload=true`, these NetCDF files are uploaded to `<results_folder_api>/<lake>_<run>` on the results server (keyed by the run name, so they do not overwrite the standard `src/main.py` forecast at `<results_folder_api>/<lake>`).
 

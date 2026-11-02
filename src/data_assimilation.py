@@ -9,7 +9,7 @@ from functions.parallel import run_parallel_tasks
 from functions.general import process_args, upload_files
 from functions.observations import fetch_observations
 from functions.log import Logger
-from functions.assimilate import (_date, parse_day, floor_to_day, latest_snapshot_date, phase_args,
+from functions.assimilate import (_date, parse_day, floor_to_day, assimilation_end, latest_snapshot_date, phase_args,
                                   copy_master_inputs, refresh_ensemble_inputs, assimilation_run_config)
 from functions.postprocess import post_process_temperature
 from configuration import AssimilatorConfig, load_assimilation_config
@@ -54,48 +54,50 @@ def assimilate_run(key, run_key, run_cfg, lake_cfg, parameters, args):
     continuing_run = prev_snapshot is not None
     log.end_stage()
 
-    if last_obs is None:
-        if prev_snapshot is None:
+    # Assimilate up to 00:00 UTC of the run day, whether or not there are new observations: a gap
+    # just advances the ensemble without updates, so the forecast always starts on the run day.
+    end_da = assimilation_end(args)
+    if prev_snapshot is None:
+        if last_obs is None:
             log.warning("No observations and no prior snapshot for {}, nothing to do.".format(key))
             return
-        log.info("No observations for {}; forecasting from last snapshot {}.".format(key, prev_snapshot))
-        last_da = parse_day(prev_snapshot)
-        assimilate = False
-    else:
         if args["first_da_date"]:
             first_da = parse_day(args["first_da_date"])
         else:
             first_da = floor_to_day(first_obs)
-        last_da = floor_to_day(last_obs)
-
+        if first_da > end_da:
+            raise ValueError("First assimilation day {} is after the run day {}.".format(_date(first_da), _date(end_da)))
+        log.begin_stage("spin_up")
+        if args["spinup_years"]:
+            spinup_start = _date(first_da - relativedelta(years=args["spinup_years"]))
+            log.info("Cold start: spinning up {} from {} to {}".format(key, spinup_start, _date(first_da)), indent=1)
+        else:
+            spinup_start = False
+            log.info("Cold start: spinning up {} from the start of the meteo data to {}".format(key, _date(first_da)), indent=1)
+        spin = Simstrat(key, parameters, phase_args(
+            args, lake_dir, directory="model_inputs",
+            snapshot=True, forecast=False, post_process=False, upload=False,
+            overwrite_simulation=True, remove_existing_results=True,
+            overwrite_start_date=spinup_start, overwrite_end_date=_date(first_da)))
+        spin.process()
+        spinup_results = os.path.join(model_inputs, "Results", "T_out.dat")
+        if os.path.exists(spinup_results):
+            shutil.copy(spinup_results, os.path.join(lake_dir, "T_out_spinup.dat"))
+        else:
+            log.warning("Spin-up produced no T_out.dat; pre-assimilation temperature will be omitted.", indent=1)
+        prev_snapshot = latest_snapshot_date(model_inputs)
         if prev_snapshot is None:
-            log.begin_stage("spin_up")
-            if args["spinup_years"]:
-                spinup_start = _date(first_da - relativedelta(years=args["spinup_years"]))
-                log.info("Cold start: spinning up {} from {} to {}".format(key, spinup_start, _date(first_da)), indent=1)
-            else:
-                spinup_start = False
-                log.info("Cold start: spinning up {} from the start of the meteo data to {}".format(key, _date(first_da)), indent=1)
-            spin = Simstrat(key, parameters, phase_args(
-                args, lake_dir, directory="model_inputs",
-                snapshot=True, forecast=False, post_process=False, upload=False,
-                overwrite_simulation=True, remove_existing_results=True,
-                overwrite_start_date=spinup_start, overwrite_end_date=_date(first_da)))
-            spin.process()
-            spinup_results = os.path.join(model_inputs, "Results", "T_out.dat")
-            if os.path.exists(spinup_results):
-                shutil.copy(spinup_results, os.path.join(lake_dir, "T_out_spinup.dat"))
-            else:
-                log.warning("Spin-up produced no T_out.dat; pre-assimilation temperature will be omitted.", indent=1)
-            prev_snapshot = latest_snapshot_date(model_inputs)
-            if prev_snapshot is None:
-                raise ValueError("No analysis snapshot in {} after spin-up; cannot assimilate.".format(model_inputs))
-            log.end_stage()
+            raise ValueError("No analysis snapshot in {} after spin-up; cannot assimilate.".format(model_inputs))
+        log.end_stage()
 
-        assimilate = last_da > parse_day(prev_snapshot)
-        if not assimilate:
-            log.warning("No observations for {} newer than snapshot {}; forecasting only.".format(key, prev_snapshot))
-            last_da = parse_day(prev_snapshot)
+    last_da = end_da
+    assimilate = last_da > parse_day(prev_snapshot)
+    if not assimilate:
+        log.info("{} is already assimilated up to {}; forecasting only.".format(key, prev_snapshot))
+        last_da = parse_day(prev_snapshot)
+    elif last_obs is None or last_obs <= parse_day(prev_snapshot):
+        log.warning("No observations for {} since {}; advancing the ensemble without updates."
+                    .format(key, prev_snapshot))
 
     snapshot_start = parse_day(prev_snapshot)
 

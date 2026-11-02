@@ -19,6 +19,15 @@ def floor_to_day(dt):
     return dt.replace(hour=0, minute=0, second=0, microsecond=0)
 
 
+def assimilation_end(args):
+    """The instant the assimilation runs up to: 00:00 UTC of the run day (args["da_end_date"], by
+    default today). Observations from the run day are never assimilated -- that day is forecast,
+    not hindcast -- and every observation from the days before it is."""
+    if args.get("da_end_date"):
+        return parse_day(args["da_end_date"])
+    return floor_to_day(datetime.now(timezone.utc))
+
+
 def latest_snapshot_date(directory):
     """Date (YYYYMMDD) of the most recent simulation-snapshot_*.dat in `directory`, or None."""
     snaps = sorted(glob.glob(os.path.join(directory, "simulation-snapshot_*.dat")))
