@@ -25,6 +25,7 @@ import numpy as np
 import pandas as pd
 
 import common
+from assimilator.models.simstrat.model import read_z_out, write_z_out, extend_depths
 
 FREE_RUN_DIR = "free_run"
 
@@ -40,24 +41,6 @@ def _sim_days(ts, ref_year):
 def _write_t_out(path, steps):
     with open(path, "w") as f:
         f.write("Number of time steps\n{}\n".format(int(steps)))
-
-
-def _extend_z_out(path, obs_depths):
-    with open(path) as f:
-        lines = f.read().split()
-    depths = []
-    for x in lines:
-        try:
-            depths.append(abs(float(x)))
-        except ValueError:
-            continue
-    bed = max(depths)
-    union = sorted(set(round(d, 2) for d in depths) | {round(float(d), 2) for d in obs_depths if d <= bed})
-    with open(path, "w") as f:
-        f.write("Depths [m]\n")
-        for z in union:
-            f.write("{:.2f}\n".format(-z))
-    return len(union)
 
 
 def _run(work, version, docker_dir=None):
@@ -111,11 +94,13 @@ def main():
 
     cfg = common.lake_config(cli.lake)
     raw = common.raw_observations(cli.lake, cfg, cli.raw)
-    n = _extend_z_out(os.path.join(work, par["Output"]["Depths"]), np.unique(raw["depth"]))
-    common.logger.info("output depths: %d (setup grid + observed depths)", n)
+    z_out = os.path.join(work, par["Output"]["Depths"])
+    depths = extend_depths(read_z_out(z_out), {round(float(d), 2) for d in np.unique(raw["depth"])})
+    write_z_out(z_out, depths)
+    common.logger.info("output depths: %d (setup grid + observed depths)", len(depths))
     par["Output"]["Times"] = "t_out.dat"
     par["Simulation"]["Continue from last snapshot"] = True
-    # Physics only, as the assimilation runs are (args/assimilation.json: couple_aed2 false).
+    # Physics only, as in the assimilation runs (couple_aed2 false).
     par.setdefault("ModelConfig", {})["CoupleAED2"] = False
 
     # 1. spin-up to --start, daily output, ending in a snapshot

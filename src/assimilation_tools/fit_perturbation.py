@@ -30,8 +30,6 @@ ICON_VARIABLES = ["T_2M", "U", "V", "GLOB"]
 DEFAULT_API = "http://eaw-alplakes2.eawag.wroot.emp-eaw.ch:8000"
 
 
-# ------------------------------------------------------------------------------- geometry --
-
 def lake_outline(key):
     with open(os.path.join(common.REPO, "static", "lake_geometry.json")) as f:
         for feature in json.load(f)["features"]:
@@ -67,8 +65,6 @@ def bbox_of(geometry, margin=0.01):
     return [round(xy[:, 1].min() - margin, 3), round(xy[:, 0].min() - margin, 3),
             round(xy[:, 1].max() + margin, 3), round(xy[:, 0].max() + margin, 3)]
 
-
-# ------------------------------------------------------------------------------- ICON data --
 
 def icon_lake_mean(geometry, bbox, start, end, api=DEFAULT_API, workers=8):
     """Hourly ICON reanalysis averaged over the grid points inside the lake: time, T_2M, U, V, GLOB.
@@ -113,8 +109,6 @@ def _flatten(d):
         df[var] = np.array(meta["data"]).ravel()
     return df
 
-
-# ------------------------------------------------------------------------------------- main --
 
 def stored_form(base):
     """What the lake file keeps: the run's `variables`, plus the amplitude and both bounds needed

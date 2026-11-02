@@ -206,7 +206,7 @@ Each run appends the new raw (sub-daily) observations to `raw.csv` and turns the
 
 Each run reprocesses only the last stored day onwards (with the look-back the causal filter needs), so the daily series matches a full reprocess; changing the settings reprocesses the whole stored record. The port reproduces the research (`feat/da-combi`) series row for row.
 
-Observation sources are pluggable (`OBSERVATION_SOURCES` in `src/functions/observations.py`): register a `(source_cfg, args, since=None) -> DataFrame[time, depth, value]` function. The built-in `datalakes` source takes the [Datalakes](https://www.datalakes-eawag.ch) *dataset* `id` and the depth-resolved data `axis` (usually `z`; the map is at `https://api.datalakes-eawag.ch/datasetparameters?datasets_id=<id>`).
+Observation sources are pluggable (`OBSERVATION_SOURCES` in `src/functions/assimilation_observations.py`): register a `(source_cfg, args, since=None) -> DataFrame[time, depth, value]` function. The built-in `datalakes` source takes the [Datalakes](https://www.datalakes-eawag.ch) *dataset* `id` and the depth-resolved data `axis` (usually `z`; the map is at `https://api.datalakes-eawag.ch/datasetparameters?datasets_id=<id>`).
 
 ### Fitting a lake
 

@@ -105,10 +105,8 @@ def save_assimilation_config(repo_dir, key, cfg):
 
 
 def load_assimilation_config(repo_dir, key):
-    """The lake's data-assimilation setup, static/assimilation/<key>.json: its runs, observation
-    source and processing, observation error, forcing perturbation and identity. Checks the
-    structure the operational pipeline relies on; the run settings themselves are validated by the
-    data-assimilation package (assimilator.config.build_config) when a run starts."""
+    """The lake's data-assimilation setup, static/assimilation/<key>.json. Checks what this
+    pipeline relies on; the submodule validates the run settings themselves when a run starts."""
     path = assimilation_config_path(repo_dir, key)
     if not os.path.isfile(path):
         raise ValueError('Lake "{}" has no data-assimilation setup: add {} (see the Data Assimilation section of README.md).'
@@ -126,9 +124,6 @@ def load_assimilation_config(repo_dir, key):
     observations = cfg.get("observations") or {}
     if not observations.get("source"):
         raise ValueError('{}: "observations" has no "source" to fetch from.'.format(path))
-    if "decimation" in observations:
-        raise ValueError('{}: "decimation" is no longer supported; use "filter", "schedule" and '
-                         '"depths" (see the Data Assimilation section of README.md).'.format(path))
     if "perturbations" not in cfg:
         raise ValueError('{}: no "perturbations" (the AR(1) forcing calibration; fit it with '
                          'src/assimilation_tools/fit_perturbation.py).'.format(path))

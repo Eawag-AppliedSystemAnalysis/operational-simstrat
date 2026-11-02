@@ -10,15 +10,14 @@ import json
 import logging
 import argparse
 
-SRC = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # src/, for configuration/functions
+SRC = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REPO = os.path.dirname(SRC)
 sys.path.insert(0, SRC)
-sys.path.append(os.path.join(REPO, "data-assimilation", "src"))
 
-import pandas as pd                                                       # noqa: E402
-from configuration import assimilation_config_path, save_assimilation_config  # noqa: E402
-from functions.observations import (update_raw_observations, processing_config,  # noqa: E402
-                                    assimilator_observations)
+import pandas as pd                                                                       # noqa: E402
+from configuration import assimilation_config_path, save_assimilation_config              # noqa: E402
+from functions.assimilate import da_observations                                          # noqa: E402
+from functions.assimilation_observations import update_raw_observations, processing_config  # noqa: E402
 
 logger = logging.getLogger("assimilation-tools")
 CACHE = os.path.join(REPO, "runs", "assimilation_tools")
@@ -104,8 +103,8 @@ def _read(path):
 
 def assimilated_series(raw, cfg):
     """The series a run assimilates, made with the same function and settings as the operational
-    pipeline (functions.observations.fetch_observations)."""
-    return assimilator_observations().preprocess(raw, processing_config(cfg.get("observations", {})))
+    pipeline (functions.assimilation_observations.fetch_observations)."""
+    return da_observations.preprocess(raw, processing_config(cfg.get("observations", {})))
 
 
 def free_run(key, path=None):
