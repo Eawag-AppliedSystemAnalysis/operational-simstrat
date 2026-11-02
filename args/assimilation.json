@@ -1,7 +1,7 @@
 {
-    "lakes": ["upperlugano"],
+    "lakes": ["aegeri", "geneva", "greifensee", "hallwil", "maggiore", "murten", "upperlugano"],
     "couple_aed2": false,
-    "max_workers": 1,
+    "max_workers": 3,
     "max_assimilation_workers": 20,
     "log": true,
     "debug": false,
