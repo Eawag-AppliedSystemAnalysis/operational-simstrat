@@ -119,17 +119,25 @@ def assimilate_run(key, run_key, run_cfg, lake_cfg, parameters, args):
                                       openda_dir=os.path.join(lake_dir, "openda_{}".format(run_name)))
         refresh_ensemble_inputs(assimilation_dir, model_inputs, cfg["n_members"], log)
         result = assimilator.run(cfg)
-        if result["analysis_time"] != last_da:
-            raise RuntimeError("The assimilation ended at {}, not at {}; the snapshot would be misdated."
-                               .format(result["analysis_time"], last_da))
+        reached = result["analysis_time"]
+        if reached > last_da or reached != floor_to_day(reached):
+            raise RuntimeError("The assimilation ended at {}, not at {} or a day before it; the snapshot "
+                               "would be misdated.".format(reached, last_da))
+        if reached < last_da:
+            # An OpenDA restart chain is not run on a window without observations: it waits at the
+            # last one, and the forecast starts there.
+            log.warning("{} is assimilated up to {} only (no observations after it); forecasting from there."
+                        .format(key, _date(reached)), indent=1)
+            last_da = reached
         if result["output_grid"]:
             # Keep the deterministic phases (spin-up extension, forecast) on the grid the
             # assimilation outputs, which includes every observation depth.
             shutil.copy(result["output_grid"], os.path.join(model_inputs, "z_out.dat"))
-        if cfg["engine"] == "openda":
-            assimilator.merge_mean_trajectory(cfg, assimilation_dir)
-        assimilator.analysis_mean_state(
-            cfg, os.path.join(model_inputs, "simulation-snapshot_{}.dat".format(_date(last_da))))
+        if last_da > snapshot_start:
+            if cfg["engine"] == "openda":
+                assimilator.merge_mean_trajectory(cfg, assimilation_dir)
+            assimilator.analysis_mean_state(
+                cfg, os.path.join(model_inputs, "simulation-snapshot_{}.dat".format(_date(last_da))))
         log.end_stage()
 
     log.begin_stage("forecast")

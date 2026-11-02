@@ -147,7 +147,7 @@ Simstrat operational uses the [data-assimilation](data-assimilation) submodule (
 python src/data_assimilation.py assimilation
 ```
 
-Where `assimilation` is the argument file in `args/`. The arguments follow the same structure as for running Simstrat operational, with additional data-assimilation arguments (`first_da_date`, `first_obs_date`, `spinup_years`, `max_assimilation_workers`, `openda_bin`).
+Where `assimilation` is the argument file in `args/`. The arguments follow the same structure as for running Simstrat operational, with additional data-assimilation arguments (`da_end_date`, `first_da_date`, `first_obs_date`, `spinup_years`, `max_assimilation_workers`, `openda_bin`).
 
 **Everything per lake lives in one file, `static/assimilation/<lake>.json`**: its assimilation runs, the observation source and how the observations are processed, the observation error, the forcing perturbation, and the basin geometry the fits need. The data-assimilation submodule holds no per-lake values: `src/data_assimilation.py` builds a flat run config from this file and calls `assimilator.run(cfg)`.
 
@@ -185,6 +185,14 @@ Unlike the forecast workflow (`src/main.py`), assimilation is **independent and 
 4. **Forecast** (every run) — free Simstrat run from the run day to the forecast horizon, warm-started from the ensemble-mean analysis (overwritten each run).
 
 **The run day is forecast, not hindcast**: its observations are never assimilated, and every observation from the days before it is. The assimilation always ends at 00:00 UTC of the run day (today, or `da_end_date=YYYYMMDD` to replay a given day), with or without new observations. A gap in the observations just advances the ensemble without updates, so the forecast always starts on the run day. A second run on the same day only forecasts.
+
+**OpenDA runs.** An OpenDA run keeps its ensemble between analyses only within one OpenDA run, and each daily call starts a new one. To carry the ensemble (and its spread) from one day to the next, give the run a restart chain:
+
+```json
+"runs": {"openda_enkf": {"engine": "openda", "algorithm": "EnKF", "n_members": 20, "openda_restart": {"keep": 7}}}
+```
+
+Each daily call then runs OpenDA once, from where the chain ends to 00:00 of the run day, every observation analysed at its own time, and saves the ensemble as `runs/<lake>_<run>/openda_<lake>_<run>/restart/restart_<YYYYMMDDTHHMMZ>.zip` (the newest `keep` are kept). A cold start or a long catch-up is split into OpenDA runs of at most `cycle_max_days` (default 31). OpenDA is not started on a window without observations: during a gap at the end of the record the chain waits at the last one and the forecast starts there. OpenDA 3.4.0 is needed, through the `openda_bin` argument.
 
 The combined assimilation + forecast temperature is written to `runs/<lake>_<run>/netcdf/`. When the run is invoked with `upload=true`, these NetCDF files are uploaded to `<results_folder_api>/<lake>_<run>` on the results server (keyed by the run name, so they do not overwrite the standard `src/main.py` forecast at `<results_folder_api>/<lake>`).
 
