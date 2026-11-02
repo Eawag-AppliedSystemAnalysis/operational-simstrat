@@ -180,7 +180,7 @@ Every run gets its own state directory `runs/<lake>_<run>/` (e.g. `runs/upperlug
 Unlike the forecast workflow (`src/main.py`), assimilation is **independent and rolling** — each run advances its own state forward instead of re-running the whole period. Each run has up to four phases:
 
 1. **Observations** — fetch the new raw observations and preprocess them into the assimilated series. If the source cannot be reached, the run warns and continues with the stored record.
-2. **Spin-up** (cold start only) — free Simstrat run from the origin to the first assimilation date.
+2. **Spin-up** (cold start only) — free Simstrat run from the origin to the first assimilation date. A run is cold-started when `model_inputs/` holds no snapshot; anything an earlier run left in the run directory is removed first, except `observations/`.
 3. **Assimilation** — `assimilator.run(cfg)` from the last snapshot to 00:00 UTC of the run day, seeded from the persisted ensemble.
 4. **Forecast** (every run) — free Simstrat run from the run day to the forecast horizon, warm-started from the ensemble-mean analysis (overwritten each run).
 

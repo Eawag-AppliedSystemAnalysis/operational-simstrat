@@ -55,6 +55,7 @@ def assimilate_run(key, run_key, run_cfg, lake_cfg, parameters, args):
         if last_obs is None:
             log.warning("No observations and no prior snapshot for {}, nothing to do.".format(key))
             return
+        clear_run_outputs(run_name, lake_dir, log)
         snapshot = spin_up(key, parameters, args, lake_dir, first_obs, end, log)
     start = parse_day(snapshot)
 
@@ -69,6 +70,24 @@ def assimilate_run(key, run_key, run_cfg, lake_cfg, parameters, args):
         analysed = start
     forecast(key, parameters, args, lake_dir, analysed, log)
     publish(run_name, parameters, args, lake_dir, start if continuing else None, log)
+
+
+def clear_run_outputs(run_name, lake_dir, log):
+    """Before a cold start, remove what an earlier run left: the members would otherwise resume from
+    their old state, and the old mean trajectory and NetCDF months would be published. The
+    observation record is kept."""
+    stale = [os.path.join(lake_dir, name) for name in
+             ("assimilation", "openda_{}".format(run_name), "forecast", "netcdf",
+              "T_out_spinup.dat", "T_out_combined.dat")]
+    stale = [p for p in stale if os.path.exists(p)]
+    if stale:
+        log.warning("Cold start: removing the previous run's {}".format(
+            ", ".join(os.path.basename(p) for p in stale)), indent=1)
+    for p in stale:
+        if os.path.isdir(p):
+            shutil.rmtree(p)
+        else:
+            os.remove(p)
 
 
 def spin_up(key, parameters, args, lake_dir, first_obs, end, log):
