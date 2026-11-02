@@ -119,6 +119,9 @@ def assimilate_run(key, run_key, run_cfg, lake_cfg, parameters, args):
                                       openda_dir=os.path.join(lake_dir, "openda_{}".format(run_name)))
         refresh_ensemble_inputs(assimilation_dir, model_inputs, cfg["n_members"], log)
         result = assimilator.run(cfg)
+        if result["analysis_time"] != last_da:
+            raise RuntimeError("The assimilation ended at {}, not at {}; the snapshot would be misdated."
+                               .format(result["analysis_time"], last_da))
         if result["output_grid"]:
             # Keep the deterministic phases (spin-up extension, forecast) on the grid the
             # assimilation outputs, which includes every observation depth.
