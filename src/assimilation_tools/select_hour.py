@@ -15,11 +15,13 @@ from assimilator.fitting.hour import select_hour, CRITERIA
 def main():
     ap = common.parser(__doc__.split("\n")[0])
     ap.add_argument("--raw", help="raw sub-daily CSV (default: the run's raw store, else fetched)")
-    ap.add_argument("--free-run", help="free-run T_out.dat (default: runs/<lake>/Results/T_out.dat)")
+    ap.add_argument("--free-run", help="hourly free-run T_out.dat (default: the one make_free_run.py writes, "
+                                       "runs/assimilation_tools/<lake>/free_run/Results/T_out.dat)")
     ap.add_argument("--window", default="0-6", help="candidate hours LO-HI (inclusive, may wrap), or 'all'")
     ap.add_argument("--criterion", default="balanced", choices=CRITERIA)
     ap.add_argument("--max-offset", type=float, default=None,
-                    help="hours a day's instant may be from the hour (default 1.5)")
+                    help="with --write: schedule.max_offset_h, how far from the hour a day's sample may be "
+                         "(default 1.5). It does not affect the choice, which scores whole hours")
     cli = ap.parse_args()
     common.setup_logging()
 

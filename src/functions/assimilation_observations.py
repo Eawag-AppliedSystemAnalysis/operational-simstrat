@@ -194,12 +194,15 @@ def fetch_observations(key, observations_cfg, args, out_dir, log=None):
             log.info("Preprocessing the full record ({}, {} raw rows)".format(reason, len(raw)), indent=1)
         processed = da_observations.preprocess(raw, processing) if not raw.empty else raw
     else:
-        tail_raw = raw[raw["time"] >= since - da_observations.lookback(processing)]
-        tail = da_observations.preprocess(tail_raw, processing, since=since)
-        # Cut the stored series where preprocess cut the tail: by the day a row is thinned into.
+        # Cut the stored series where preprocess cuts the tail: by the day a row is thinned into.
         kept_t = existing["time"]
         if processing.get("schedule"):
             kept_t = (kept_t + pd.Timedelta(minutes=30)).dt.floor("1h")
+        # temperature.csv is written after raw.csv: if a run stopped in between, the series ends
+        # before the raw record's last day, so reprocess from its own last day and lose none.
+        since = min(since, kept_t.max().floor("D"))
+        tail_raw = raw[raw["time"] >= since - da_observations.lookback(processing)]
+        tail = da_observations.preprocess(tail_raw, processing, since=since)
         processed = pd.concat([existing[kept_t < since], tail], ignore_index=True)
         if log is not None:
             log.info("Preprocessed the record from {} ({} rows)".format(since.date(), len(tail)), indent=1)

@@ -15,7 +15,8 @@ from assimilator.fitting.sigma import fit_sigma
 def main():
     ap = common.parser(__doc__.split("\n")[0])
     ap.add_argument("--raw", help="raw sub-daily CSV (default: the run's raw store, else fetched)")
-    ap.add_argument("--free-run", help="free-run T_out.dat (default: runs/<lake>/Results/T_out.dat)")
+    ap.add_argument("--free-run", help="hourly free-run T_out.dat (default: the one make_free_run.py writes, "
+                                       "runs/assimilation_tools/<lake>/free_run/Results/T_out.dat)")
     ap.add_argument("--year", type=int, help="restrict to one calendar year")
     ap.add_argument("--max-depth", type=float, help="ignore observations below this depth (m)")
     ap.add_argument("--annual", action="store_true",

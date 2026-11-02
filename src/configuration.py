@@ -114,6 +114,8 @@ def load_assimilation_config(repo_dir, key):
     with open(path) as f:
         cfg = json.load(f)
     runs = cfg.get("runs")
+    if isinstance(runs, dict):
+        runs = cfg["runs"] = {k: v for k, v in runs.items() if not k.startswith("_")}   # "_" keys are comments
     if not isinstance(runs, dict) or not runs:
         raise ValueError('{}: no runs under "runs" (e.g. "python_enkf": {{"engine": "python", '
                          '"algorithm": "EnKF", "n_members": 20}}).'.format(path))
