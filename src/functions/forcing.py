@@ -49,6 +49,9 @@ def download_forcing_data(output, start, end, forcing, forecast, forcing_forecas
             output = meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, longitude, reference_date, output, api, log)
         elif forcing_forecast["source"].lower() == "visualcrossing":
             output = meteodata_forecast_from_visualcrossing(forcing_forecast, elevation, latitude, longitude, reference_date, output, visualcrossing_key, log)
+    estimate = output["cloud"].pop("estimate")
+    missing = np.isnan(output["cloud"]["data"])
+    output["cloud"]["data"][missing] = estimate[missing]
     return output
 
 
@@ -157,7 +160,12 @@ def meteodata_from_meteostations(start, end, forcing, elevation, latitude, longi
     swr_rolling = df['swr'].rolling(window=24, center=True, min_periods=1).mean()
     solar_index = np.interp(swr_rolling / cssr_rolling, [0, 1],
                             [0, 1])  # Flerchinger et al. (2009), Crawford and Duchon (1999)
-    output["cloud"]["data"] = 1 - solar_index
+    cloud = 1 - solar_index
+    # The 24 h rolling window extends the estimate ~12 h beyond the last solar observation. Only keep it where solar
+    # radiation was observed, so a forecast's cloud cover takes over after the observations; the full estimate is the
+    # fallback where neither is available (applied in download_forcing_data).
+    output["cloud"]["data"] = np.where(np.isnan(output["sol"]["data"]), np.nan, cloud)
+    output["cloud"]["estimate"] = cloud
     return output
 
 
@@ -195,7 +203,7 @@ def meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, lo
         df = df[parameters]
     elif forcing_forecast["model"].lower() == "icon":
         log.info("Extending forcing files using MeteoSwiss ICON forecast.", indent=1)
-        endpoint = api + "/meteoswiss/icon/point/forecast/icon-ch2-eps/{}/{}/{}?variables=T_2M&variables=U&variables=V&variables=GLOB&variables=RELHUM_2M&variables=CLCT&variables=TOT_PREC"
+        endpoint = api + "/meteoswiss/icon/point/forecast/icon-ch2-eps/{}/{}/{}?" + ICON_VARIABLES
         today = datetime.now().strftime("%Y%m%d")
         try:
             data = call_url(endpoint.format(today, latitude, longitude))
@@ -206,23 +214,7 @@ def meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, lo
         grid_elevation = get_elevation_swisstopo(data["lat"], data["lng"])
         data_dict = {key: data["variables"][key]["data"] for key in data["variables"].keys()}
         data_dict["utc_time"] = data["time"]
-        df = pd.DataFrame(data_dict)
-        if pd.isna(df.loc[0, 'GLOB']):
-            df.loc[0, 'GLOB'] = 0.0
-        df['Time'] = pd.to_datetime(df['utc_time'], utc=True)
-        df['Time'] = df.apply(lambda row: datetime_to_simstrat_time(row['Time'], reference_date), axis=1)
-        df["T_2M"] = df["T_2M"] - 273.15  # Kelvin to celsius
-        df["T_2M"] = adjust_temperature_for_altitude_difference(df["T_2M"].values, elevation - grid_elevation)
-        df["TOT_PREC"] = df["TOT_PREC"] * 0.001  # kg m-2 to m/hr
-        df["CLCT"] = df["CLCT"] * 0.01  # Percentage to fraction
-        df["u"] = df["U"]
-        df["v"] = df["V"]
-        df["Tair"] = df["T_2M"]
-        df["sol"] = df["GLOB"]
-        df["vap"] = vapor_pressure_from_relative_humidity_and_temperature(df["T_2M"].values, df["RELHUM_2M"])
-        df["cloud"] = df["CLCT"]
-        df["rain"] = df["TOT_PREC"]
-        df = df[parameters]
+        df = icon_to_forcing(pd.DataFrame(data_dict), elevation, grid_elevation, reference_date)
     else:
         raise ValueError("MeteoSwiss forecast not implemented for model: {}".format(forcing_forecast["model"]))
     df = df.set_index('Time')
@@ -230,6 +222,74 @@ def meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, lo
     df_o = df_o.reset_index()
     for key in df_o.columns:
         output[key]["data"] = df_o[key].to_numpy(copy=True)
+    return output
+
+
+ICON_VARIABLES = "variables=T_2M&variables=U&variables=V&variables=GLOB&variables=RELHUM_2M&variables=CLCT&variables=TOT_PREC"
+FORCING_COLUMNS = ["Time", "u", "v", "Tair", "sol", "vap", "cloud", "rain"]
+
+
+def icon_to_forcing(df, elevation, grid_elevation, reference_date):
+    """Convert an Alplakes ICON point forecast (columns T_2M, U, V, GLOB, RELHUM_2M, CLCT, TOT_PREC, utc_time)
+    to Simstrat forcing columns. Shared by the ensemble-mean forecast and the individual ensemble members."""
+    df = df.copy()
+    if pd.isna(df.loc[0, 'GLOB']):
+        df.loc[0, 'GLOB'] = 0.0
+    df['Time'] = pd.to_datetime(df['utc_time'], utc=True)
+    df['Time'] = df.apply(lambda row: datetime_to_simstrat_time(row['Time'], reference_date), axis=1)
+    df["T_2M"] = df["T_2M"] - 273.15  # Kelvin to celsius
+    df["T_2M"] = adjust_temperature_for_altitude_difference(df["T_2M"].values, elevation - grid_elevation)
+    df["TOT_PREC"] = df["TOT_PREC"] * 0.001  # kg m-2 to m/hr
+    df["CLCT"] = df["CLCT"] * 0.01  # Percentage to fraction
+    df["u"] = df["U"]
+    df["v"] = df["V"]
+    df["Tair"] = df["T_2M"]
+    df["sol"] = df["GLOB"]
+    df["vap"] = vapor_pressure_from_relative_humidity_and_temperature(df["T_2M"].values, df["RELHUM_2M"])
+    df["cloud"] = df["CLCT"]
+    df["rain"] = df["TOT_PREC"]
+    return df[FORCING_COLUMNS]
+
+
+def meteodata_forecast_members(elevation, latitude, longitude, reference_date, forecast_start, api, log):
+    """Download every ICON-CH2-EPS member for the run starting at forecast_start (00 UTC) from the Alplakes API.
+    Returns a list of (member number, forcing DataFrame) with the same conversion as the ensemble-mean forecast."""
+    endpoint = api + "/meteoswiss/icon/point/forecast/icon-ch2-eps-members/{}/{}/{}?" + ICON_VARIABLES
+    log.info("Downloading ICON-CH2-EPS members for {}".format(forecast_start.strftime("%Y-%m-%d")), indent=1)
+    data = call_url(endpoint.format(forecast_start.strftime("%Y%m%d"), latitude, longitude))
+    first_time = pd.to_datetime(data["time"][0], utc=True)
+    if first_time != pd.Timestamp(forecast_start):
+        raise ValueError("ICON members start at {}, expected {}".format(first_time, forecast_start))
+    grid_elevation = get_elevation_swisstopo(data["lat"], data["lng"])
+    values = {key: np.array(data["variables"][key]["data"], dtype=float) for key in data["variables"].keys()}
+    members = []
+    for i, member in enumerate(data["members"]):
+        data_dict = {key: values[key][:, i] for key in values.keys()}
+        data_dict["utc_time"] = data["time"]
+        members.append((member, icon_to_forcing(pd.DataFrame(data_dict), elevation, grid_elevation, reference_date)))
+    log.info("Received {} members, {} time steps".format(len(members), len(data["time"])), indent=2)
+    return members
+
+
+def member_forcing_data(forcing_data, member_df, forecast_start, reference_date, history_days=2):
+    """Forcing for one ensemble member: the final base forcing for the history_days before forecast_start (so the
+    restart has forcing to interpolate from), then the member forecast. Member gaps (e.g. lead-0 rain) are filled
+    from the base forcing at the same time. Returns a new forcing dict with the same metadata as forcing_data."""
+    t0 = round(datetime_to_simstrat_time(forecast_start, reference_date), 4)
+    base = pd.DataFrame({c: forcing_data[c]["data"] for c in FORCING_COLUMNS})
+    base["Time"] = base["Time"].round(4)
+    base = base.drop_duplicates(subset="Time").set_index("Time")
+    member = member_df.copy()
+    member["Time"] = member["Time"].round(4)
+    member = member.set_index("Time")
+    member = member[member.index >= t0]
+    member = member.fillna(base.reindex(member.index))
+    history = base[(base.index >= t0 - history_days) & (base.index < t0)]
+    df = pd.concat([history, member]).reset_index()
+    output = {}
+    for key in FORCING_COLUMNS:
+        output[key] = {k: v for k, v in forcing_data[key].items() if k not in ("data", "data_extended")}
+        output[key]["data"] = df[key].to_numpy(dtype=float, copy=True)
     return output
 
 

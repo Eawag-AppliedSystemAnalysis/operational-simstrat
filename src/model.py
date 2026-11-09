@@ -2,6 +2,7 @@ import os
 import json
 import shutil
 import traceback
+import concurrent.futures
 import numpy as np
 from datetime import datetime, timezone, timedelta
 
@@ -16,13 +17,26 @@ from functions.aed2 import create_aed_configuration_file, compute_oxygen_inflows
 from functions.inflow import collect_inflow_data, interpolate_inflow_data, quality_assurance_inflow_data, \
     fill_inflow_data, merge_surface_inflows
 from functions.forcing import metadata_from_forcing, download_forcing_data, interpolate_forcing_data, fill_forcing_data, \
-    quality_assurance_forcing_data
+    quality_assurance_forcing_data, meteodata_forecast_members, member_forcing_data
 from functions.par import update_par_file, overwrite_par_file_dates
 from functions.observations import (initial_conditions_from_observations,
                                     climatology_initial_conditions_from_observations,
                                     default_initial_conditions,
                                     absorption_from_observations, default_absorption)
 from functions.general import run_subprocess, upload_files, serializer
+
+
+class QuietLog(object):
+    def info(self, *args, **kwargs):
+        pass
+
+
+def link_or_copy(source, destination):
+    try:
+        os.link(source, destination)
+    except OSError:
+        shutil.copy2(source, destination)
+    return destination
 
 
 class Simstrat(object):
@@ -126,6 +140,11 @@ class Simstrat(object):
         self.forcing_end = self.parameters["reference_date"]
         self.end_date = datetime.now().replace(tzinfo=timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
         self.forecast = False
+        self.forcing_data = None
+        self.ensemble = False
+        self.forecast_start = None
+        self.ensemble_results = None
+        self.ensemble_dir = os.path.join(self.simulation_dir, "ensemble")
 
         if os.path.exists(self.simulation_dir) and args["overwrite_simulation"]:
             shutil.rmtree(self.simulation_dir)
@@ -165,10 +184,12 @@ class Simstrat(object):
                 self.run_simulation()
                 if self.args["reset_date"]:
                     self.reset_date()
+                self.ensemble_forecast()
                 if self.args["post_process"]:
                     self.post_process()
                     if self.args["upload"]:
                         self.upload()
+                self.clean_ensemble()
         except Exception as e:
             self.log.info(str(e))
             self.log.info(str(traceback.format_exc()))
@@ -321,6 +342,7 @@ class Simstrat(object):
         if self.args["forecast"] and "forcing_forecast" in self.parameters:
             self.forecast = True
             today = datetime.now().replace(tzinfo=timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+            self.forecast_start = today
             end_date = today + timedelta(days=self.parameters["forcing_forecast"]["days"])
             self.log.info(
                 "Using forecast to extend end date by {} days".format(self.parameters["forcing_forecast"]["days"]),
@@ -350,7 +372,36 @@ class Simstrat(object):
             self.log.info("Model will be initialised from initial conditions", indent=1)
         self.start_date = start_date
         self.end_date = end_date
+        self.ensemble = self.ensemble_eligible()
         self.log.end_stage()
+        return True
+
+    def ensemble_eligible(self):
+        """The ICON-CH2-EPS ensemble forecast needs a MeteoSwiss ICON forecast, a forecast start inside the run and
+        snapshots enabled (every run leg restarts from the previous leg's snapshot)."""
+        if not self.args.get("ensemble_forecast"):
+            return False
+        forcing_forecast = self.parameters.get("forcing_forecast") or {}
+        reasons = []
+        if not self.forecast:
+            reasons.append("no forecast in this run")
+        elif forcing_forecast.get("source", "").lower() != "meteoswiss" or forcing_forecast.get("model", "").lower() != "icon":
+            reasons.append("forecast source is {} {}, not MeteoSwiss ICON".format(
+                forcing_forecast.get("source"), forcing_forecast.get("model")))
+        elif not self.start_date < self.forecast_start < self.end_date:
+            reasons.append("forecast start {} is not inside the run".format(self.forecast_start))
+        if not self.args["snapshot"]:
+            reasons.append("snapshots are disabled")
+        if not self.args["monthly_snapshot"]:
+            reasons.append("monthly_snapshot is off, so dated snapshots would contain forecast data")
+        if self.args["overwrite_end_date"]:
+            reasons.append("overwrite_end_date is set")
+        if not self.args["post_process"]:
+            reasons.append("post_process is off")
+        if reasons:
+            self.log.info("Ensemble forecast skipped: {}".format("; ".join(reasons)), indent=1)
+            return False
+        self.log.info("Ensemble forecast enabled from {}".format(self.forecast_start), indent=1)
         return True
 
     def prepare_snapshot(self):
@@ -425,6 +476,7 @@ class Simstrat(object):
                                          self.parameters["reference_date"], self.log)
         self.log.info("Writing forcing data.", indent=1)
         write_forcing_data(forcing_data, self.simulation_dir, self.args["merge_inputs"], self.log)
+        self.forcing_data = forcing_data
         self.log.end_stage()
 
     def create_inflow_files(self):
@@ -491,30 +543,41 @@ class Simstrat(object):
         write_par_file(self.args["simstrat_version"], par, self.simulation_dir)
         self.log.end_stage()
 
+    def docker_command(self, directory):
+        if self.args["docker_dir"]:
+            directory = os.path.join(self.args["docker_dir"], os.path.relpath(directory, self.args["repo_dir"]))
+        return "docker run --rm --user $(id -u):$(id -g) -v {}:/simstrat/run eawag/simstrat:{} Settings.par".format(
+            directory, self.args["simstrat_version"])
+
     def run_simulation(self):
         self.log.begin_stage("run_simulation")
-        if self.args["docker_dir"]:
-            simulation_dir = os.path.join(self.args["docker_dir"],
-                                          os.path.relpath(self.simulation_dir, self.args["repo_dir"]))
-        else:
-            simulation_dir = self.simulation_dir
-        command = "docker run --rm --user $(id -u):$(id -g) -v {}:/simstrat/run eawag/simstrat:{} Settings.par".format(
-            simulation_dir, self.args["simstrat_version"])
+        command = self.docker_command(self.simulation_dir)
         month_beginning = self.forcing_end.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         snapshot_path = os.path.join(self.simulation_dir, "Results", "simulation-snapshot.dat")
-        if self.args["snapshot"] and self.args["monthly_snapshot"] and month_beginning != self.start_date:
-            self.log.info("Splitting into two runs to create correct snapshot", indent=1)
-            self.log.info("Running from {} - {}".format(self.start_date, month_beginning), indent=1)
-            overwrite_par_file_dates(os.path.join(self.simulation_dir, "Settings.par"), self.start_date,
-                                     month_beginning, self.parameters["reference_date"])
-            run_subprocess(command)
-            snapshot_out_path = os.path.join(self.simulation_dir,
-                                             "simulation-snapshot_{}.dat".format(month_beginning.strftime("%Y%m%d")))
-            shutil.copy(snapshot_path, snapshot_out_path)
-            overwrite_par_file_dates(os.path.join(self.simulation_dir, "Settings.par"), month_beginning, self.end_date,
-                                     self.parameters["reference_date"])
-            self.log.info("Running from {} - {}".format(month_beginning, self.end_date), indent=1)
-            run_subprocess(command)
+        split_month = self.args["snapshot"] and self.args["monthly_snapshot"] and month_beginning != self.start_date
+        splits = [month_beginning] if split_month else []
+        if self.ensemble:
+            if os.path.exists(self.ensemble_dir):
+                shutil.rmtree(self.ensemble_dir)
+            os.makedirs(self.ensemble_dir)
+            if self.forecast_start not in splits:
+                splits.append(self.forecast_start)
+            splits.sort()
+        if splits:
+            self.log.info("Splitting into {} runs to create correct snapshots".format(len(splits) + 1), indent=1)
+            leg_start = self.start_date
+            for split in splits + [self.end_date]:
+                self.log.info("Running from {} - {}".format(leg_start, split), indent=1)
+                overwrite_par_file_dates(os.path.join(self.simulation_dir, "Settings.par"), leg_start, split,
+                                         self.parameters["reference_date"])
+                run_subprocess(command)
+                if split_month and split == month_beginning:
+                    snapshot_out_path = os.path.join(self.simulation_dir,
+                                                     "simulation-snapshot_{}.dat".format(month_beginning.strftime("%Y%m%d")))
+                    shutil.copy(snapshot_path, snapshot_out_path)
+                if self.ensemble and split == self.forecast_start:
+                    shutil.copy(snapshot_path, os.path.join(self.ensemble_dir, "snapshot.dat"))
+                leg_start = split
             os.remove(snapshot_path)
         else:
             self.log.info("Running from {} - {}".format(self.start_date, self.end_date), indent=1)
@@ -532,6 +595,13 @@ class Simstrat(object):
                   "folder": os.path.join(self.simulation_dir, "Results"),
                   "version": self.args["simstrat_version"],
                   "parameters": self.parameters}
+        if self.forecast:
+            inputs["forecast_start"] = self.forecast_start.isoformat()
+        if self.ensemble_results:
+            inputs["ensemble"] = self.ensemble_results
+        elif self.forecast and (self.parameters["forcing_forecast"]["source"].lower() == "meteoswiss"
+                                and self.parameters["forcing_forecast"]["model"].lower() == "icon"):
+            inputs["forecast_source"] = "Alplakes icon-ch2-eps ensemble mean"
         input_file = os.path.join(self.simulation_dir, "inputs.json")
         self.log.info("Exporting parameters to file", indent=1)
         json_data = json.dumps(inputs, default=serializer, indent=2)
@@ -543,6 +613,96 @@ class Simstrat(object):
         run_subprocess(command)
         os.remove(input_file)
         self.log.end_stage()
+
+    def ensemble_forecast(self):
+        """Run every ICON-CH2-EPS member from the forecast-start snapshot. On success, self.ensemble_results tells
+        post_process to publish the median run; on any failure the ensemble-mean forecast is published as before."""
+        if not self.ensemble:
+            return
+        self.log.begin_stage("ensemble_forecast")
+        try:
+            self.ensemble_results = self.run_ensemble()
+        except Exception as e:
+            self.ensemble_results = None
+            self.log.warning("Ensemble forecast failed, publishing the ensemble-mean forecast instead: {}".format(e), indent=1)
+            self.log.info(str(traceback.format_exc()))
+            if self.args["debug"]:
+                raise
+        self.log.end_stage()
+
+    def run_ensemble(self):
+        snapshot = os.path.join(self.ensemble_dir, "snapshot.dat")
+        if not os.path.exists(snapshot):
+            raise ValueError("Forecast-start snapshot not found: {}".format(snapshot))
+        members = meteodata_forecast_members(self.parameters["elevation"], self.parameters["latitude"],
+                                             self.parameters["longitude"], self.parameters["reference_date"],
+                                             self.forecast_start, self.args["data_api"], self.log)
+        self.log.info("Preparing {} member runs".format(len(members)), indent=1)
+        member_dirs = {member: self.prepare_member(member, df, snapshot) for member, df in members}
+
+        def run_member(member):
+            try:
+                run_subprocess(self.docker_command(member_dirs[member]))
+                return member, None
+            except Exception as e:
+                return member, str(e)
+
+        self.log.info("Running members with {} workers".format(self.args["ensemble_workers"]), indent=1)
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.args["ensemble_workers"]) as executor:
+            outcomes = list(executor.map(run_member, member_dirs.keys()))
+        succeeded = sorted(member for member, error in outcomes if error is None)
+        for member, error in outcomes:
+            if error is not None:
+                self.log.warning("Member {} failed: {}".format(member, error[-400:]), indent=2)
+        self.log.info("{} of {} members succeeded".format(len(succeeded), len(members)), indent=1)
+        if len(succeeded) < self.args["ensemble_min_members"]:
+            raise ValueError("Only {} members succeeded, {} required".format(
+                len(succeeded), self.args["ensemble_min_members"]))
+        return {"forecast_start": self.forecast_start.isoformat(),
+                "model": "ICON-CH2-EPS",
+                "members": succeeded,
+                "results": [os.path.join(member_dirs[member], "Results") for member in succeeded]}
+
+    def prepare_member(self, member, member_df, snapshot):
+        """Member directory: inputs hard-linked from the lake directory, its own Forcing.dat, the forecast-start
+        snapshot and a par file that continues from it until the end date.
+
+        Inflow (Qin/Tin/Sin, AED2_inflow) and absorption files must stay identical to the base run's: on a restart
+        Simstrat resumes them by skipping the number of lines recorded in the snapshot, not by time, so a shortened
+        file is silently read as zero inflow. Forcing.dat is read by time and can be replaced."""
+        member_dir = os.path.join(self.ensemble_dir, "member_{:02d}".format(member))
+        os.makedirs(member_dir)
+        skip = {"Forcing.dat", "Results", "ensemble", "inputs.json"}
+        for name in os.listdir(self.simulation_dir):
+            source = os.path.join(self.simulation_dir, name)
+            if name in skip or name.startswith("simulation-snapshot_") or name.endswith(".log"):
+                continue
+            if os.path.isdir(source):
+                shutil.copytree(source, os.path.join(member_dir, name), copy_function=link_or_copy)
+            else:
+                link_or_copy(source, os.path.join(member_dir, name))
+        forcing = member_forcing_data(self.forcing_data, member_df, self.forecast_start,
+                                      self.parameters["reference_date"])
+        forcing = quality_assurance_forcing_data(forcing, QuietLog())
+        forcing = interpolate_forcing_data(forcing)
+        write_forcing_data(forcing, member_dir, False, QuietLog())
+        results = os.path.join(member_dir, "Results")
+        os.makedirs(results)
+        os.chmod(results, 0o777)
+        shutil.copy(snapshot, os.path.join(results, "simulation-snapshot.dat"))
+        par_file = os.path.join(member_dir, "Settings.par")
+        os.remove(par_file)
+        with open(os.path.join(self.simulation_dir, "Settings.par")) as f:
+            par = json.load(f)
+        par["Simulation"]["Continue from last snapshot"] = True
+        with open(par_file, "w") as f:
+            json.dump(par, f, indent=4)
+        overwrite_par_file_dates(par_file, self.forecast_start, self.end_date, self.parameters["reference_date"])
+        return member_dir
+
+    def clean_ensemble(self):
+        if os.path.exists(self.ensemble_dir) and not self.args["debug"]:
+            shutil.rmtree(self.ensemble_dir)
 
     def upload(self):
         self.log.begin_stage("upload")
