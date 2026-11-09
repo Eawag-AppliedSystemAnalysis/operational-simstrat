@@ -377,17 +377,18 @@ class Simstrat(object):
         return True
 
     def ensemble_eligible(self):
-        """The ICON-CH2-EPS ensemble forecast needs a MeteoSwiss ICON forecast, a forecast start inside the run and
-        snapshots enabled (every run leg restarts from the previous leg's snapshot)."""
+        """The ICON-CH2-EPS ensemble forecast needs a forecast in the run (any deterministic source, which remains the
+        fallback), a forecast start inside the run and snapshots enabled (every run leg restarts from the previous
+        leg's snapshot). Lakes outside the ICON-CH2-EPS domain are caught when the members are downloaded, and a lake
+        can opt out with "ensemble": false in its forcing_forecast."""
         if not self.args.get("ensemble_forecast"):
             return False
         forcing_forecast = self.parameters.get("forcing_forecast") or {}
         reasons = []
         if not self.forecast:
             reasons.append("no forecast in this run")
-        elif forcing_forecast.get("source", "").lower() != "meteoswiss" or forcing_forecast.get("model", "").lower() != "icon":
-            reasons.append("forecast source is {} {}, not MeteoSwiss ICON".format(
-                forcing_forecast.get("source"), forcing_forecast.get("model")))
+        elif forcing_forecast.get("ensemble") is False:
+            reasons.append("disabled for this lake in lake_parameters.json")
         elif not self.start_date < self.forecast_start < self.end_date:
             reasons.append("forecast start {} is not inside the run".format(self.forecast_start))
         if not self.args["snapshot"]:
@@ -597,11 +598,10 @@ class Simstrat(object):
                   "parameters": self.parameters}
         if self.forecast:
             inputs["forecast_start"] = self.forecast_start.isoformat()
+        if self.forecast:
+            inputs["forecast_source"] = self.deterministic_forecast_source()
         if self.ensemble_results:
             inputs["ensemble"] = self.ensemble_results
-        elif self.forecast and (self.parameters["forcing_forecast"]["source"].lower() == "meteoswiss"
-                                and self.parameters["forcing_forecast"]["model"].lower() == "icon"):
-            inputs["forecast_source"] = "Alplakes icon-ch2-eps ensemble mean"
         input_file = os.path.join(self.simulation_dir, "inputs.json")
         self.log.info("Exporting parameters to file", indent=1)
         json_data = json.dumps(inputs, default=serializer, indent=2)
@@ -613,6 +613,16 @@ class Simstrat(object):
         run_subprocess(command)
         os.remove(input_file)
         self.log.end_stage()
+
+    def deterministic_forecast_source(self):
+        """Label for the forecast published when the ensemble isn't used."""
+        source = self.parameters["forcing_forecast"]["source"]
+        model = self.parameters["forcing_forecast"].get("model") or ""  # VisualCrossing lakes have "model": false
+        if source.lower() == "meteoswiss" and model.lower() == "icon":
+            return "Alplakes icon-ch2-eps ensemble mean"
+        if source.lower() == "visualcrossing":
+            return "VisualCrossing"
+        return "{} {}".format(source, model).strip()
 
     def ensemble_forecast(self):
         """Run every ICON-CH2-EPS member from the forecast-start snapshot. On success, self.ensemble_results tells

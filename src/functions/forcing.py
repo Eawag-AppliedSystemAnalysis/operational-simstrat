@@ -4,8 +4,9 @@ import pandas as pd
 from datetime import datetime, timezone, timedelta
 from .general import (call_url, adjust_temperature_for_altitude_difference, air_pressure_from_elevation, detect_gaps,
                       adjust_data_to_mean_and_std, clear_sky_solar_radiation, datetime_to_simstrat_time,
-                      calculate_mean_wind_direction, interpolate_timeseries, fill_day_of_year, get_elevation_swisstopo,
-                      vapor_pressure_from_relative_humidity_and_temperature, get_elevation_eudem25, calculate_vapor_pressure)
+                      calculate_mean_wind_direction, interpolate_timeseries, fill_day_of_year,
+                      vapor_pressure_from_relative_humidity_and_temperature, get_elevation_eudem25, calculate_vapor_pressure,
+                      get_elevation)
 
 import matplotlib.pyplot as plt
 
@@ -183,7 +184,7 @@ def meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, lo
             print("ERROR", e)
             yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y%m%d")
             data = call_url(endpoint.format(yesterday, latitude, longitude))
-        grid_elevation = get_elevation_swisstopo(data["lat"], data["lng"])
+        grid_elevation = get_elevation(data["lat"], data["lng"])
         data_dict = {key: data["variables"][key]["data"] for key in data["variables"].keys()}
         data_dict["utc_time"] = data["time"]
         df = pd.DataFrame(data_dict)
@@ -211,7 +212,8 @@ def meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, lo
             print("ERROR", e)
             yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y%m%d")
             data = call_url(endpoint.format(yesterday, latitude, longitude))
-        grid_elevation = get_elevation_swisstopo(data["lat"], data["lng"])
+        check_icon_distance(data, "icon-ch2-eps")
+        grid_elevation = get_elevation(data["lat"], data["lng"])
         data_dict = {key: data["variables"][key]["data"] for key in data["variables"].keys()}
         data_dict["utc_time"] = data["time"]
         df = icon_to_forcing(pd.DataFrame(data_dict), elevation, grid_elevation, reference_date)
@@ -226,7 +228,15 @@ def meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, lo
 
 
 ICON_VARIABLES = "variables=T_2M&variables=U&variables=V&variables=GLOB&variables=RELHUM_2M&variables=CLCT&variables=TOT_PREC"
+ICON_MAX_DISTANCE = 5000  # m; the Alplakes API returns the nearest grid cell however far away it is
 FORCING_COLUMNS = ["Time", "u", "v", "Tair", "sol", "vap", "cloud", "rain"]
+
+
+def check_icon_distance(data, product):
+    distance = data["distance"]["data"]
+    if distance > ICON_MAX_DISTANCE:
+        raise ValueError("The lake is {:.0f} km from the nearest {} grid cell, outside the model domain".format(
+            distance / 1000, product))
 
 
 def icon_to_forcing(df, elevation, grid_elevation, reference_date):
@@ -260,7 +270,8 @@ def meteodata_forecast_members(elevation, latitude, longitude, reference_date, f
     first_time = pd.to_datetime(data["time"][0], utc=True)
     if first_time != pd.Timestamp(forecast_start):
         raise ValueError("ICON members start at {}, expected {}".format(first_time, forecast_start))
-    grid_elevation = get_elevation_swisstopo(data["lat"], data["lng"])
+    check_icon_distance(data, "icon-ch2-eps-members")
+    grid_elevation = get_elevation(data["lat"], data["lng"])
     values = {key: np.array(data["variables"][key]["data"], dtype=float) for key in data["variables"].keys()}
     members = []
     for i, member in enumerate(data["members"]):

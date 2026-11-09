@@ -190,6 +190,14 @@ def get_elevation_eudem25(latitude, longitude):
     return float(data["results"][0]["elevation"])
 
 
+def get_elevation(latitude, longitude):
+    """Ground elevation (m a.s.l.): Swisstopo, which only covers Switzerland and its surroundings, then EU-DEM."""
+    try:
+        return get_elevation_swisstopo(latitude, longitude)
+    except Exception:
+        return get_elevation_eudem25(latitude, longitude)
+
+
 def latlng_to_ch1903(lat, lng):
     lat = lat * 3600
     lng = lng * 3600

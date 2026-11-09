@@ -114,9 +114,12 @@ See the instructions [here](https://github.com/Eawag-AppliedSystemAnalysis/Simst
 
 ## Ensemble forecast
 
-By default the forecast days are forced with the ICON-CH2-EPS ensemble mean (`icon-ch2-eps` from the Alplakes API).
-With `ensemble_forecast=true`, lakes whose `forcing_forecast` is MeteoSwiss ICON also run Simstrat once for each of the
-21 ICON-CH2-EPS members (`icon-ch2-eps-members`):
+By default the forecast days are forced with each lake's deterministic forecast from `forcing_forecast`: the
+ICON-CH2-EPS ensemble mean (`icon-ch2-eps` from the Alplakes API) or VisualCrossing. With `ensemble_forecast=true`,
+every lake inside the ICON-CH2-EPS domain also runs Simstrat once for each of the 21 members (`icon-ch2-eps-members`),
+whatever its deterministic source. This includes VisualCrossing lakes in Bavaria, Austria and Slovenia, which are outside
+the smaller `icon-ch2-eps` area. Lakes more than 5 km from the nearest ICON grid cell are skipped, and a lake can opt
+out with `"ensemble": false` in its `forcing_forecast`.
 
 1. The run is split at today 00:00 UTC, the start of the forecast, and the snapshot at that point is kept in
    `runs/<lake>/ensemble/`.
@@ -130,8 +133,8 @@ With `ensemble_forecast=true`, lakes whose `forcing_forecast` is MeteoSwiss ICON
 
 The attributes `forecast_source`, `forecast_start`, `ensemble_members` and `median_member` record what was published.
 If the members can't be downloaded, too few runs succeed (`ensemble_min_members`, default 18), or post-processing can't
-use their output, the ensemble-mean forecast is published as before, with `forecast_source` set to
-`Alplakes icon-ch2-eps ensemble mean`. Members run `ensemble_workers` (default 4) at a time per lake, and the member
+use their output, the lake's deterministic forecast is published as before, with `forecast_source` set to
+`Alplakes icon-ch2-eps ensemble mean` or `VisualCrossing`. Members run `ensemble_workers` (default 4) at a time per lake, and the member
 folders are removed after post-processing unless `debug=true`.
 
 ```bash

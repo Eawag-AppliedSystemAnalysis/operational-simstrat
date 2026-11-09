@@ -104,9 +104,9 @@ def post_process(start_date, results, version, parameters, ensemble=None, foreca
                                   'long_name': 'Temperature {}th percentile of the {} ensemble'.format(
                                       key.split("_p")[-1], ensemble["model"])}
         except Exception as e:
-            print("Failed to apply ensemble forecast, writing the ensemble-mean forecast instead:", e)
+            print("Failed to apply ensemble forecast, writing the deterministic forecast ({}) instead:".format(
+                forecast_source), e)
             traceback.print_exc()
-            forecast_attributes["forecast_source"] = "Alplakes icon-ch2-eps ensemble mean"
 
     print("Calculating products")
     data_dict["Thermocline"] = thermocline(data_dict["T"], time, depths)
