@@ -10,6 +10,10 @@ import pandas as pd
 from datetime import datetime, timezone, timedelta
 from dateutil.relativedelta import relativedelta
 
+# Minimum half-spread (degC) used to normalise deviations when picking the ensemble median run, so points where all
+# members agree (first forecast hours, deep water) do not decide the selection on numerical noise.
+SPREAD_FLOOR = 0.05
+
 
 def post_process(start_date, results, version, parameters, ensemble=None, forecast_source=None, forecast_start=None):
     dimensions = {
@@ -149,7 +153,10 @@ def post_process(start_date, results, version, parameters, ensemble=None, foreca
 
 def apply_ensemble(data_dict, time, depths, ensemble, reference_date):
     """Replace the forecast rows of every output variable with the median run: the ensemble member whose temperature
-    is closest (RMSE over all forecast depths and times) to the pointwise median temperature of all members.
+    is closest to the pointwise median temperature of all members. Closeness is the RMS over all forecast depths and
+    times of the deviation from the median divided by the local half-spread (p90 - p10) / 2, floored at
+    SPREAD_FLOOR, so points where the ensemble is tight (early forecast) weigh as much as points where it is wide
+    and the chosen member stays inside the p10-p90 band as much as possible.
     Also returns T_p10 / T_p90, the pointwise 10th / 90th percentiles of all members' temperature.
 
     Returns (new data_dict, bands, attributes) and leaves the input data_dict untouched."""
@@ -171,10 +178,14 @@ def apply_ensemble(data_dict, time, depths, ensemble, reference_date):
 
     temperature = np.stack([read_member(folder, "T") for folder in ensemble["results"]])
     median = np.nanmedian(temperature, axis=0)
-    rmse = np.sqrt(np.nanmean((temperature - median) ** 2, axis=(1, 2)))
-    chosen = int(np.nanargmin(rmse))
+    p10, p90 = np.nanpercentile(temperature, (10, 90), axis=0)
+    half_spread = np.maximum((p90 - p10) / 2, SPREAD_FLOOR)
+    score = np.sqrt(np.nanmean(((temperature - median) / half_spread) ** 2, axis=(1, 2)))
+    chosen = int(np.nanargmin(score))
     median_member = ensemble["members"][chosen]
-    print("Median run is member {} (RMSE to the pointwise median {:.3f} degC)".format(median_member, rmse[chosen]))
+    within = np.nanmean((temperature[chosen] >= p10) & (temperature[chosen] <= p90))
+    print("Median run is member {} (spread-normalised RMS {:.3f}, {:.0%} of points within p10-p90)".format(
+        median_member, score[chosen], within))
 
     output = {}
     for key, values in data_dict.items():
@@ -186,9 +197,9 @@ def apply_ensemble(data_dict, time, depths, ensemble, reference_date):
         output[key] = merged
 
     bands = {}
-    for percentile in (10, 90):
+    for percentile, values in ((10, p10), (90, p90)):
         band = np.full(data_dict["T"].shape, np.nan)
-        band[mask] = np.nanpercentile(temperature, percentile, axis=0)
+        band[mask] = values
         bands["T_p{}".format(percentile)] = band
 
     attributes = {
