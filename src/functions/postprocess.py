@@ -161,11 +161,14 @@ def apply_ensemble(data_dict, time, depths, ensemble, reference_date):
 
     Returns (new data_dict, bands, attributes) and leaves the input data_dict untouched."""
     forecast_start = datetime.fromisoformat(ensemble["forecast_start"])
-    mask = time >= forecast_start
+    # The base leg ending at the members' restart snapshot (F + 1 h) writes an output the members do not have
+    first_member_day = pd.read_csv(os.path.join(ensemble["results"][0], "T_out.dat"), usecols=[0]).iloc[0, 0]
+    all_days = np.array([(t - reference_date).total_seconds() / 86400 for t in time])
+    mask = (time >= forecast_start) & (all_days >= first_member_day - 1e-3)
     n_forecast = int(mask.sum())
     if n_forecast == 0:
         raise ValueError("No base output after the forecast start {}".format(forecast_start))
-    base_days = np.array([(t - reference_date).total_seconds() / 86400 for t in time[mask]])
+    base_days = all_days[mask]
 
     def read_member(folder, key):
         df = pd.read_csv(os.path.join(folder, "{}_out.dat".format(key)))

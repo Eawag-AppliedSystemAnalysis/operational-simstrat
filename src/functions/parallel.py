@@ -1,4 +1,5 @@
 import concurrent.futures
+import threading
 import time
 import queue
 
@@ -6,6 +7,7 @@ import queue
 def run_parallel_tasks(tasks, args, code_function, log):
     q = queue.Queue()
     start = time.time()
+    lock = threading.Lock()
 
     for task in tasks:
         task["dependencies"] = []
@@ -21,13 +23,13 @@ def run_parallel_tasks(tasks, args, code_function, log):
             task["dependencies"] = []
 
     def feed_the_workers():
-        new_tasks = False
-        for task in tasks:
-            if "status" not in task:
-                task["status"] = "waiting"
-            if len(task["dependencies"]) == 0 and task["status"] == "waiting":
-                task['status'] = "running"
-                q.put(task)
+        with lock:
+            for task in tasks:
+                if "status" not in task:
+                    task["status"] = "waiting"
+                if len(task["dependencies"]) == 0 and task["status"] == "waiting":
+                    task['status'] = "running"
+                    q.put(task)
 
     def run(task):
         log.info("{} starting".format(task["key"]))
@@ -38,16 +40,18 @@ def run_parallel_tasks(tasks, args, code_function, log):
             log.info("{} failed in {}s. See task log for details.".format(task["key"], round(time.time() - start_time, 1)))
             if args["debug"]:
                 raise
-            for t in tasks:
-                if task["key"] == t["key"]:
-                    t["status"] = "failed"
+            with lock:
+                for t in tasks:
+                    if task["key"] == t["key"]:
+                        t["status"] = "failed"
         else:
             log.info("{} completed in {}s".format(task["key"], round(time.time() - start_time, 1)))
-            for t in tasks:
-                if task["key"] in t["dependencies"]:
-                    t["dependencies"].remove(task["key"])
-                if task["key"] == t["key"]:
-                    t["status"] = "succeeded"
+            with lock:
+                for t in tasks:
+                    if task["key"] in t["dependencies"]:
+                        t["dependencies"].remove(task["key"])
+                    if task["key"] == t["key"]:
+                        t["status"] = "succeeded"
         feed_the_workers()
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=args["max_workers"]) as executor:

@@ -32,12 +32,14 @@ def update_par_file(simstrat_version, file_path, start_date, end_date, snapshot,
     return par
 
 
-def overwrite_par_file_dates(file_path, start_date, end_date, reference_date):
+def overwrite_par_file_dates(file_path, start_date, end_date, reference_date, split=False):
     with open(file_path) as f:
         par = json.load(f)
 
+    # A restart from a split snapshot starts at split + 1 h, so the leg before it must end there too
+    end_offset = timedelta(hours=1) if split else -timedelta(hours=1)
     par["Simulation"]["Start d"] = datetime_to_simstrat_time(start_date + timedelta(hours=1), reference_date)
-    par["Simulation"]["End d"] = datetime_to_simstrat_time(end_date - timedelta(hours=1), reference_date)
+    par["Simulation"]["End d"] = datetime_to_simstrat_time(end_date + end_offset, reference_date)
 
     with open(file_path, 'w') as f:
         json.dump(par, f, indent=4)

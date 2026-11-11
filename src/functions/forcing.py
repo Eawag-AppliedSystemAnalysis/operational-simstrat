@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from datetime import datetime, timezone, timedelta
 from .general import (call_url, adjust_temperature_for_altitude_difference, air_pressure_from_elevation, detect_gaps,
-                      adjust_data_to_mean_and_std, clear_sky_solar_radiation, datetime_to_simstrat_time,
+                      clear_sky_solar_radiation, datetime_to_simstrat_time,
                       calculate_mean_wind_direction, interpolate_timeseries, fill_day_of_year,
                       vapor_pressure_from_relative_humidity_and_temperature, get_elevation_eudem25, calculate_vapor_pressure,
                       get_elevation)
@@ -56,6 +56,31 @@ def download_forcing_data(output, start, end, forcing, forecast, forcing_forecas
     return output
 
 
+# Ratio keeps non-negative variables non-negative; wind direction is circular so it is not adjusted
+GAP_FILL_ADJUSTMENT = {"air_temperature": "offset", "vapour_pressure": "offset", "relative_humidity": "offset",
+                       "wind_speed": "ratio", "precipitation": "ratio", "global_radiation": "ratio",
+                       "wind_direction": None}
+GAP_FILL_WINDOW = timedelta(days=30)
+GAP_FILL_MIN_OVERLAP = 72  # hours
+
+
+def map_backup_to_primary(p_id, primary, backup):
+    method = GAP_FILL_ADJUSTMENT.get(p_id)
+    if method is None:
+        return backup, "no adjustment"
+    common = pd.concat([primary, backup], axis=1, join="inner").dropna()
+    if len(common) < GAP_FILL_MIN_OVERLAP:
+        return backup, "no adjustment, only {} h overlap".format(len(common))
+    mean_primary, mean_backup = common.iloc[:, 0].mean(), common.iloc[:, 1].mean()
+    if method == "offset":
+        return backup + (mean_primary - mean_backup), "offset {:+.3f} from {} h overlap".format(
+            mean_primary - mean_backup, len(common))
+    if mean_backup <= 0:
+        return backup, "no adjustment, backup mean is zero over {} h overlap".format(len(common))
+    return backup * (mean_primary / mean_backup), "ratio {:.3f} from {} h overlap".format(
+        mean_primary / mean_backup, len(common))
+
+
 def meteodata_from_meteostations(start, end, forcing, elevation, latitude, longitude, reference_date, output, api, log):
     endpoint = api + "/{}/meteodata/measured/{}/{}/{}?variables={}&resample=hourly"
 
@@ -68,7 +93,7 @@ def meteodata_from_meteostations(start, end, forcing, elevation, latitude, longi
     configured_parameters = {p_id for f in forcing for p_id in f["parameters"].keys()}
     raw_data = {}
     for p_id in parameter_ids:
-        gaps = False
+        gaps = None  # None until a primary station is chosen, [] means it has no gaps
         df = False
         for f in forcing:
             if p_id in f["parameters"].keys():
@@ -76,7 +101,7 @@ def meteodata_from_meteostations(start, end, forcing, elevation, latitude, longi
                 parameter = f["parameters"][p_id]
                 if parameter["end_date"] < start:
                     continue
-                if not gaps:
+                if gaps is None:
                     start_date = min(max(start, parameter["start_date"]), parameter["end_date"])
                     end_date = min(end, parameter["end_date"])
                     log.info(
@@ -94,9 +119,6 @@ def meteodata_from_meteostations(start, end, forcing, elevation, latitude, longi
                     df['values'] = pd.to_numeric(df['values'], errors='coerce')
                     df = df.dropna()
                     df = df.sort_values(by='time')
-                    adjust = True if len(df) > 1000 else False
-                    mean = df["values"].mean()
-                    std = df["values"].std()
                     gaps = detect_gaps(df["time"], start, end)
                 elif len(gaps) > 0:
                     for gap in gaps:
@@ -104,25 +126,25 @@ def meteodata_from_meteostations(start, end, forcing, elevation, latitude, longi
                             log.info("{}: Trying to complete with data from station {} : {} - {}".format(
                                 p_id, f["id"], gap[0].strftime('%Y%m%d'), gap[1].strftime('%Y%m%d')), indent=2)
                             try:
-                                url = endpoint.format(source, f["id"], gap[0].strftime('%Y%m%d'), gap[1].strftime('%Y%m%d'), p_id)
+                                fetch_start = max(gap[0] - GAP_FILL_WINDOW, start, parameter["start_date"])
+                                fetch_end = min(gap[1] + GAP_FILL_WINDOW, end, parameter["end_date"])
+                                url = endpoint.format(source, f["id"], fetch_start.strftime('%Y%m%d'),
+                                                      fetch_end.strftime('%Y%m%d'), p_id)
                                 print(url)
                                 data = call_url(url)
-                                if adjust:
-                                    d_new = adjust_data_to_mean_and_std(data["variables"][p_id]["data"], std, mean)
-                                else:
-                                    d_new = np.array(data["variables"][p_id]["data"], dtype=float)
-                                df_new = pd.DataFrame({'time': data["time"], 'values_new': d_new})
-                                df_new = df_new.drop_duplicates(subset=['time'])
-                                df_new['time'] = pd.to_datetime(df_new['time'])
-                                df_new['values_new'] = pd.to_numeric(df_new['values_new'], errors='coerce')
-                                df = pd.merge(df, df_new, on='time', how='outer')
-                                df['values'] = df['values'].combine_first(df['values_new'])
-                                df = df[["time", "values"]]
-                                df = df.dropna()
-                                df = df.sort_values(by='time')
-                                df = df.reset_index()
+                                d_new = np.array(data["variables"][p_id]["data"], dtype=float)
+                                if p_id == "air_temperature":
+                                    d_new = adjust_temperature_for_altitude_difference(d_new, elevation - f["elevation"])
+                                backup = pd.Series(d_new, index=pd.to_datetime(data["time"]))
+                                backup = backup[~backup.index.duplicated()].dropna()
+                                primary = df.set_index("time")["values"]
+                                backup, how = map_backup_to_primary(p_id, primary, backup)
+                                log.info("{}: Mapped {} onto primary station: {}".format(p_id, f["id"], how), indent=3)
+                                backup = backup[(backup.index >= gap[0]) & (backup.index <= gap[1])]
+                                df = primary.combine_first(backup).dropna().sort_index()
+                                df = df.rename_axis("time").rename("values").reset_index()
                             except Exception as e:
-                                print("ERROR", e)
+                                log.warning("{}: Failed to fill gap from station {}: {}".format(p_id, f["id"], e))
                     gaps = detect_gaps(df["time"], start, end)
         if isinstance(df, pd.core.frame.DataFrame):
             df_m = pd.merge(df_t, df, on='time', how='left')
