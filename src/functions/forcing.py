@@ -56,103 +56,267 @@ def download_forcing_data(output, start, end, forcing, forecast, forcing_forecas
     return output
 
 
-# Ratio keeps non-negative variables non-negative; wind direction is circular so it is not adjusted
-GAP_FILL_ADJUSTMENT = {"air_temperature": "offset", "vapour_pressure": "offset", "relative_humidity": "offset",
-                       "wind_speed": "ratio", "precipitation": "ratio", "global_radiation": "ratio",
-                       "wind_direction": None}
-GAP_FILL_WINDOW = timedelta(days=30)
-GAP_FILL_MIN_OVERLAP = 72  # hours
+# Linear matches mean and spread like the legacy rescaling, but per month; ratio keeps non-negative variables
+# non-negative. Used only for gaps up to GAP_FILL_MAX_DAYS, where hold-out tests on real station data showed it beats
+# the legacy rescaling in every case; all other gaps and variables keep the legacy rescaling.
+GAP_FILL_MAPPING = {"air_temperature": "linear", "relative_humidity": "linear", "vapour_pressure": "ratio",
+                    "global_radiation": "ratio"}
+GAP_FILL_MAX_DAYS = {"air_temperature": 90, "vapour_pressure": 90, "relative_humidity": 30, "global_radiation": 90}
+GAP_FILL_REFERENCE = timedelta(days=3 * 365)
+GAP_FILL_MIN_MONTH_HOURS = 240
+GAP_FILL_MIN_TOTAL_HOURS = 720
+MID_MONTH_DOY = np.array([15.5, 45.0, 74.5, 105.0, 135.5, 166.0, 196.5, 227.5, 258.0, 288.5, 319.0, 349.5])
 
 
-def map_backup_to_primary(p_id, primary, backup):
-    method = GAP_FILL_ADJUSTMENT.get(p_id)
-    if method is None:
-        return backup, "no adjustment"
+def legacy_rescale(arr, std, mean):
+    arr = np.array(arr, dtype=float)
+    data_mean = np.nanmean(arr)
+    data_std = np.nanstd(arr)
+    if np.isnan(data_mean) or np.isnan(data_std) or data_std == 0:
+        print("Forcing data not adjusted")
+        return arr
+
+    return (arr - data_mean) / data_std * std + mean
+
+
+def reference_window(year, overlap_start, overlap_end):
+    """The GAP_FILL_REFERENCE period of the stations' common record nearest to the given year."""
+    centre = datetime(year, 7, 2, tzinfo=timezone.utc)
+    ref_start = centre - GAP_FILL_REFERENCE / 2
+    ref_end = ref_start + GAP_FILL_REFERENCE
+    if ref_start < overlap_start:
+        ref_start, ref_end = overlap_start, overlap_start + GAP_FILL_REFERENCE
+    if ref_end > overlap_end:
+        ref_start, ref_end = overlap_end - GAP_FILL_REFERENCE, overlap_end
+    return max(ref_start, overlap_start), min(ref_end, overlap_end)
+
+
+def fit_monthly_mapping(p_id, primary, backup):
+    """Monthly parameters mapping the backup onto the primary, from the hours both measured. Months with too few
+    hours use the fit over all of them. Returns None if there is too little overlap to fit."""
+    method = GAP_FILL_MAPPING[p_id]
     common = pd.concat([primary, backup], axis=1, join="inner").dropna()
-    if len(common) < GAP_FILL_MIN_OVERLAP:
-        return backup, "no adjustment, only {} h overlap".format(len(common))
-    mean_primary, mean_backup = common.iloc[:, 0].mean(), common.iloc[:, 1].mean()
-    if method == "offset":
-        return backup + (mean_primary - mean_backup), "offset {:+.3f} from {} h overlap".format(
-            mean_primary - mean_backup, len(common))
-    if mean_backup <= 0:
-        return backup, "no adjustment, backup mean is zero over {} h overlap".format(len(common))
-    return backup * (mean_primary / mean_backup), "ratio {:.3f} from {} h overlap".format(
-        mean_primary / mean_backup, len(common))
+    if len(common) < GAP_FILL_MIN_TOTAL_HOURS:
+        return None
+
+    def fit(p, b):
+        if method == "linear":
+            if b.std() > 0 and p.std() > 0:
+                return {"mean_primary": p.mean(), "std_primary": p.std(), "mean_backup": b.mean(), "std_backup": b.std()}
+            return None
+        return {"ratio": p.sum() / b.sum()} if b.sum() > 0 else None
+
+    overall = fit(common.iloc[:, 0], common.iloc[:, 1])
+    if overall is None:
+        return None
+    params, own = {k: np.full(12, v, dtype=float) for k, v in overall.items()}, 0
+    for month in range(1, 13):
+        sel = common[common.index.month == month]
+        if len(sel) >= GAP_FILL_MIN_MONTH_HOURS:
+            value = fit(sel.iloc[:, 0], sel.iloc[:, 1])
+            if value is not None:
+                for k, v in value.items():
+                    params[k][month - 1] = v
+                own += 1
+    return {"method": method, "params": params, "own_months": own, "hours": len(common)}
+
+
+def apply_monthly_mapping(p_id, backup, mapping):
+    """Map backup values with the monthly parameters interpolated by day of year between mid-month points."""
+    doy = backup.index.day_of_year.to_numpy() - 1 + backup.index.hour.to_numpy() / 24
+    xp = np.concatenate(([MID_MONTH_DOY[-1] - 365], MID_MONTH_DOY, [MID_MONTH_DOY[0] + 365]))
+    p = {k: np.interp(doy, xp, np.concatenate(([v[-1]], v, [v[0]]))) for k, v in mapping["params"].items()}
+    if mapping["method"] == "linear":
+        mapped = (backup - p["mean_backup"]) / p["std_backup"] * p["std_primary"] + p["mean_primary"]
+    else:
+        mapped = backup * p["ratio"]
+    if p_id == "relative_humidity":
+        mapped = mapped.clip(0, 100)
+    return mapped
+
+
+def describe_mapping(mapping):
+    p = mapping["params"]
+    if mapping["method"] == "linear":
+        offset = p["mean_primary"] - p["mean_backup"]
+        scale = p["std_primary"] / p["std_backup"]
+        return "offset {:.3f} to {:.3f}, scale {:.3f} to {:.3f}".format(offset.min(), offset.max(), scale.min(), scale.max())
+    return "ratio {:.3f} to {:.3f}".format(p["ratio"].min(), p["ratio"].max())
+
+
+def fetch_station_series(endpoint, station, p_id, start_date, end_date, elevation):
+    source = station["type"].lower().split("_")[0]
+    data = call_url(endpoint.format(source, station["id"], start_date.strftime('%Y%m%d'), end_date.strftime('%Y%m%d'), p_id))
+    values = pd.to_numeric(pd.Series(data["variables"][p_id]["data"]), errors="coerce").to_numpy(dtype=float)
+    if p_id == "air_temperature":
+        values = adjust_temperature_for_altitude_difference(values, elevation - station["elevation"])
+    series = pd.Series(values, index=pd.to_datetime(data["time"]))
+    return series[~series.index.duplicated()].dropna().sort_index()
+
+
+STATION_PARAMETERS = ["wind_speed", "wind_direction", "precipitation", "air_temperature", "global_radiation",
+                      "vapour_pressure", "relative_humidity"]
 
 
 def meteodata_from_meteostations(start, end, forcing, elevation, latitude, longitude, reference_date, output, api, log):
+    """Hourly forcing from the lake's meteo stations. For each variable the first station in the list that measures it
+    is the primary; later stations fill the primary's gaps."""
     endpoint = api + "/{}/meteodata/measured/{}/{}/{}?variables={}&resample=hourly"
-
     time = start + np.arange(0, (end - start).total_seconds() / 3600 + 1, 1).astype(int) * timedelta(hours=1)
-    df_t = pd.DataFrame({'time': time})
-    df_t['time'] = pd.to_datetime(df_t['time'])
     output["Time"]["data"] = np.array([datetime_to_simstrat_time(t, reference_date) for t in time])
 
-    parameter_ids = ["wind_speed", "wind_direction", "precipitation", "air_temperature", "global_radiation", "vapour_pressure", "relative_humidity"]
-    configured_parameters = {p_id for f in forcing for p_id in f["parameters"].keys()}
+    configured_parameters = {p_id for station in forcing for p_id in station["parameters"].keys()}
     raw_data = {}
-    for p_id in parameter_ids:
-        gaps = None  # None until a primary station is chosen, [] means it has no gaps
-        df = False
-        for f in forcing:
-            if p_id in f["parameters"].keys():
-                source = f["type"].lower().split("_")[0]
-                parameter = f["parameters"][p_id]
-                if parameter["end_date"] < start:
-                    continue
-                if gaps is None:
-                    start_date = min(max(start, parameter["start_date"]), parameter["end_date"])
-                    end_date = min(end, parameter["end_date"])
-                    log.info(
-                        "{}: Using data from station {} : {} - {}".format(p_id, f["id"], start_date.strftime('%Y%m%d'),
-                                                                          end_date.strftime('%Y%m%d')), indent=1)
-                    url = endpoint.format(source, f["id"], start_date.strftime('%Y%m%d'), end_date.strftime('%Y%m%d'), p_id)
-                    print(url)
-                    data = call_url(url)
-                    values = np.array(data["variables"][p_id]["data"])
-                    if p_id == "air_temperature":
-                        values = adjust_temperature_for_altitude_difference(values, elevation - f["elevation"])
-                    df = pd.DataFrame({'time': data["time"], 'values': values})
-                    df = df.drop_duplicates(subset=['time'])
-                    df['time'] = pd.to_datetime(df['time'])
-                    df['values'] = pd.to_numeric(df['values'], errors='coerce')
-                    df = df.dropna()
-                    df = df.sort_values(by='time')
-                    gaps = detect_gaps(df["time"], start, end)
-                elif len(gaps) > 0:
-                    for gap in gaps:
-                        if gap[1] >= parameter["start_date"] and gap[0] <= parameter["end_date"]:
-                            log.info("{}: Trying to complete with data from station {} : {} - {}".format(
-                                p_id, f["id"], gap[0].strftime('%Y%m%d'), gap[1].strftime('%Y%m%d')), indent=2)
-                            try:
-                                fetch_start = max(gap[0] - GAP_FILL_WINDOW, start, parameter["start_date"])
-                                fetch_end = min(gap[1] + GAP_FILL_WINDOW, end, parameter["end_date"])
-                                url = endpoint.format(source, f["id"], fetch_start.strftime('%Y%m%d'),
-                                                      fetch_end.strftime('%Y%m%d'), p_id)
-                                print(url)
-                                data = call_url(url)
-                                d_new = np.array(data["variables"][p_id]["data"], dtype=float)
-                                if p_id == "air_temperature":
-                                    d_new = adjust_temperature_for_altitude_difference(d_new, elevation - f["elevation"])
-                                backup = pd.Series(d_new, index=pd.to_datetime(data["time"]))
-                                backup = backup[~backup.index.duplicated()].dropna()
-                                primary = df.set_index("time")["values"]
-                                backup, how = map_backup_to_primary(p_id, primary, backup)
-                                log.info("{}: Mapped {} onto primary station: {}".format(p_id, f["id"], how), indent=3)
-                                backup = backup[(backup.index >= gap[0]) & (backup.index <= gap[1])]
-                                df = primary.combine_first(backup).dropna().sort_index()
-                                df = df.rename_axis("time").rename("values").reset_index()
-                            except Exception as e:
-                                log.warning("{}: Failed to fill gap from station {}: {}".format(p_id, f["id"], e))
-                    gaps = detect_gaps(df["time"], start, end)
-        if isinstance(df, pd.core.frame.DataFrame):
-            df_m = pd.merge(df_t, df, on='time', how='left')
-            raw_data[p_id] = np.array(df_m["values"])
+    for p_id in STATION_PARAMETERS:
+        series = station_series(p_id, start, end, forcing, elevation, endpoint, log)
+        if series is not None:
+            raw_data[p_id] = values_at_times(series, time)
         elif p_id in configured_parameters:
             log.info("{}: No measured data in requested period, deferring to forecast".format(p_id), indent=1)
             raw_data[p_id] = np.full(len(time), np.nan)
 
+    wind_to_components(raw_data, output, log)
+    output["Tair"]["data"] = raw_data["air_temperature"]
+    output["sol"]["data"] = raw_data["global_radiation"]
+    air_pressure = air_pressure_from_elevation(elevation)
+    if "vapour_pressure" not in raw_data:
+        raw_data["vapour_pressure"] = calculate_vapor_pressure(raw_data["air_temperature"], raw_data["relative_humidity"], air_pressure)
+    output["vap"]["data"] = raw_data["vapour_pressure"]
+    if "precipitation" in raw_data:
+        output["rain"]["data"] = raw_data["precipitation"] * 0.001  # Convert mm to m
+    else:
+        output["rain"]["data"] = np.zeros(len(raw_data["air_temperature"]))
+    estimate_cloud_cover(output, time, air_pressure, latitude, longitude, log)
+    return output
+
+
+def station_series(p_id, start, end, forcing, elevation, endpoint, log):
+    """One variable from the stations in priority order: the first becomes the primary, later ones fill its gaps.
+    Returns a DataFrame (time, values), or None if no station has data in the period."""
+    primary = None
+    for station in forcing:
+        if p_id not in station["parameters"].keys():
+            continue
+        parameter = station["parameters"][p_id]
+        if parameter["end_date"] < start:
+            continue
+        if primary is None:
+            primary = download_primary(p_id, station, parameter, start, end, elevation, endpoint, log)
+        elif len(primary["gaps"]) > 0:
+            fill_gaps_from_backup(primary, p_id, station, parameter, start, end, elevation, endpoint, log)
+    return None if primary is None else primary["df"]
+
+
+def download_primary(p_id, station, parameter, start, end, elevation, endpoint, log):
+    source = station["type"].lower().split("_")[0]
+    start_date = min(max(start, parameter["start_date"]), parameter["end_date"])
+    end_date = min(end, parameter["end_date"])
+    log.info("{}: Using data from station {} : {} - {}".format(p_id, station["id"], start_date.strftime('%Y%m%d'),
+                                                               end_date.strftime('%Y%m%d')), indent=1)
+    url = endpoint.format(source, station["id"], start_date.strftime('%Y%m%d'), end_date.strftime('%Y%m%d'), p_id)
+    print(url)
+    data = call_url(url)
+    values = np.array(data["variables"][p_id]["data"])
+    if p_id == "air_temperature":
+        values = adjust_temperature_for_altitude_difference(values, elevation - station["elevation"])
+    df = pd.DataFrame({'time': data["time"], 'values': values})
+    df = df.drop_duplicates(subset=['time'])
+    df['time'] = pd.to_datetime(df['time'])
+    df['values'] = pd.to_numeric(df['values'], errors='coerce')
+    df = df.dropna()
+    df = df.sort_values(by='time')
+    # Statistics for the legacy rescaling, and caches of reference data and monthly fits per backup station
+    return {"station": station, "parameter": parameter, "df": df, "adjust": True if len(df) > 1000 else False,
+            "mean": df["values"].mean(), "std": df["values"].std(), "references": {}, "fits": {},
+            "gaps": detect_gaps(df["time"], start, end)}
+
+
+def fill_gaps_from_backup(primary, p_id, station, parameter, start, end, elevation, endpoint, log):
+    overlap = (max(primary["parameter"]["start_date"], parameter["start_date"]),
+               min(primary["parameter"]["end_date"], parameter["end_date"]))
+    for gap in primary["gaps"]:
+        if gap[1] >= parameter["start_date"] and gap[0] <= parameter["end_date"]:
+            log.info("{}: Trying to complete with data from station {} : {} - {}".format(
+                p_id, station["id"], gap[0].strftime('%Y%m%d'), gap[1].strftime('%Y%m%d')), indent=2)
+            try:
+                backup = backup_values_for_gap(primary, p_id, station, gap, overlap, elevation, endpoint, log)
+                primary["df"] = fill_missing_values(primary["df"], backup)
+            except Exception as e:
+                log.warning("{}: Failed to fill gap from station {}: {}".format(p_id, station["id"], e))
+    primary["gaps"] = detect_gaps(primary["df"]["time"], start, end)
+
+
+def backup_values_for_gap(primary, p_id, station, gap, overlap, elevation, endpoint, log):
+    """The backup station's data for the gap, mapped onto the primary: legacy rescaling, or the monthly mapping for
+    the variables and gap lengths in GAP_FILL_MAPPING / GAP_FILL_MAX_DAYS."""
+    source = station["type"].lower().split("_")[0]
+    url = endpoint.format(source, station["id"], gap[0].strftime('%Y%m%d'), gap[1].strftime('%Y%m%d'), p_id)
+    print(url)
+    data = call_url(url)
+    raw = pd.to_numeric(pd.Series(data["variables"][p_id]["data"]), errors="coerce").to_numpy(dtype=float)
+    legacy = legacy_rescale(raw, primary["std"], primary["mean"]) if primary["adjust"] else raw
+    backup = pd.Series(legacy, index=pd.to_datetime(data["time"]))
+    if p_id not in GAP_FILL_MAPPING or gap[1] - gap[0] > timedelta(days=GAP_FILL_MAX_DAYS[p_id]):
+        log.info("{}: {}: legacy rescaling".format(p_id, station["id"]), indent=3)
+        return backup
+    if p_id == "air_temperature":
+        raw = adjust_temperature_for_altitude_difference(raw, elevation - station["elevation"])
+    raw = pd.Series(raw, index=backup.index)
+    for year in sorted(set(backup.index.year)):
+        mapping, window = monthly_mapping_for_year(primary, p_id, station, year, overlap, elevation, endpoint, log)
+        in_year = backup.index.year == year
+        if mapping is None:
+            how = "legacy rescaling (no overlap)" if window is None else "legacy rescaling (too little overlap)"
+        else:
+            backup[in_year] = apply_monthly_mapping(p_id, raw[in_year], mapping)
+            how = "{} ({} own months, {} h, reference {} - {})".format(
+                describe_mapping(mapping), mapping["own_months"], mapping["hours"],
+                window[0].strftime('%Y%m%d'), window[1].strftime('%Y%m%d'))
+        log.info("{}: {} {}: {}".format(p_id, station["id"], year, how), indent=3)
+    return backup
+
+
+def monthly_mapping_for_year(primary, p_id, station, year, overlap, elevation, endpoint, log):
+    """The monthly mapping of the backup onto the primary for one year, fitted on the reference window nearest to
+    it and cached. Returns (mapping or None, window or None)."""
+    window = reference_window(year, overlap[0], overlap[1]) if overlap[1] > overlap[0] else None
+    key = (station["id"], window)
+    if key not in primary["fits"]:
+        primary["fits"][key] = None
+        if window is not None:
+            try:
+                for s in (primary["station"], station):
+                    if (s["id"], window) not in primary["references"]:
+                        primary["references"][(s["id"], window)] = fetch_station_series(
+                            endpoint, s, p_id, window[0], window[1], elevation)
+                primary["fits"][key] = fit_monthly_mapping(p_id, primary["references"][(primary["station"]["id"], window)],
+                                                        primary["references"][(station["id"], window)])
+            except Exception as e:
+                log.warning("{}: Failed to fit {} onto {}, using legacy rescaling: {}".format(
+                    p_id, station["id"], primary["station"]["id"], e))
+    return primary["fits"][key], window
+
+
+def fill_missing_values(df, backup):
+    """Use the backup values where df (time, values) has none."""
+    df_new = pd.DataFrame({'time': backup.index, 'values_new': backup.to_numpy()})
+    df_new = df_new.drop_duplicates(subset=['time'])
+    df = pd.merge(df, df_new, on='time', how='outer')
+    df['values'] = df['values'].combine_first(df['values_new'])
+    df = df[["time", "values"]]
+    df = df.dropna()
+    df = df.sort_values(by='time')
+    return df.reset_index(drop=True)
+
+
+def values_at_times(df, time):
+    df_t = pd.DataFrame({'time': time})
+    df_t['time'] = pd.to_datetime(df_t['time'])
+    df_m = pd.merge(df_t, df, on='time', how='left')
+    return np.array(df_m["values"])
+
+
+def wind_to_components(raw_data, output, log):
     log.info("Processing wind from magnitude and direction to components", indent=1)
     wind_direction = raw_data["wind_direction"]
     wind_magnitude = raw_data["wind_speed"]
@@ -162,20 +326,8 @@ def meteodata_from_meteostations(start, end, forcing, elevation, latitude, longi
     output["u"]["data"] = -wind_magnitude * np.sin(wind_direction * np.pi / 180)
     output["v"]["data"] = -wind_magnitude * np.cos(wind_direction * np.pi / 180)
 
-    output["Tair"]["data"] = raw_data["air_temperature"]
-    output["sol"]["data"] = raw_data["global_radiation"]
 
-    air_pressure = air_pressure_from_elevation(elevation)
-
-    if "vapour_pressure" not in raw_data:
-        raw_data["vapour_pressure"] = calculate_vapor_pressure(raw_data["air_temperature"], raw_data["relative_humidity"], air_pressure)
-    output["vap"]["data"] = raw_data["vapour_pressure"]
-
-    if "precipitation" in raw_data:
-        output["rain"]["data"] = raw_data["precipitation"] * 0.001  # Convert mm to m
-    else:
-        output["rain"]["data"] = np.zeros(len(raw_data["air_temperature"]))
-
+def estimate_cloud_cover(output, time, air_pressure, latitude, longitude, log):
     log.info("Estimate cloudiness based on ratio between measured and theoretical solar radiation", indent=1)
     cssr = clear_sky_solar_radiation(time, air_pressure, output["vap"]["data"], latitude, longitude)
     df = pd.DataFrame({"cssr": cssr, "swr": output["sol"]["data"]})
@@ -189,7 +341,6 @@ def meteodata_from_meteostations(start, end, forcing, elevation, latitude, longi
     # fallback where neither is available (applied in download_forcing_data).
     output["cloud"]["data"] = np.where(np.isnan(output["sol"]["data"]), np.nan, cloud)
     output["cloud"]["estimate"] = cloud
-    return output
 
 
 def meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, longitude, reference_date, output, api, log):
