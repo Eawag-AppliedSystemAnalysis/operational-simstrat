@@ -189,7 +189,8 @@ class Simstrat(object):
                     self.post_process()
                     if self.args["upload"]:
                         self.upload()
-                self.clean_ensemble()
+                if not self.args.get("keep_ensemble"):
+                    self.clean_ensemble()
         except Exception as e:
             self.log.info(str(e))
             self.log.info(str(traceback.format_exc()))
@@ -378,9 +379,13 @@ class Simstrat(object):
 
     def ensemble_eligible(self):
         """The ICON-CH2-EPS ensemble forecast needs a forecast in the run (any deterministic source, which remains the
-        fallback), a forecast start inside the run and snapshots enabled (every run leg restarts from the previous
-        leg's snapshot). Lakes outside the ICON-CH2-EPS domain are caught when the members are downloaded, and a lake
-        can opt out with "ensemble": false in its forcing_forecast."""
+        fallback), a forecast start inside the run, or at its start when the run restarts from a snapshot (the data
+        assimilation forecast starts from the analysis at the forecast start), and snapshots enabled (every run leg
+        restarts from the previous leg's snapshot). Lakes outside the ICON-CH2-EPS domain are caught when the members
+        are downloaded, and a lake can opt out with "ensemble": false in its forcing_forecast.
+
+        The members are used by post_process, or, with keep_ensemble, left in ensemble_dir for the caller (the data
+        assimilation publishes them itself and then calls clean_ensemble)."""
         if not self.args.get("ensemble_forecast"):
             return False
         forcing_forecast = self.parameters.get("forcing_forecast") or {}
@@ -389,15 +394,14 @@ class Simstrat(object):
             reasons.append("no forecast in this run")
         elif forcing_forecast.get("ensemble") is False:
             reasons.append("disabled for this lake in lake_parameters.json")
-        elif not self.start_date < self.forecast_start < self.end_date:
+        elif not (self.start_date < self.forecast_start or (self.start_date == self.forecast_start and self.snapshot)) \
+                or not self.forecast_start < self.end_date:
             reasons.append("forecast start {} is not inside the run".format(self.forecast_start))
         if not self.args["snapshot"]:
             reasons.append("snapshots are disabled")
-        if not self.args["monthly_snapshot"]:
-            reasons.append("monthly_snapshot is off, so dated snapshots would contain forecast data")
         if self.args["overwrite_end_date"]:
             reasons.append("overwrite_end_date is set")
-        if not self.args["post_process"]:
+        if not self.args["post_process"] and not self.args.get("keep_ensemble"):
             reasons.append("post_process is off")
         if reasons:
             self.log.info("Ensemble forecast skipped: {}".format("; ".join(reasons)), indent=1)
@@ -561,7 +565,10 @@ class Simstrat(object):
             if os.path.exists(self.ensemble_dir):
                 shutil.rmtree(self.ensemble_dir)
             os.makedirs(self.ensemble_dir)
-            if self.forecast_start not in splits:
+            if self.forecast_start == self.start_date:
+                # The run restarts from a snapshot at the forecast start: the members restart from the same one
+                shutil.copy(snapshot_path, os.path.join(self.ensemble_dir, "snapshot.dat"))
+            elif self.forecast_start not in splits:
                 splits.append(self.forecast_start)
             splits.sort()
         if splits:
@@ -579,6 +586,10 @@ class Simstrat(object):
                 if self.ensemble and split == self.forecast_start:
                     shutil.copy(snapshot_path, os.path.join(self.ensemble_dir, "snapshot.dat"))
                 leg_start = split
+            if not self.args["monthly_snapshot"]:
+                # Only the ensemble splits these runs: keep the end snapshot as the single run below does
+                shutil.copy(snapshot_path, os.path.join(
+                    self.simulation_dir, "simulation-snapshot_{}.dat".format(self.end_date.strftime("%Y%m%d"))))
             os.remove(snapshot_path)
         else:
             self.log.info("Running from {} - {}".format(self.start_date, self.end_date), indent=1)

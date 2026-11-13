@@ -20,7 +20,7 @@
     },
     "sigma_obs": {
         "mixed": 0.532,
-        "stratified": 0.954
+        "stratified": 0.956
     },
     "perturbations": {
         "fit_window": {

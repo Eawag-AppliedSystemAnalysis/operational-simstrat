@@ -122,7 +122,8 @@ the smaller `icon-ch2-eps` area. Lakes more than 5 km from the nearest ICON grid
 out with `"ensemble": false` in its `forcing_forecast`.
 
 1. The run is split at today 00:00 UTC, the start of the forecast, and the snapshot at that point is kept in
-   `runs/<lake>/ensemble/`.
+   `runs/<lake>/ensemble/`. A run that restarts from a snapshot at that time, like the data assimilation forecast,
+   isn't split: its starting snapshot is kept.
 2. Each member restarts from that snapshot in `runs/<lake>/ensemble/member_NN/`. It uses the same inputs, with forcing
    from that member for the forecast days.
 3. Post-processing picks the **median run**: the member whose temperature is closest (RMSE over all forecast depths and
@@ -211,7 +212,7 @@ Unlike the forecast workflow (`src/main.py`), assimilation is **independent and 
 1. **Observations** — fetch the new raw observations and preprocess them into the assimilated series. If the source cannot be reached, the run warns and continues with the stored record.
 2. **Spin-up** (cold start only) — free Simstrat run from the origin to the first assimilation date. A run is cold-started when `model_inputs/` holds no snapshot; anything an earlier run left in the run directory is removed first, except `observations/`.
 3. **Assimilation** — `assimilator.run(cfg)` from the last snapshot to 00:00 UTC of the run day, seeded from the persisted ensemble.
-4. **Forecast** (every run) — free Simstrat run from the run day to the forecast horizon, warm-started from the ensemble-mean analysis (overwritten each run).
+4. **Forecast** (every run) — free Simstrat run from the run day to the forecast horizon, warm-started from the ensemble-mean analysis (overwritten each run). With `ensemble_forecast=true` (set in `args/assimilation.json`) it uses the ICON-CH2-EPS ensemble exactly as the operational forecast does (see *Ensemble forecast*): every member also runs from the analysis at the forecast start, the median run is published for the forecast days with `T_p10`/`T_p90`, and the deterministic forecast is the fallback. The members run in `forecast/ensemble/` and are removed after publishing unless `debug=true`.
 
 **The run day is forecast, not hindcast**: its observations are never assimilated, and every observation from the days before it is. The assimilation always ends at 00:00 UTC of the run day (today, or `da_end_date=YYYYMMDD` to replay a given day), with or without new observations. A gap in the observations just advances the ensemble without updates, so the forecast always starts on the run day. A second run on the same day only forecasts.
 
@@ -223,7 +224,7 @@ Unlike the forecast workflow (`src/main.py`), assimilation is **independent and 
 
 Each daily call then runs OpenDA once, from where the chain ends to 00:00 of the run day, every observation analysed at its own time, and saves the ensemble as `runs/<lake>_<run>/openda_<lake>_<run>/restart/restart_<YYYYMMDDTHHMMZ>.zip` (the newest `keep` are kept). A cold start or a long catch-up is split into OpenDA runs of at most `cycle_max_days` (default 31). OpenDA is not started on a window without observations: during a gap at the end of the record the chain waits at the last one and the forecast starts there. OpenDA 3.4.0 is needed, through the `openda_bin` argument.
 
-The combined assimilation + forecast temperature is written to `runs/<lake>_<run>/netcdf/`. When the run is invoked with `upload=true`, these NetCDF files are uploaded to `<results_folder_api>/<lake>_<run>` on the results server (keyed by the run name, so they do not overwrite the standard `src/main.py` forecast at `<results_folder_api>/<lake>`).
+The combined assimilation + forecast temperature is written to `runs/<lake>_<run>/netcdf/`, with the same `T_p10`/`T_p90` variables and `forecast_start`, `forecast_source`, `ensemble_members` and `median_member` attributes as the operational forecast in the months containing the forecast. When the run is invoked with `upload=true`, these NetCDF files are uploaded to `<results_folder_api>/<lake>_<run>` on the results server (keyed by the run name, so they do not overwrite the standard `src/main.py` forecast at `<results_folder_api>/<lake>`).
 
 ### Observations
 
@@ -251,7 +252,7 @@ python src/assimilation_tools/fit_sigma.py       <lake> --write           # -> s
 
 and add a run under `runs` and the lake to `args/assimilation.json`. `make_free_run.py` builds the hourly free run the hour and sigma fits compare against (the operational run outputs only every 3 h). `select_hour.py` searches 00–06 UTC by default; pass `--window 23-6` to include 23 UTC (as chosen for Ägeri and Hallwil). Raw observations come from the lake's run, or are fetched from its source; `--raw file.csv` overrides.
 
-The analysis hours, depth grids and perturbations are the research choices. The seiche windows were refitted on the Datalakes records to October 2026 (except Maggiore, kept at the research 77.5 h: the refit gives 68.5 h, and its window already costs a lot of lag), and `sigma_obs` was refitted on the resulting series against `make_free_run.py` free runs of the operational setup (Ägeri as one annual value, `fit_sigma.py --annual`, as in the research). The stored perturbation amplitudes were fitted on the whole of Lake Lugano; a refit uses the upper basin outline from `static/lake_geometry.json`.
+The depth grids and perturbations are the research choices. The seiche windows were refitted on the Datalakes records to October 2026 (except Maggiore, kept at the research 77.5 h: the refit gives 68.5 h, and its window already costs a lot of lag). The analysis hours and `sigma_obs` were refitted on the same records against `make_free_run.py` free runs of the November 2026 calibration: the hours with `select_hour.py` (`--window 23-6` for Ägeri and Hallwil; Greifensee keeps its research `hour_window` 0–6 UTC, as its sampling phase drifts), then `sigma_obs` on the resulting series (Ägeri as one annual value, `fit_sigma.py --annual`, as in the research). The stored perturbation amplitudes were fitted on the whole of Lake Lugano; a refit uses the upper basin outline from `static/lake_geometry.json`.
 
 The data-assimilation submodule can also run on its own on any Simstrat folder (`python data-assimilation/src/assimilate.py run --sim-dir ...`); see its README.
 

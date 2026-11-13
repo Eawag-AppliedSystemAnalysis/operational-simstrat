@@ -68,8 +68,11 @@ def assimilate_run(key, run_key, run_cfg, lake_cfg, parameters, args):
     else:
         log.info("{} is already assimilated up to {}; forecasting only.".format(key, snapshot))
         analysed = start
-    forecast(key, parameters, args, lake_dir, analysed, log)
-    publish(run_name, parameters, args, lake_dir, start if continuing else None, log)
+    model = forecast(key, parameters, args, lake_dir, analysed, log)
+    try:
+        publish(run_name, parameters, args, lake_dir, start if continuing else None, model, log)
+    finally:
+        model.clean_ensemble()
 
 
 def clear_run_outputs(run_name, lake_dir, log):
@@ -102,7 +105,7 @@ def spin_up(key, parameters, args, lake_dir, first_obs, end, log):
         key, spinup_start or "the start of the meteo data", day_str(first_da)), indent=1)
     Simstrat(key, parameters, phase_args(
         args, lake_dir, directory="model_inputs",
-        snapshot=True, forecast=False, post_process=False, upload=False,
+        snapshot=True, forecast=False, ensemble_forecast=False, post_process=False, upload=False,
         overwrite_simulation=True, remove_existing_results=True,
         overwrite_start_date=spinup_start, overwrite_end_date=day_str(first_da))).process()
     spinup_results = os.path.join(model_inputs, "Results", "T_out.dat")
@@ -123,7 +126,7 @@ def extend_inputs(key, parameters, args, lake_dir, start, log):
     log.info("Extending master inputs for {} from {} to the forecast horizon".format(key, day_str(start)), indent=1)
     Simstrat(key, parameters, phase_args(
         args, lake_dir, directory="model_inputs",
-        run=False, forecast=True, post_process=False, upload=False,
+        run=False, forecast=True, ensemble_forecast=False, post_process=False, upload=False,
         overwrite_simulation=False, remove_existing_results=False,
         overwrite_start_date=day_str(start), overwrite_end_date=False)).process()
     log.end_stage()
@@ -161,7 +164,9 @@ def assimilate(key, run_name, run_cfg, lake_cfg, args, lake_dir, start, end, obs
 
 
 def forecast(key, parameters, args, lake_dir, start, log):
-    """A free run from the analysis at `start` to the forecast horizon."""
+    """A free run from the analysis at `start` to the forecast horizon. With ensemble_forecast, like
+    the operational forecast, every ICON-CH2-EPS member also runs from the analysis at the forecast
+    start (today 00:00 UTC); the members are kept for publish. Returns the Simstrat run."""
     model_inputs = os.path.join(lake_dir, "model_inputs")
     forecast_dir = os.path.join(lake_dir, "forecast")
     snapshot = "simulation-snapshot_{}.dat".format(day_str(start))
@@ -172,22 +177,36 @@ def forecast(key, parameters, args, lake_dir, start, log):
     copy_master_inputs(model_inputs, forecast_dir)
     if os.path.exists(os.path.join(model_inputs, "z_out.dat")):
         shutil.copy(os.path.join(model_inputs, "z_out.dat"), os.path.join(forecast_dir, "z_out.dat"))
-    Simstrat(key, parameters, phase_args(
+    model = Simstrat(key, parameters, phase_args(
         args, lake_dir, directory="forecast",
         snapshot=True, snapshot_date=day_str(start), forecast=True,
         overwrite_simulation=False, remove_existing_results=True,
-        overwrite_start_date=False, overwrite_end_date=False, post_process=False)).process()
+        overwrite_start_date=False, overwrite_end_date=False, post_process=False, keep_ensemble=True))
+    model.process()
+    if model.ensemble_results:
+        log.info("Forecast ensemble: {} ICON-CH2-EPS members".format(len(model.ensemble_results["members"])), indent=1)
+    elif model.forecast:
+        log.info("Forecast: {} (no ensemble, see the forecast log)".format(model.deterministic_forecast_source()),
+                 indent=1)
     log.end_stage()
+    return model
 
 
-def publish(run_name, parameters, args, lake_dir, changed_since, log):
+def publish(run_name, parameters, args, lake_dir, changed_since, model, log):
     """Write the combined temperature as NetCDF (only the months from `changed_since` on a
-    continuing run) and upload it."""
+    continuing run) and upload it. The forecast is the ensemble's median run with its p10-p90 band
+    when the forecast `model` ran the ensemble, as in the operational forecast."""
     log.begin_stage("combine_temperature")
     log.info("Combining assimilation and forecast temperature into NetCDF for {}".format(run_name), indent=1)
+    forecast_info = {}
+    if model.forecast:
+        forecast_info = {"forecast_start": model.forecast_start,
+                         "forecast_source": model.deterministic_forecast_source(),
+                         "ensemble": model.ensemble_results}
     try:
         post_process_temperature(lake_dir, args["simstrat_version"], parameters,
-                                 changed_since=changed_since, clear_netcdf=changed_since is not None)
+                                 changed_since=changed_since, clear_netcdf=changed_since is not None,
+                                 **forecast_info)
     except Exception as e:
         log.warning("Failed to combine temperature outputs: {}".format(e), indent=1)
     log.end_stage()

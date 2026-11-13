@@ -14,12 +14,12 @@
             "w_seiche_h": 26.1
         },
         "schedule": {
-            "hour": 6
+            "hour": 5
         }
     },
     "sigma_obs": {
-        "mixed": 0.352,
-        "stratified": 0.766
+        "mixed": 0.351,
+        "stratified": 0.777
     },
     "perturbations": {
         "fit_window": {

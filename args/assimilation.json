@@ -5,5 +5,6 @@
     "max_assimilation_workers": 20,
     "log": true,
     "debug": false,
-    "upload": true
+    "upload": true,
+    "ensemble_forecast": true
 }
