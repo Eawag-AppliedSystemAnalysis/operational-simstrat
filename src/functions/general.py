@@ -259,17 +259,6 @@ def clear_sky_solar_radiation(time, air_pressure, vapour_pressure, lat, lon):
     return effective_solar_constant * cos_zenith * TrTpg * Tw * Ta
 
 
-def adjust_data_to_mean_and_std(arr, std, mean):
-    arr = np.array(arr, dtype=float)
-    data_mean = np.nanmean(arr)
-    data_std = np.nanstd(arr)
-    if np.isnan(data_mean) or np.isnan(data_std) or data_std == 0:
-        print("Forcing data not adjusted")
-        return arr
-
-    return (arr - data_mean) / data_std * std + mean
-
-
 def detect_gaps(arr, start, end, max_allowable_gap=86400):
     arr = np.array(arr)
     datetime_objects = np.concatenate([[start], arr, [end]])
@@ -313,8 +302,8 @@ def fill_day_of_year(time, data, time_full, data_full, reference_date):
 
 
 def calculate_mean_wind_direction(wind_direction):
-    mean_wind_direction = np.arctan2(np.nanmean(np.sin(np.radians(wind_direction))),
-                                     np.nanmean(np.cos(np.radians(wind_direction))))
+    mean_wind_direction = np.degrees(np.arctan2(np.nanmean(np.sin(np.radians(wind_direction))),
+                                                np.nanmean(np.cos(np.radians(wind_direction)))))
     if mean_wind_direction < 0:
         mean_wind_direction += 360
     return mean_wind_direction

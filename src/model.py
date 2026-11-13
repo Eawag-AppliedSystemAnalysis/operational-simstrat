@@ -570,7 +570,7 @@ class Simstrat(object):
             for split in splits + [self.end_date]:
                 self.log.info("Running from {} - {}".format(leg_start, split), indent=1)
                 overwrite_par_file_dates(os.path.join(self.simulation_dir, "Settings.par"), leg_start, split,
-                                         self.parameters["reference_date"])
+                                         self.parameters["reference_date"], split=split != self.end_date)
                 run_subprocess(command)
                 if split_month and split == month_beginning:
                     snapshot_out_path = os.path.join(self.simulation_dir,
