@@ -1,0 +1,87 @@
+{
+    "runs": {
+        "python_enkf": {
+            "engine": "python",
+            "algorithm": "EnKF",
+            "n_members": 20
+        }
+    },
+    "observations": {
+        "source": "datalakes",
+        "id": 1046,
+        "axis": "z",
+        "filter": {
+            "w_seiche_h": 12.2
+        },
+        "schedule": {
+            "hour": 23
+        }
+    },
+    "sigma_obs": {
+        "mixed": 0.486,
+        "stratified": 0.723
+    },
+    "perturbations": {
+        "fit_window": {
+            "start": "2025-01-01",
+            "end": "2025-12-31"
+        },
+        "variables": {
+            "U": {
+                "phi": 0.736605,
+                "sigma": 1.090674
+            },
+            "V": {
+                "phi": 0.770616,
+                "sigma": 0.862616
+            },
+            "GLOB": {
+                "phi": 0.901013,
+                "sigma": 30.971801
+            }
+        },
+        "amplitude": {
+            "stationary_std": {
+                "U": 1.612652,
+                "V": 1.353549,
+                "GLOB": 71.3978
+            }
+        },
+        "persistence": {
+            "bound": "envelope",
+            "chosen": {
+                "U": "lower",
+                "V": "upper",
+                "GLOB": "upper"
+            },
+            "lower": {
+                "tau_h": {
+                    "U": 3.271,
+                    "V": 2.112,
+                    "GLOB": 1.755
+                },
+                "phi": {
+                    "U": 0.736605,
+                    "V": 0.622856,
+                    "GLOB": 0.565647
+                }
+            },
+            "upper": {
+                "tau_h": {
+                    "U": 2.927,
+                    "V": 3.838,
+                    "GLOB": 9.594
+                },
+                "phi": {
+                    "U": 0.710615,
+                    "V": 0.770616,
+                    "GLOB": 0.901013
+                }
+            }
+        }
+    },
+    "identity": {
+        "length_km": 8.4,
+        "mean_depth": 28.6
+    }
+}

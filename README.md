@@ -122,7 +122,8 @@ the smaller `icon-ch2-eps` area. Lakes more than 5 km from the nearest ICON grid
 out with `"ensemble": false` in its `forcing_forecast`.
 
 1. The run is split at today 00:00 UTC, the start of the forecast, and the snapshot at that point is kept in
-   `runs/<lake>/ensemble/`.
+   `runs/<lake>/ensemble/`. A run that restarts from a snapshot at that time, like the data assimilation forecast,
+   isn't split: its starting snapshot is kept.
 2. Each member restarts from that snapshot in `runs/<lake>/ensemble/member_NN/`. It uses the same inputs, with forcing
    from that member for the forecast days.
 3. Post-processing picks the **median run**: the member whose temperature is closest (RMSE over all forecast depths and
@@ -170,59 +171,89 @@ There should be one file per lake and per parameter and the values should all ha
 
 ## Data Assimilation
 
-Simstrat operational uses the [data-assimilation](data-assimilation) submodule (native Ensemble Kalman Filter / Particle Filter over a Simstrat ensemble) to blend live in-situ measurements into the model. It is called as follows:
+Simstrat operational uses the [data-assimilation](data-assimilation) submodule (native Ensemble Kalman Filter / Particle Filter over a Simstrat ensemble, or OpenDA) to blend live in-situ measurements into the model. It is called as follows:
 
 ```bash
 python src/data_assimilation.py assimilation
 ```
 
-Where `assimilation` is the argument file in `args/`. The arguments follow the same structure as for running Simstrat operational, with additional data-assimilation arguments (`first_da_date`, `first_obs_date`, `spinup_years`, `max_assimilation_workers`). The per-filter parameters (`engine`, `algorithm`, `n_members`, `sigma_obs`, `sigma_scale`, `rng_seed`, plus the optional `inflation`, default `1.0`) are configured **per lake** in `static/lake_parameters.json` (see below), not in the argument file. `engine` is either `python` (native, `algorithm` `EnKF`/`PF`) or `openda` (`algorithm` `EnKF`/`DEnKF`/`EnSR`/`PF`, cross-checked through [OpenDA](https://www.openda.org)); OpenDA runs need an OpenDA 3.4.0 installation, with its `bin/` directory set via the `openda_bin` argument (or `oda_run.sh` already on `PATH`).
+Where `assimilation` is the argument file in `args/`. The arguments follow the same structure as for running Simstrat operational, with additional data-assimilation arguments (`da_end_date`, `first_da_date`, `first_obs_date`, `spinup_years`, `max_assimilation_workers`, `openda_bin`).
 
-Each lake can define one or more named assimilation runs under an `assimilation` block in `static/lake_parameters.json` (e.g. `python_enkf`). Every run gets its own state directory `runs/<lake>_<run>/` (e.g. `runs/upperlugano_python_enkf/`), containing the persistent ensemble under `assimilation/`, the `model_inputs/` analysis inputs + snapshots, the `forecast/` extension, and the fetched `observations/`.
+**Everything per lake lives in one file, `static/assimilation/<lake>.json`**: its assimilation runs, the observation source and how the observations are processed, the observation error, the forcing perturbation, and the basin geometry the fits need. The data-assimilation submodule holds no per-lake values: `src/data_assimilation.py` builds a flat run config from this file and calls `assimilator.run(cfg)`.
 
-Unlike the forecast workflow (`src/main.py`), assimilation is **independent and rolling** — each run advances its own state forward instead of re-running the whole period. Each run has up to three phases:
+```json
+{
+    "runs": {"python_enkf": {"engine": "python", "algorithm": "EnKF", "n_members": 20}},
+    "observations": {
+        "source": "datalakes", "id": 1334, "axis": "z",
+        "filter":   {"w_seiche_h": 27.3},
+        "schedule": {"hour": 6}
+    },
+    "sigma_obs": {"mixed": 0.299, "stratified": 0.586},
+    "perturbations": {"variables": {"U": {"phi": 0.754, "sigma": 0.588}, "V": {...}, "GLOB": {...}}},
+    "identity": {"length_km": 25.0}
+}
+```
 
-1. **Spin-up** (cold start only) — free Simstrat run from the origin to the first assimilation date.
-2. **Assimilation** — EnKF/PF from the previous-last to the new-last observation date, seeded from the persisted ensemble.
-3. **Forecast** (every run) — free Simstrat run from the last assimilation date to the forecast horizon, warm-started from the ensemble-mean analysis (overwritten each run).
+| Key | Meaning |
+|---|---|
+| `runs` | One entry per assimilation run. Any key of the submodule's run config can go here (`engine`, `algorithm`, `n_members`, `inflation`, `sigma_scale`, `rng_seed`, `obs_operator`, …, see `data-assimilation/docs/configuration.md`); a key set here overrides the lake-level one (e.g. a run-specific `sigma_obs`). `engine` is `python` (`algorithm` `EnKF`/`PF`) or `openda` (`EnKF`/`DEnKF`/`EnSR`/`PF`, needs OpenDA 3.4.0 via the `openda_bin` argument). |
+| `observations` | Where the raw record comes from (`source` and its keys) and how it becomes the assimilated series (`filter`, `schedule`, optional `depths`), see *Observations* below. Defaults, set only to change them: `filter.thermo_depth_min` 4 m, `schedule.max_offset_h` 1.5 h, `depth_tolerance_m` 0.5 m. |
+| `sigma_obs` | Observation error, °C: a number or `{"mixed", "stratified"}` (stratified = May–Oct). **Valid only for the series it was fitted on**: refit after changing `filter`, `schedule` or `depths`. Without it the run uses `sigma_default` (0.5 °C). |
+| `perturbations` | The AR(1) forcing perturbation that generates the ensemble. Only `variables` is used by the run; `fit_window`, `amplitude` and `persistence` are what the fit tool needs to refit the upper bound or switch bound without ICON. |
+| `identity` | Inputs of the fits: basin length `length_km`, and `mean_depth` where it should differ from `average_depth` in `lake_parameters.json`. Optional `lake_bbox` sets the ICON request box (default: the bounds of the lake's outline in `static/lake_geometry.json`). |
 
-The combined assimilation + forecast temperature is written to `runs/<lake>_<run>/netcdf/`. When the run is invoked with `upload=true`, these NetCDF files are uploaded to `<results_folder_api>/<lake>_<run>` on the results server (keyed by the run name, so they do not overwrite the standard `src/main.py` forecast at `<results_folder_api>/<lake>`).
+A lake is assimilated when it is listed in `args/assimilation.json` and its file has a run and an observation `source`. Keys starting with `_` are comments. The seven study lakes were migrated from the data-assimilation research setup (branch `feat/da-combi`), each with a `python_enkf` run and its Datalakes dataset: upperlugano 1334, maggiore 1333, geneva 448 (LéXPLORE chain), aegeri 1077 (Idronaut depth-time grid), hallwil 1046, murten 956, greifensee 515 (profiler; its vertical axis is labelled pressure but holds the 1–16.9 m depth grid).
+
+Every run gets its own state directory `runs/<lake>_<run>/` (e.g. `runs/upperlugano_python_enkf/`), containing the persistent ensemble under `assimilation/`, the `model_inputs/` analysis inputs + snapshots, the `forecast/` extension, and the `observations/` (the raw record `raw.csv`, the assimilated series `temperature.csv` and the settings it was made with, `processing.json`).
+
+Unlike the forecast workflow (`src/main.py`), assimilation is **independent and rolling** — each run advances its own state forward instead of re-running the whole period. Each run has up to four phases:
+
+1. **Observations** — fetch the new raw observations and preprocess them into the assimilated series. If the source cannot be reached, the run warns and continues with the stored record.
+2. **Spin-up** (cold start only) — free Simstrat run from the origin to the first assimilation date. A run is cold-started when `model_inputs/` holds no snapshot; anything an earlier run left in the run directory is removed first, except `observations/`.
+3. **Assimilation** — `assimilator.run(cfg)` from the last snapshot to 00:00 UTC of the run day, seeded from the persisted ensemble.
+4. **Forecast** (every run) — free Simstrat run from the run day to the forecast horizon, warm-started from the ensemble-mean analysis (overwritten each run). With `ensemble_forecast=true` (set in `args/assimilation.json`) it uses the ICON-CH2-EPS ensemble exactly as the operational forecast does (see *Ensemble forecast*): every member also runs from the analysis at the forecast start, the median run is published for the forecast days with `T_p10`/`T_p90`, and the deterministic forecast is the fallback. The members run in `forecast/ensemble/` and are removed after publishing unless `debug=true`.
+
+**The run day is forecast, not hindcast**: its observations are never assimilated, and every observation from the days before it is. The assimilation always ends at 00:00 UTC of the run day (today, or `da_end_date=YYYYMMDD` to replay a given day), with or without new observations. A gap in the observations just advances the ensemble without updates, so the forecast always starts on the run day. A second run on the same day only forecasts.
+
+**OpenDA runs.** An OpenDA run keeps its ensemble between analyses only within one OpenDA run, and each daily call starts a new one. To carry the ensemble (and its spread) from one day to the next, give the run a restart chain:
+
+```json
+"runs": {"openda_enkf": {"engine": "openda", "algorithm": "EnKF", "n_members": 20, "openda_restart": {"keep": 7}}}
+```
+
+Each daily call then runs OpenDA once, from where the chain ends to 00:00 of the run day, every observation analysed at its own time, and saves the ensemble as `runs/<lake>_<run>/openda_<lake>_<run>/restart/restart_<YYYYMMDDTHHMMZ>.zip` (the newest `keep` are kept). A cold start or a long catch-up is split into OpenDA runs of at most `cycle_max_days` (default 31). OpenDA is not started on a window without observations: during a gap at the end of the record the chain waits at the last one and the forecast starts there. OpenDA 3.4.0 is needed, through the `openda_bin` argument.
+
+The combined assimilation + forecast temperature is written to `runs/<lake>_<run>/netcdf/`, with the same `T_p10`/`T_p90` variables and `forecast_start`, `forecast_source`, `ensemble_members` and `median_member` attributes as the operational forecast in the months containing the forecast. When the run is invoked with `upload=true`, these NetCDF files are uploaded to `<results_folder_api>/<lake>_<run>` on the results server (keyed by the run name, so they do not overwrite the standard `src/main.py` forecast at `<results_folder_api>/<lake>`).
 
 ### Observations
 
-Observations are fetched live each run through a **pluggable source layer** (`src/functions/observations.py`) and written to `runs/{lake-key}_{run}/observations/temperature.csv` with columns `time,depth,value`. Add a new source by registering a `(source_cfg, args, since=None) -> DataFrame[time, depth, value]` function in `OBSERVATION_SOURCES`.
+Each run appends the new raw (sub-daily) observations to `raw.csv` and turns the record into the series it assimilates with the submodule's `assimilator.observations.preprocess`. Rows are only ever selected or averaged, never invented, and the series **is** the analysis schedule: one analysis per distinct observation time.
 
-A lake's observations are configured **per run**, in an `observations` block inside that run's entry under the `assimilation` block in `static/lake_parameters.json` — the source, the dataset, and the **decimation** (temporal resampling applied after fetching). For the `datalakes` source, `id` is the [Datalakes](https://www.datalakes-eawag.ch) *dataset* id (e.g. `1334` = Upper Lake Lugano buoy) and `axis` is the data axis to assimilate — the depth-resolved 2D grid, usually `z`:
+1. **Filter** (`filter`) — below `thermo_depth_min` (4 m) most hour-to-hour variance is the thermocline displaced by basin-scale seiches, which a 1D model cannot reproduce. Each depth there is replaced by a causal trailing mean over one fundamental seiche period `w_seiche_h`, from Merian's two-layer formula `T = 2L / sqrt(g'·h_eff)` at peak stratification (11 h on Ägeri, 27 h on Upper Lugano, 97 h on Geneva). A value is dropped when its window is less than a quarter full or holds only samples from before a gap. The top 4 m pass through untouched. Removing `filter` switches it off.
+2. **Depth grid** (`depths`, optional) — keep the depth nearest each target within `depth_tolerance_m` (0.5 m), for dense sensor chains and interpolated profiles.
+3. **Thin** (`schedule`) — one instant per day, all its depths: the one nearest `hour` UTC, skipping the day if it is more than `max_offset_h` away; or, with `"hour_window": [lo, hi]`, the first instant in that window (for lakes whose sampling phase drifts). The hour matters because assimilating at a fixed hour aliases that hour's model error into a bias; it is chosen where the model's diurnal bias is small relative to its day-to-day error, among early-morning hours so the analysis lands before the day it forecasts.
 
-```json
-"assimilation": {
-    "python_enkf": {
-        "observations": {
-            "source": "datalakes",
-            "id": 1334,
-            "axis": "z",
-            "decimation": { "time": "1D", "aggregation": "nearest" }
-        }
-    }
-}
+Each run reprocesses only the last stored day onwards (with the look-back the causal filter needs), so the daily series matches a full reprocess; changing the settings reprocesses the whole stored record. The port reproduces the research (`feat/da-combi`) series row for row.
+
+Observation sources are pluggable (`OBSERVATION_SOURCES` in `src/functions/assimilation_observations.py`): register a `(source_cfg, args, since=None) -> DataFrame[time, depth, value]` function. The built-in `datalakes` source takes the [Datalakes](https://www.datalakes-eawag.ch) *dataset* `id` and the depth-resolved data `axis` (usually `z`; the map is at `https://api.datalakes-eawag.ch/datasetparameters?datasets_id=<id>`).
+
+### Fitting a lake
+
+The fitted values are produced by the tools in `src/assimilation_tools/`, which load the data and call the submodule's `assimilator.fitting`. Each prints its result; `--write` stores it in the lake's file. To add a lake: run the operational simulation for it, create `static/assimilation/<lake>.json` with `observations.source`, `identity.length_km` and empty `runs`, then
+
+```bash
+python src/assimilation_tools/fit_perturbation.py <lake> --icon --write   # ICON reanalysis, Eawag network
+python src/assimilation_tools/calibrate_filter.py <lake> --write           # -> observations.filter
+python src/assimilation_tools/make_free_run.py   <lake> --start <first obs day> --end <last forcing day>
+python src/assimilation_tools/select_hour.py     <lake> --write           # -> observations.schedule
+python src/assimilation_tools/fit_sigma.py       <lake> --write           # -> sigma_obs, on the final series
 ```
 
-A dataset's axis→variable map is at `https://api.datalakes-eawag.ch/datasetparameters?datasets_id=<id>` (for 1334: `x`=time, `y`=depth, `z`=temp [degC], `y1`=surface_temp, …), so set `axis` to the depth-resolved variable you want to assimilate.
+and add a run under `runs` and the lake to `args/assimilation.json`. `make_free_run.py` builds the hourly free run the hour and sigma fits compare against (the operational run outputs only every 3 h). `select_hour.py` searches 00–06 UTC by default; pass `--window 23-6` to include 23 UTC (as chosen for Ägeri and Hallwil). Raw observations come from the lake's run, or are fetched from its source; `--raw file.csv` overrides.
 
-`decimation.time` is a pandas offset (`"1h"`, `"6h"`, `"1D"`, …) and `aggregation` is `mean`/`median`/`min`/`max`/`first`/`last`/`nearest`. The only built-in source is `datalakes`.
+The depth grids and perturbations are the research choices. The seiche windows were refitted on the Datalakes records to October 2026 (except Maggiore, kept at the research 77.5 h: the refit gives 68.5 h, and its window already costs a lot of lag). The analysis hours and `sigma_obs` were refitted on the same records against `make_free_run.py` free runs of the November 2026 calibration: the hours with `select_hour.py` (`--window 23-6` for Ägeri and Hallwil; Greifensee keeps its research `hour_window` 0–6 UTC, as its sampling phase drifts), then `sigma_obs` on the resulting series (Ägeri as one annual value, `fit_sigma.py --annual`, as in the research). The stored perturbation amplitudes were fitted on the whole of Lake Lugano; a refit uses the upper basin outline from `static/lake_geometry.json`.
 
-### Perturbations
+The data-assimilation submodule can also run on its own on any Simstrat folder (`python data-assimilation/src/assimilate.py run --sim-dir ...`); see its README.
 
-The ensemble is generated by AR(1) perturbations of the forcing. These are sourced **first** from an optional `perturbations` block inside the run's entry under `assimilation` in `static/lake_parameters.json`, and **fall back** to `data-assimilation/perturbations/{lake-key}.json` (fitted offline with the submodule's `notebooks/perturbations_from_icon.py`). If neither exists the run errors clearly. The in-lake block is a flat `{variable: {phi, sigma}}` map (a full `{ "variables": { … } }` object is also accepted):
-
-```json
-"assimilation": {
-    "python_enkf": {
-        "perturbations": {
-            "U":    { "phi": 0.656, "sigma": 0.676 },
-            "V":    { "phi": 0.691, "sigma": 0.902 },
-            "GLOB": { "phi": 0.486, "sigma": 45.531 }
-        }
-    }
-}
-```
+Tests: `python -m pytest data-assimilation/tests`.

@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import json
 from functions import verify
@@ -93,13 +94,56 @@ class CalibratorConfig(Config):
         self.args["lake_parameters_dir"] = self.lake_parameters_dir
 
 
+def assimilation_config_path(repo_dir, key):
+    return os.path.join(repo_dir, "static", "assimilation", "{}.json".format(key))
+
+
+def save_assimilation_config(repo_dir, key, cfg):
+    """Write a lake's data-assimilation setup, with lists of numbers kept on one line."""
+    text = json.dumps(cfg, indent=4)
+    text = re.sub(r"\[\s*([-+\d.eE,\s]+?)\s*\]",
+                  lambda m: "[" + ", ".join(x.strip() for x in m.group(1).split(",")) + "]", text)
+    with open(assimilation_config_path(repo_dir, key), "w") as f:
+        f.write(text + "\n")
+
+
+def load_assimilation_config(repo_dir, key):
+    """The lake's data-assimilation setup, static/assimilation/<key>.json. Checks what this
+    pipeline relies on; the submodule validates the run settings themselves when a run starts."""
+    path = assimilation_config_path(repo_dir, key)
+    if not os.path.isfile(path):
+        raise ValueError('Lake "{}" has no data-assimilation setup: add {} (see the Data Assimilation section of README.md).'
+                         .format(key, os.path.relpath(path, repo_dir)))
+    with open(path) as f:
+        cfg = json.load(f)
+    runs = cfg.get("runs")
+    if isinstance(runs, dict):
+        runs = cfg["runs"] = {k: v for k, v in runs.items() if not k.startswith("_")}   # "_" keys are comments
+    if not isinstance(runs, dict) or not runs:
+        raise ValueError('{}: no runs under "runs" (e.g. "python_enkf": {{"engine": "python", '
+                         '"algorithm": "EnKF", "n_members": 20}}).'.format(path))
+    for run_key, run in runs.items():
+        missing = [k for k in ("engine", "algorithm", "n_members") if k not in run]
+        if missing:
+            raise ValueError('{}: run "{}" is missing {}.'.format(path, run_key, missing))
+    observations = cfg.get("observations") or {}
+    if not observations.get("source"):
+        raise ValueError('{}: "observations" has no "source" to fetch from.'.format(path))
+    if "perturbations" not in cfg:
+        raise ValueError('{}: no "perturbations" (the AR(1) forcing calibration; fit it with '
+                         'src/assimilation_tools/fit_perturbation.py).'.format(path))
+    return cfg
+
+
 class AssimilatorConfig(Config):
     def __init__(self, *args, **kwargs):
         super(AssimilatorConfig, self).__init__(*args, **kwargs)
-        # engine, algorithm, n_members, sigma_obs, inflation, sigma_scale and rng_seed are
-        # configured per-lake in lake_parameters.json (no global default).
+        # Per-lake settings (runs, observations, sigma_obs, perturbations) live in
+        # static/assimilation/<lake>.json, see load_assimilation_config.
         self.default_args["first_da_date"] = {"default": False, "verify": verify.verify_date,
                                               "desc": "Cold-start: earliest date to assimilate YYYYMMDD (defaults to earliest observation)"}
+        self.default_args["da_end_date"] = {"default": False, "verify": verify.verify_date,
+                                            "desc": "Run day YYYYMMDD: assimilate up to 00:00 UTC of this day and forecast from there (defaults to today). Observations from the run day itself are never assimilated"}
         self.default_args["first_obs_date"] = {"default": False, "verify": verify.verify_date,
                                                "desc": "Earliest date to collect observations YYYYMMDD; observations before this are discarded (defaults to all available)"}
         self.default_args["spinup_years"] = {"default": False, "verify": verify.verify_integer,
