@@ -17,7 +17,7 @@ def collect_inflow_data(inflows, salinity, start, end, reference_date, simulatio
         if inflow["type"] == "bafu_hydrostation":
             log.info("Downloading bafu hydrodata for station {}".format(inflow["Q"]["id"]), indent=2)
             inflow_data["deep_inflows"].append(
-                download_bafu_hydrodata(inflow, start, end, time, salinity, api)
+                download_bafu_hydrodata(inflow, start, end, time, salinity, api, log)
             )
         elif inflow["type"] == "simstrat_model_inflow":
             log.info("Collecting simulation outflows from {}".format(inflow["id"]), indent=2)
@@ -128,7 +128,7 @@ def fill_inflow_data(inflow_data, inflow_parameters, simulation_dir, snapshot, r
     return inflow_data
 
 
-def download_bafu_hydrodata(inflow, start_date, end_date, time, salinity, api):
+def download_bafu_hydrodata(inflow, start_date, end_date, time, salinity, api, log):
     endpoint = api + "/bafu/hydrodata/measured/{}/{}/{}/{}?resample=hourly"
     df_t = pd.DataFrame({'time': time})
     df_t['time'] = pd.to_datetime(df_t['time'])
@@ -152,8 +152,8 @@ def download_bafu_hydrodata(inflow, start_date, end_date, time, salinity, api):
                     print("Reversing flow direction")
                     values = values * -1
             except Exception as e:
-                print("WARNING: Failed to access url")
-                print(e)
+                log.warning("Failed to download {} for BAFU station {}, the whole series will be gap-filled "
+                            "(day-of-year climatology): {}".format(p, inflow[p]["id"], e), indent=2)
                 values = np.full(len(time), np.nan)
         deep_inflow[p] = values
     return deep_inflow
@@ -161,7 +161,7 @@ def download_bafu_hydrodata(inflow, start_date, end_date, time, salinity, api):
 
 def parse_lake_outflow(inflow, time, simulation_dir, reference_date):
     if not os.path.exists(os.path.join(simulation_dir, "..", inflow["id"], "Results")):
-        raise ValueError("{} must be run before it can be used as an inflow.")
+        raise ValueError("{} must be run before it can be used as an inflow.".format(inflow["id"]))
 
     if "surface_inflow" in inflow:
         lake_inflow = [

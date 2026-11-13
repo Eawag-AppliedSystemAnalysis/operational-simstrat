@@ -112,6 +112,35 @@ docker run -v $(pwd):/simstrat/run eawag/simstrat:3.0.4 Settings.par
 
 See the instructions [here](https://github.com/Eawag-AppliedSystemAnalysis/Simstrat) for details.
 
+## Ensemble forecast
+
+By default the forecast days are forced with each lake's deterministic forecast from `forcing_forecast`: the
+ICON-CH2-EPS ensemble mean (`icon-ch2-eps` from the Alplakes API) or VisualCrossing. With `ensemble_forecast=true`,
+every lake inside the ICON-CH2-EPS domain also runs Simstrat once for each of the 21 members (`icon-ch2-eps-members`),
+whatever its deterministic source. This includes VisualCrossing lakes in Bavaria, Austria and Slovenia, which are outside
+the smaller `icon-ch2-eps` area. Lakes more than 5 km from the nearest ICON grid cell are skipped, and a lake can opt
+out with `"ensemble": false` in its `forcing_forecast`.
+
+1. The run is split at today 00:00 UTC, the start of the forecast, and the snapshot at that point is kept in
+   `runs/<lake>/ensemble/`.
+2. Each member restarts from that snapshot in `runs/<lake>/ensemble/member_NN/`. It uses the same inputs, with forcing
+   from that member for the forecast days.
+3. Post-processing picks the **median run**: the member whose temperature is closest (RMSE over all forecast depths and
+   times) to the pointwise median temperature of all members. That member's output replaces every variable for the
+   forecast days, and the thermocline is calculated from its temperature.
+4. `T_p10` and `T_p90` are added to the monthly NetCDF files. They are the 10th and 90th percentiles of all members'
+   temperature, calculated for each depth and time, and NaN outside the forecast.
+
+The attributes `forecast_source`, `forecast_start`, `ensemble_members` and `median_member` record what was published.
+If the members can't be downloaded, too few runs succeed (`ensemble_min_members`, default 18), or post-processing can't
+use their output, the lake's deterministic forecast is published as before, with `forecast_source` set to
+`Alplakes icon-ch2-eps ensemble mean` or `VisualCrossing`. Members run `ensemble_workers` (default 4) at a time per lake, and the member
+folders are removed after post-processing unless `debug=true`.
+
+```bash
+python src/main.py operational ensemble_forecast=true
+```
+
 ## Calibration
 
 Simstrat operational uses [Lake-Calibrator](https://github.com/eawag-surface-waters-research/lake-calibrator) to calibrate the lakes. It is installed as a submodule as can be called as follows:

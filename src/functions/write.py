@@ -101,6 +101,10 @@ def write_inflows(inflow_mode, simulation_dir, merge_inputs, log, inflow_data=No
             with open(file_path, 'w', encoding='utf-8') as f:
                 f.write("No inflows")
         elif inflow_mode == 2:
+            # Local copies: inflow_data is reused for the oxygen inflows, which merge their own history
+            deep = [d[key] for d in inflow_data["deep_inflows"]]
+            surface = [d[key] for d in inflow_data["surface_inflows"]]
+            time = inflow_data["Time"]
             if os.path.exists(file_path) and merge_inputs:
                 time_min = inflow_data["Time"][0]
                 df = pd.read_csv(file_path, skiprows=3, sep=r'\s+', header=None)
@@ -108,17 +112,9 @@ def write_inflows(inflow_mode, simulation_dir, merge_inputs, log, inflow_data=No
                 df = df[df['Time'] < time_min]
                 if len(df) > 0:
                     time = np.concatenate((df["Time"].values, inflow_data["Time"]))
-                    for i in range(len(inflow_data["deep_inflows"])):
-                        inflow_data["deep_inflows"][i][key] = np.concatenate((df[str(i)].values, inflow_data["deep_inflows"][i][key]))
-                    n_deep = len(inflow_data["deep_inflows"])
-                    for i in range(n_deep, n_deep + len(inflow_data["surface_inflows"])):
-                        j = i - n_deep
-                        inflow_data["surface_inflows"][j][key] = np.concatenate((df[str(i)].values, inflow_data["surface_inflows"][j][key]))
+                    deep = [np.concatenate((df[str(i)].values, values)) for i, values in enumerate(deep)]
+                    surface = [np.concatenate((df[str(len(deep) + j)].values, values)) for j, values in enumerate(surface)]
                     log.info("Merged {} with existing forcing data".format(key), indent=2)
-                else:
-                    time = inflow_data["Time"]
-            else:
-                time = inflow_data["Time"]
 
             with open(file_path, 'w', encoding='utf-8') as f:
                 f.write('%10s %10s %10s %10s\n' % ('Time [d]', 'Depth [m]', 'Deep Inflows [{}]'.format(files[key]["deep_unit"]),
@@ -135,8 +131,8 @@ def write_inflows(inflow_mode, simulation_dir, merge_inputs, log, inflow_data=No
                     if nan_skip:
                         continue
                     f.write('%10.4f ' % time[i])
-                    f.write(' '.join(['%10.2f' % z[key][i] for z in inflow_data["deep_inflows"]]))
-                    f.write(' '.join(['%10.2f' % z[key][i] for z in inflow_data["surface_inflows"]]))
+                    f.write(' '.join(['%10.2f' % values[i] for values in deep]))
+                    f.write(' '.join(['%10.2f' % values[i] for values in surface]))
                     f.write('\n')
 
 
