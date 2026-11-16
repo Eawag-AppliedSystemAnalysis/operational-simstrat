@@ -5,7 +5,7 @@ from datetime import datetime, timezone, timedelta
 from .general import (call_url, adjust_temperature_for_altitude_difference, air_pressure_from_elevation, detect_gaps,
                       clear_sky_solar_radiation, datetime_to_simstrat_time,
                       calculate_mean_wind_direction, interpolate_timeseries, fill_day_of_year,
-                      vapor_pressure_from_relative_humidity_and_temperature, get_elevation_eudem25, calculate_vapor_pressure,
+                      get_elevation_eudem25, calculate_vapor_pressure,
                       get_elevation)
 
 import matplotlib.pyplot as plt
@@ -180,7 +180,16 @@ def meteodata_from_meteostations(start, end, forcing, elevation, latitude, longi
     output["sol"]["data"] = raw_data["global_radiation"]
     air_pressure = air_pressure_from_elevation(elevation)
     if "vapour_pressure" not in raw_data:
-        raw_data["vapour_pressure"] = calculate_vapor_pressure(raw_data["air_temperature"], raw_data["relative_humidity"], air_pressure)
+        # Vapour pressure from the relative humidity with the temperature at the humidity station's elevation (the air
+        # temperature above is corrected to the lake elevation). The vapour pressure, not the relative humidity, is
+        # roughly conserved over the elevation difference: with the lake-elevation temperature it would be ~20-25 %
+        # too high for a station 500 m above the lake.
+        rh_station = primary_station("relative_humidity", start, forcing)
+        temperature, rh_pressure = raw_data["air_temperature"], air_pressure
+        if rh_station is not None:
+            temperature = adjust_temperature_for_altitude_difference(temperature, rh_station["elevation"] - elevation)
+            rh_pressure = air_pressure_from_elevation(rh_station["elevation"])
+        raw_data["vapour_pressure"] = calculate_vapor_pressure(temperature, raw_data["relative_humidity"], rh_pressure)
     output["vap"]["data"] = raw_data["vapour_pressure"]
     if "precipitation" in raw_data:
         output["rain"]["data"] = raw_data["precipitation"] * 0.001  # Convert mm to m
@@ -188,6 +197,14 @@ def meteodata_from_meteostations(start, end, forcing, elevation, latitude, longi
         output["rain"]["data"] = np.zeros(len(raw_data["air_temperature"]))
     estimate_cloud_cover(output, time, air_pressure, latitude, longitude, log)
     return output
+
+
+def primary_station(p_id, start, forcing):
+    """The station that station_series uses as the primary for p_id (first in the list with data after start)."""
+    for station in forcing:
+        if p_id in station["parameters"].keys() and station["parameters"][p_id]["end_date"] >= start:
+            return station
+    return None
 
 
 def station_series(p_id, start, end, forcing, elevation, endpoint, log):
@@ -331,11 +348,22 @@ def estimate_cloud_cover(output, time, air_pressure, latitude, longitude, log):
     log.info("Estimate cloudiness based on ratio between measured and theoretical solar radiation", indent=1)
     cssr = clear_sky_solar_radiation(time, air_pressure, output["vap"]["data"], latitude, longitude)
     df = pd.DataFrame({"cssr": cssr, "swr": output["sol"]["data"]})
-    cssr_rolling = df['cssr'].rolling(window=24, center=True, min_periods=1).mean()
-    swr_rolling = df['swr'].rolling(window=24, center=True, min_periods=1).mean()
-    solar_index = np.interp(swr_rolling / cssr_rolling, [0, 1],
-                            [0, 1])  # Flerchinger et al. (2009), Crawford and Duchon (1999)
-    cloud = 1 - solar_index
+    # Both 24 h means over the same hours: where either the measured or the clear-sky radiation (e.g. missing vapour
+    # pressure) is missing, both are excluded. Otherwise a gap in the measured radiation at midday leaves the bright
+    # hours in the clear-sky mean only (cloud cover too high), and a gap in the clear-sky radiation the opposite.
+    valid = df["cssr"].notna() & df["swr"].notna()
+    cssr_rolling = df["cssr"].where(valid).rolling(window=24, center=True, min_periods=1).sum()
+    swr_rolling = df["swr"].where(valid).rolling(window=24, center=True, min_periods=1).sum()
+    # Windows in which the valid hours hold less than half of the clear-sky radiation (most of the daylight missing)
+    # give no estimate; they are interpolated in time from the neighbouring windows below.
+    # (reference: clear-sky radiation of all hours, with gaps in the vapour pressure interpolated for this purpose only)
+    vap_filled = pd.Series(output["vap"]["data"], dtype=float).interpolate(limit_direction="both").to_numpy()
+    cssr_all = pd.Series(clear_sky_solar_radiation(time, air_pressure, vap_filled, latitude, longitude)).rolling(
+        window=24, center=True, min_periods=1).sum()
+    enough = cssr_rolling >= 0.5 * cssr_all
+    ratio = (swr_rolling / cssr_rolling).where(enough & (cssr_rolling > 0))
+    solar_index = np.interp(ratio, [0, 1], [0, 1])  # Flerchinger et al. (2009), Crawford and Duchon (1999)
+    cloud = pd.Series(1 - solar_index).interpolate(limit_direction="both").to_numpy()
     # The 24 h rolling window extends the estimate ~12 h beyond the last solar observation. Only keep it where solar
     # radiation was observed, so a forecast's cloud cover takes over after the observations; the full estimate is the
     # fallback where neither is available (applied in download_forcing_data).
@@ -364,6 +392,9 @@ def meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, lo
         df['Time'] = pd.to_datetime(df['utc_time'], utc=True)
         df['Time'] = df.apply(lambda row: datetime_to_simstrat_time(row['Time'], reference_date), axis=1)
         df["T_2M"] = df["T_2M"] - 273.15  # Kelvin to celsius
+        # vapour pressure at the grid point (conserved over the elevation difference, unlike the relative humidity)
+        df["vap"] = calculate_vapor_pressure(df["T_2M"].values, df["RELHUM_2M"].values,
+                                             air_pressure_from_elevation(grid_elevation))
         df["T_2M"] = adjust_temperature_for_altitude_difference(df["T_2M"].values, elevation - grid_elevation)
         df["TOT_PREC"] = df["TOT_PREC"] * 0.001  # kg m-2 to m/hr
         df["CLCT"] = df["CLCT"] * 0.01  # Percentage to fraction
@@ -371,7 +402,6 @@ def meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, lo
         df["v"] = df["V"]
         df["Tair"] = df["T_2M"]
         df["sol"] = df["GLOB"]
-        df["vap"] = vapor_pressure_from_relative_humidity_and_temperature(df["T_2M"].values, df["RELHUM_2M"])
         df["cloud"] = df["CLCT"]
         df["rain"] = df["TOT_PREC"]
         df = df[parameters]
@@ -421,6 +451,9 @@ def icon_to_forcing(df, elevation, grid_elevation, reference_date):
     df['Time'] = pd.to_datetime(df['utc_time'], utc=True)
     df['Time'] = df.apply(lambda row: datetime_to_simstrat_time(row['Time'], reference_date), axis=1)
     df["T_2M"] = df["T_2M"] - 273.15  # Kelvin to celsius
+    # vapour pressure at the grid point (conserved over the elevation difference, unlike the relative humidity)
+    df["vap"] = calculate_vapor_pressure(df["T_2M"].values, df["RELHUM_2M"].values,
+                                         air_pressure_from_elevation(grid_elevation))
     df["T_2M"] = adjust_temperature_for_altitude_difference(df["T_2M"].values, elevation - grid_elevation)
     df["TOT_PREC"] = df["TOT_PREC"] * 0.001  # kg m-2 to m/hr
     df["CLCT"] = df["CLCT"] * 0.01  # Percentage to fraction
@@ -428,7 +461,6 @@ def icon_to_forcing(df, elevation, grid_elevation, reference_date):
     df["v"] = df["V"]
     df["Tair"] = df["T_2M"]
     df["sol"] = df["GLOB"]
-    df["vap"] = vapor_pressure_from_relative_humidity_and_temperature(df["T_2M"].values, df["RELHUM_2M"])
     df["cloud"] = df["CLCT"]
     df["rain"] = df["TOT_PREC"]
     return df[FORCING_COLUMNS]
@@ -492,13 +524,14 @@ def meteodata_forecast_from_visualcrossing(forcing_forecast, elevation, latitude
     data_flat = [hour for day in data["days"] for hour in day["hours"]]
     data_dict = {key: [hour[key] for hour in data_flat] for key in ["datetimeEpoch", "temp", "humidity", "precip", "windspeed", "winddir", "cloudcover", "solarradiation"]}
     df = pd.DataFrame(data_dict)
-    df['Time'] = df.apply(lambda row: datetime_to_simstrat_time(datetime.fromtimestamp(row['datetimeEpoch']).replace(tzinfo=timezone.utc), reference_date), axis=1)
+    df['Time'] = df.apply(lambda row: datetime_to_simstrat_time(datetime.fromtimestamp(row['datetimeEpoch'], tz=timezone.utc), reference_date), axis=1)
     df["Tair"] = adjust_temperature_for_altitude_difference(df["temp"].values, elevation - grid_elevation)
     df["rain"] = df["precip"] * 0.001 # mm/hr to m/hr
     df["windspeed"] = df["windspeed"] * (1000/3600) # km/h to m/s
     df["sol"] = df["solarradiation"]
     df["cloud"] = df["cloudcover"] * 0.01 # % to decimal
-    df["vap"] = vapor_pressure_from_relative_humidity_and_temperature(df["temp"].values, df["humidity"])
+    # vapour pressure at the grid point (Gill 1982, as for the stations and ICON / COSMO)
+    df["vap"] = calculate_vapor_pressure(df["temp"].values, df["humidity"].values, air_pressure_from_elevation(grid_elevation))
     df["u"] = -df["windspeed"] * np.sin(df["winddir"] * np.pi / 180)
     df["v"] = -df["windspeed"] * np.cos(df["winddir"] * np.pi / 180)
     df = df[parameters]
