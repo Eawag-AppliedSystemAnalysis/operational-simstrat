@@ -5,7 +5,7 @@ from datetime import datetime, timezone, timedelta
 from .general import (call_url, adjust_temperature_for_altitude_difference, air_pressure_from_elevation, detect_gaps,
                       clear_sky_solar_radiation, datetime_to_simstrat_time,
                       calculate_mean_wind_direction, interpolate_timeseries, fill_day_of_year,
-                      vapor_pressure_from_relative_humidity_and_temperature, get_elevation_eudem25, calculate_vapor_pressure,
+                      get_elevation_eudem25, calculate_vapor_pressure,
                       get_elevation)
 
 import matplotlib.pyplot as plt
@@ -185,10 +185,11 @@ def meteodata_from_meteostations(start, end, forcing, elevation, latitude, longi
         # roughly conserved over the elevation difference: with the lake-elevation temperature it would be ~20-25 %
         # too high for a station 500 m above the lake.
         rh_station = primary_station("relative_humidity", start, forcing)
-        temperature = raw_data["air_temperature"]
+        temperature, rh_pressure = raw_data["air_temperature"], air_pressure
         if rh_station is not None:
             temperature = adjust_temperature_for_altitude_difference(temperature, rh_station["elevation"] - elevation)
-        raw_data["vapour_pressure"] = calculate_vapor_pressure(temperature, raw_data["relative_humidity"], air_pressure)
+            rh_pressure = air_pressure_from_elevation(rh_station["elevation"])
+        raw_data["vapour_pressure"] = calculate_vapor_pressure(temperature, raw_data["relative_humidity"], rh_pressure)
     output["vap"]["data"] = raw_data["vapour_pressure"]
     if "precipitation" in raw_data:
         output["rain"]["data"] = raw_data["precipitation"] * 0.001  # Convert mm to m
@@ -381,7 +382,8 @@ def meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, lo
         df['Time'] = df.apply(lambda row: datetime_to_simstrat_time(row['Time'], reference_date), axis=1)
         df["T_2M"] = df["T_2M"] - 273.15  # Kelvin to celsius
         # vapour pressure at the grid point (conserved over the elevation difference, unlike the relative humidity)
-        df["vap"] = vapor_pressure_from_relative_humidity_and_temperature(df["T_2M"].values, df["RELHUM_2M"])
+        df["vap"] = calculate_vapor_pressure(df["T_2M"].values, df["RELHUM_2M"].values,
+                                             air_pressure_from_elevation(grid_elevation))
         df["T_2M"] = adjust_temperature_for_altitude_difference(df["T_2M"].values, elevation - grid_elevation)
         df["TOT_PREC"] = df["TOT_PREC"] * 0.001  # kg m-2 to m/hr
         df["CLCT"] = df["CLCT"] * 0.01  # Percentage to fraction
@@ -439,7 +441,8 @@ def icon_to_forcing(df, elevation, grid_elevation, reference_date):
     df['Time'] = df.apply(lambda row: datetime_to_simstrat_time(row['Time'], reference_date), axis=1)
     df["T_2M"] = df["T_2M"] - 273.15  # Kelvin to celsius
     # vapour pressure at the grid point (conserved over the elevation difference, unlike the relative humidity)
-    df["vap"] = vapor_pressure_from_relative_humidity_and_temperature(df["T_2M"].values, df["RELHUM_2M"])
+    df["vap"] = calculate_vapor_pressure(df["T_2M"].values, df["RELHUM_2M"].values,
+                                         air_pressure_from_elevation(grid_elevation))
     df["T_2M"] = adjust_temperature_for_altitude_difference(df["T_2M"].values, elevation - grid_elevation)
     df["TOT_PREC"] = df["TOT_PREC"] * 0.001  # kg m-2 to m/hr
     df["CLCT"] = df["CLCT"] * 0.01  # Percentage to fraction
@@ -516,7 +519,8 @@ def meteodata_forecast_from_visualcrossing(forcing_forecast, elevation, latitude
     df["windspeed"] = df["windspeed"] * (1000/3600) # km/h to m/s
     df["sol"] = df["solarradiation"]
     df["cloud"] = df["cloudcover"] * 0.01 # % to decimal
-    df["vap"] = vapor_pressure_from_relative_humidity_and_temperature(df["temp"].values, df["humidity"])
+    # vapour pressure at the grid point (Gill 1982, as for the stations and ICON / COSMO)
+    df["vap"] = calculate_vapor_pressure(df["temp"].values, df["humidity"].values, air_pressure_from_elevation(grid_elevation))
     df["u"] = -df["windspeed"] * np.sin(df["winddir"] * np.pi / 180)
     df["v"] = -df["windspeed"] * np.cos(df["winddir"] * np.pi / 180)
     df = df[parameters]
