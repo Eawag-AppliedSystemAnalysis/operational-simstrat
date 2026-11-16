@@ -348,11 +348,22 @@ def estimate_cloud_cover(output, time, air_pressure, latitude, longitude, log):
     log.info("Estimate cloudiness based on ratio between measured and theoretical solar radiation", indent=1)
     cssr = clear_sky_solar_radiation(time, air_pressure, output["vap"]["data"], latitude, longitude)
     df = pd.DataFrame({"cssr": cssr, "swr": output["sol"]["data"]})
-    cssr_rolling = df['cssr'].rolling(window=24, center=True, min_periods=1).mean()
-    swr_rolling = df['swr'].rolling(window=24, center=True, min_periods=1).mean()
-    solar_index = np.interp(swr_rolling / cssr_rolling, [0, 1],
-                            [0, 1])  # Flerchinger et al. (2009), Crawford and Duchon (1999)
-    cloud = 1 - solar_index
+    # Both 24 h means over the same hours: where either the measured or the clear-sky radiation (e.g. missing vapour
+    # pressure) is missing, both are excluded. Otherwise a gap in the measured radiation at midday leaves the bright
+    # hours in the clear-sky mean only (cloud cover too high), and a gap in the clear-sky radiation the opposite.
+    valid = df["cssr"].notna() & df["swr"].notna()
+    cssr_rolling = df["cssr"].where(valid).rolling(window=24, center=True, min_periods=1).sum()
+    swr_rolling = df["swr"].where(valid).rolling(window=24, center=True, min_periods=1).sum()
+    # Windows in which the valid hours hold less than half of the clear-sky radiation (most of the daylight missing)
+    # give no estimate; they are interpolated in time from the neighbouring windows below.
+    # (reference: clear-sky radiation of all hours, with gaps in the vapour pressure interpolated for this purpose only)
+    vap_filled = pd.Series(output["vap"]["data"], dtype=float).interpolate(limit_direction="both").to_numpy()
+    cssr_all = pd.Series(clear_sky_solar_radiation(time, air_pressure, vap_filled, latitude, longitude)).rolling(
+        window=24, center=True, min_periods=1).sum()
+    enough = cssr_rolling >= 0.5 * cssr_all
+    ratio = (swr_rolling / cssr_rolling).where(enough & (cssr_rolling > 0))
+    solar_index = np.interp(ratio, [0, 1], [0, 1])  # Flerchinger et al. (2009), Crawford and Duchon (1999)
+    cloud = pd.Series(1 - solar_index).interpolate(limit_direction="both").to_numpy()
     # The 24 h rolling window extends the estimate ~12 h beyond the last solar observation. Only keep it where solar
     # radiation was observed, so a forecast's cloud cover takes over after the observations; the full estimate is the
     # fallback where neither is available (applied in download_forcing_data).
