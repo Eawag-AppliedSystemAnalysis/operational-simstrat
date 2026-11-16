@@ -225,6 +225,9 @@ def get_day_of_year(datetime_array):
 
 
 def clear_sky_solar_radiation(time, air_pressure, vapour_pressure, lat, lon):
+    # Clear-sky irradiance following Woolway et al. (2015), Lake Heat Flux Analyzer (calc_lwnet.m), based on
+    # Crawford & Duchon (1999) and Meyers & Dale (1983). A copy: the caller's (forcing) array must not be changed.
+    vapour_pressure = np.array(vapour_pressure, dtype=float)
     vapour_pressure[vapour_pressure < 1] = np.nan
     hour_of_day = np.array([t.hour + t.minute / 60 + t.second / 3600 for t in time])
     doy = get_day_of_year(time) + hour_of_day / 24
@@ -239,13 +242,18 @@ def clear_sky_solar_radiation(time, air_pressure, vapour_pressure, lat, lon):
     cos_zenith = np.sin(lat * np.pi / 180) * np.sin(phi) + np.cos(lat * np.pi / 180) * np.cos(phi) * np.cos(
         np.pi / 12 * (hour_of_day - solar_noon))  # Cosine of the solar zenith angle (Wikipedia)
     cos_zenith[cos_zenith < 0] = 0
-    m = 35 * cos_zenith * (1244 * cos_zenith ** 2 + 1) ** -0.5  # Air mass thickness coefficient
-    x = [-10, 81, 173, 264, 355]
+    # Optical air mass, as calc_lwnet.m (m = 35*(1224*cosZ.^2+1).^-.5): 1 with the sun in the zenith, ~1/cos(zenith)
+    # for moderate angles, 35 at the horizon. Previously 35 * cos_zenith * (1244 * cos_zenith ** 2 + 1) ** -0.5, which
+    # kept m at ~1 for every sun position and overestimated the clear-sky radiation at low sun (and thus the cloud cover).
+    m = 35 * (1224 * cos_zenith ** 2 + 1) ** -0.5
+    # Smith (1966) G constant: winter, spring, summer, fall, winter, spring (repeated for the wrap-around at the end of
+    # the year, as calc_lwnet.m; without the last column days > 355 were extrapolated)
+    x = [-10, 81, 173, 264, 355, 446]
     y = [5, 15, 25, 35, 45, 55, 65, 75, 85]
-    z = [[3.37, 2.85, 2.8, 2.64, 3.37], [2.99, 3.02, 2.7, 2.93, 2.99], [3.6, 3, 2.98, 2.93, 3.6],
-         [3.04, 3.11, 2.92, 2.94, 3.04], [2.7, 2.95, 2.77, 2.71, 2.7],
-         [2.52, 3.07, 2.67, 2.93, 2.52], [1.76, 2.69, 2.61, 2.61, 1.76],
-         [1.6, 1.67, 2.24, 2.63, 1.6], [1.11, 1.44, 1.94, 2.02, 1.11]]
+    z = [[3.37, 2.85, 2.8, 2.64, 3.37, 2.85], [2.99, 3.02, 2.7, 2.93, 2.99, 3.02], [3.6, 3, 2.98, 2.93, 3.6, 3],
+         [3.04, 3.11, 2.92, 2.94, 3.04, 3.11], [2.7, 2.95, 2.77, 2.71, 2.7, 2.95],
+         [2.52, 3.07, 2.67, 2.93, 2.52, 3.07], [1.76, 2.69, 2.61, 2.61, 1.76, 2.69],
+         [1.6, 1.67, 2.24, 2.63, 1.6, 1.67], [1.11, 1.44, 1.94, 2.02, 1.11, 1.44]]
     fG = interpolate.RegularGridInterpolator((y, x), z, bounds_error=False, fill_value=None)
     G = fG(np.column_stack([np.full_like(doy, lat), doy])) # Empirical constant
     Td = (243.5 * np.log(vapour_pressure / 6.112)) / (
@@ -255,7 +263,7 @@ def clear_sky_solar_radiation(time, air_pressure, vapour_pressure, lat, lon):
     Ta = 0.935 ** m  # Attenuation coefficient for aerosols
     TrTpg = 1.021 - 0.084 * (m * (
             0.000949 * air_pressure + 0.051)) ** 0.5  # Attenuation coefficient for Rayleigh scattering and permanent gases
-    effective_solar_constant = 1353 * (1 + 0.034 * np.cos(2 * np.pi / 365.24 * doy))
+    effective_solar_constant = 1353 * (1 + 0.034 * np.cos(2 * np.pi / 365.24 * doy)) ** 2  # squared, as calc_lwnet.m
     return effective_solar_constant * cos_zenith * TrTpg * Tw * Ta
 
 

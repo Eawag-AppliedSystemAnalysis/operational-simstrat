@@ -492,7 +492,7 @@ def meteodata_forecast_from_visualcrossing(forcing_forecast, elevation, latitude
     data_flat = [hour for day in data["days"] for hour in day["hours"]]
     data_dict = {key: [hour[key] for hour in data_flat] for key in ["datetimeEpoch", "temp", "humidity", "precip", "windspeed", "winddir", "cloudcover", "solarradiation"]}
     df = pd.DataFrame(data_dict)
-    df['Time'] = df.apply(lambda row: datetime_to_simstrat_time(datetime.fromtimestamp(row['datetimeEpoch']).replace(tzinfo=timezone.utc), reference_date), axis=1)
+    df['Time'] = df.apply(lambda row: datetime_to_simstrat_time(datetime.fromtimestamp(row['datetimeEpoch'], tz=timezone.utc), reference_date), axis=1)
     df["Tair"] = adjust_temperature_for_altitude_difference(df["temp"].values, elevation - grid_elevation)
     df["rain"] = df["precip"] * 0.001 # mm/hr to m/hr
     df["windspeed"] = df["windspeed"] * (1000/3600) # km/h to m/s
