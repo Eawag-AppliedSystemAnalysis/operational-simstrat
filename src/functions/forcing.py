@@ -180,7 +180,15 @@ def meteodata_from_meteostations(start, end, forcing, elevation, latitude, longi
     output["sol"]["data"] = raw_data["global_radiation"]
     air_pressure = air_pressure_from_elevation(elevation)
     if "vapour_pressure" not in raw_data:
-        raw_data["vapour_pressure"] = calculate_vapor_pressure(raw_data["air_temperature"], raw_data["relative_humidity"], air_pressure)
+        # Vapour pressure from the relative humidity with the temperature at the humidity station's elevation (the air
+        # temperature above is corrected to the lake elevation). The vapour pressure, not the relative humidity, is
+        # roughly conserved over the elevation difference: with the lake-elevation temperature it would be ~20-25 %
+        # too high for a station 500 m above the lake.
+        rh_station = primary_station("relative_humidity", start, forcing)
+        temperature = raw_data["air_temperature"]
+        if rh_station is not None:
+            temperature = adjust_temperature_for_altitude_difference(temperature, rh_station["elevation"] - elevation)
+        raw_data["vapour_pressure"] = calculate_vapor_pressure(temperature, raw_data["relative_humidity"], air_pressure)
     output["vap"]["data"] = raw_data["vapour_pressure"]
     if "precipitation" in raw_data:
         output["rain"]["data"] = raw_data["precipitation"] * 0.001  # Convert mm to m
@@ -188,6 +196,14 @@ def meteodata_from_meteostations(start, end, forcing, elevation, latitude, longi
         output["rain"]["data"] = np.zeros(len(raw_data["air_temperature"]))
     estimate_cloud_cover(output, time, air_pressure, latitude, longitude, log)
     return output
+
+
+def primary_station(p_id, start, forcing):
+    """The station that station_series uses as the primary for p_id (first in the list with data after start)."""
+    for station in forcing:
+        if p_id in station["parameters"].keys() and station["parameters"][p_id]["end_date"] >= start:
+            return station
+    return None
 
 
 def station_series(p_id, start, end, forcing, elevation, endpoint, log):
@@ -364,6 +380,8 @@ def meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, lo
         df['Time'] = pd.to_datetime(df['utc_time'], utc=True)
         df['Time'] = df.apply(lambda row: datetime_to_simstrat_time(row['Time'], reference_date), axis=1)
         df["T_2M"] = df["T_2M"] - 273.15  # Kelvin to celsius
+        # vapour pressure at the grid point (conserved over the elevation difference, unlike the relative humidity)
+        df["vap"] = vapor_pressure_from_relative_humidity_and_temperature(df["T_2M"].values, df["RELHUM_2M"])
         df["T_2M"] = adjust_temperature_for_altitude_difference(df["T_2M"].values, elevation - grid_elevation)
         df["TOT_PREC"] = df["TOT_PREC"] * 0.001  # kg m-2 to m/hr
         df["CLCT"] = df["CLCT"] * 0.01  # Percentage to fraction
@@ -371,7 +389,6 @@ def meteodata_forecast_from_meteoswiss(forcing_forecast, elevation, latitude, lo
         df["v"] = df["V"]
         df["Tair"] = df["T_2M"]
         df["sol"] = df["GLOB"]
-        df["vap"] = vapor_pressure_from_relative_humidity_and_temperature(df["T_2M"].values, df["RELHUM_2M"])
         df["cloud"] = df["CLCT"]
         df["rain"] = df["TOT_PREC"]
         df = df[parameters]
@@ -421,6 +438,8 @@ def icon_to_forcing(df, elevation, grid_elevation, reference_date):
     df['Time'] = pd.to_datetime(df['utc_time'], utc=True)
     df['Time'] = df.apply(lambda row: datetime_to_simstrat_time(row['Time'], reference_date), axis=1)
     df["T_2M"] = df["T_2M"] - 273.15  # Kelvin to celsius
+    # vapour pressure at the grid point (conserved over the elevation difference, unlike the relative humidity)
+    df["vap"] = vapor_pressure_from_relative_humidity_and_temperature(df["T_2M"].values, df["RELHUM_2M"])
     df["T_2M"] = adjust_temperature_for_altitude_difference(df["T_2M"].values, elevation - grid_elevation)
     df["TOT_PREC"] = df["TOT_PREC"] * 0.001  # kg m-2 to m/hr
     df["CLCT"] = df["CLCT"] * 0.01  # Percentage to fraction
@@ -428,7 +447,6 @@ def icon_to_forcing(df, elevation, grid_elevation, reference_date):
     df["v"] = df["V"]
     df["Tair"] = df["T_2M"]
     df["sol"] = df["GLOB"]
-    df["vap"] = vapor_pressure_from_relative_humidity_and_temperature(df["T_2M"].values, df["RELHUM_2M"])
     df["cloud"] = df["CLCT"]
     df["rain"] = df["TOT_PREC"]
     return df[FORCING_COLUMNS]
